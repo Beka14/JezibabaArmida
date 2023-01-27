@@ -33,5 +33,9 @@ public class Thermometer : MonoBehaviour
     {
         return (int)slider.value;
     }
-   
+    public void SetValue(int i)
+    {
+        slider.value = i;
+        t.text = slider.value + "";
+    }
 }

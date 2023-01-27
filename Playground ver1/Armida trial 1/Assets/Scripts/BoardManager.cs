@@ -24,6 +24,7 @@ public class BoardManager : MonoBehaviour
         thermometer = GameObject.Find("Slider");
         thermoScript = thermometer.GetComponent<Thermometer>();
         thermoScript.ChangeValue(69);
+        GetComponent<GameManager>().Init();
     }
     public string FirstLevelEquasion(int pocet_kamenov)
     {
@@ -80,6 +81,7 @@ public class BoardManager : MonoBehaviour
         string tmp = Stringify(pole, kamene);
         //TODO 
 
+        SetUpThermo(pociatocna);
         InstantiateStones();
 
         //
@@ -122,6 +124,15 @@ public class BoardManager : MonoBehaviour
     }
 
     //TODO: NASTAVIT TEPLOMER
+
+    public void SetUpThermo(int value)
+    {
+        kamene = GameObject.Find("kamene");
+        thermometer = GameObject.Find("Slider");
+        thermoScript = thermometer.GetComponent<Thermometer>();
+        //Debug.Log(thermometer.name);
+        thermoScript.SetValue(value);
+    }
 
     public void InstantiateStones()
     {
