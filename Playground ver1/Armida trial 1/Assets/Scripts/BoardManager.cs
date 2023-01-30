@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.UI;
@@ -24,7 +25,7 @@ public class BoardManager : MonoBehaviour
         thermometer = GameObject.Find("Slider");
         thermoScript = thermometer.GetComponent<Thermometer>();
         thermoScript.ChangeValue(69);
-        GetComponent<GameManager>().Init();
+        //GetComponent<GameManager>().Init();
     }
     public string FirstLevelEquasion(int pocet_kamenov)
     {
@@ -37,14 +38,14 @@ public class BoardManager : MonoBehaviour
         vsetky = new List<int>();
 
         int pociatocna = Random.Range(min, max + 1);
-        int studenyKamen = Random.Range(1, 5) * -1;
+        int studenyKamen = Random.Range(-5,-1); //studenyKamen = Random.Range(1, 5) * -1;
         int horuciKamen = Random.Range(1, 5);
         int vysledna = Random.Range(min, max + 1);
 
         while (!ok)
         {
             pociatocna = Random.Range(min, max+1);
-            studenyKamen = Random.Range(1, 5) * -1;
+            studenyKamen = Random.Range(-5,-1); //studenyKamen = Random.Range(1, 5) * -1;
             horuciKamen = Random.Range(1, 5);
             vysledna = Random.Range(min, max + 1);
 
@@ -52,12 +53,13 @@ public class BoardManager : MonoBehaviour
             {
                 for(int y=0; y < 1000; y++)
                 {
-                    if (pociatocna + (horuciKamen * x) + (studenyKamen * y) == vysledna && x + y <= pocet_kamenov && x != 0 && y != 0)
+                    if ((pociatocna + (horuciKamen * x) + (studenyKamen * y) == vysledna) && x + y <= pocet_kamenov && x != 0 && y != 0)
                     {
                         kamene = new List<int>();
                         ok = true;
                         for (int i = 0; i < x; i++) kamene.Add(horuciKamen);
                         for (int j = 0; j < y; j++) kamene.Add(studenyKamen);
+                        //Debug.Log("------------ " + string.Join(",", kamene));
                         break;
                     }
                 }
@@ -73,7 +75,7 @@ public class BoardManager : MonoBehaviour
             for(int i = 0; i < z; i++)
             {
                 int x = Random.Range(0, kamene.Count);
-                pole.Add(kamene[x]);
+                pole.Add(kamene[x]);        //problem??
                 kamene.RemoveAt(x);
             }
         }
@@ -85,11 +87,12 @@ public class BoardManager : MonoBehaviour
         InstantiateStones();
 
         //
-        return pociatocna + tmp + " = " + vysledna; 
+        return pociatocna + "" + tmp + " = " + vysledna; 
     }
 
     string Stringify(List<int> a, List<int> b)
     {
+        //Debug.Log("------------2 " + string.Join(",", a) + " // " + string.Join(",", b));
         string sb = "";
         int r = Random.Range(0,b.Count);
         for(int i=0;i<r;i++)
@@ -114,12 +117,13 @@ public class BoardManager : MonoBehaviour
             sb += ")";
         }
 
-        for (int i = r; i < b.Count - r; i++)
+        for (int i = r; i < b.Count; i++)  //i < b.Count-r
         {
             sb += (b[i] < 0) ? " - " + -1 * b[i] : " + " + b[i];
             vsetky.Add(b[i]);
         }
 
+        //Debug.Log("------------3 " + string.Join(",", vsetky));
         return sb;
     }
 
@@ -145,7 +149,7 @@ public class BoardManager : MonoBehaviour
             {
                 g = Instantiate(studeny);
                 TextMeshProUGUI v = g.transform.Find("value").GetComponent<TextMeshProUGUI>();
-                v.text = i*-1 + "";
+                v.text = (i == -1)? "":i *-1 + "";
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
             }
@@ -153,25 +157,38 @@ public class BoardManager : MonoBehaviour
             {
                 g = Instantiate(horuci);
                 TextMeshProUGUI v = g.transform.Find("value").GetComponent<TextMeshProUGUI>();
-                v.text = i + "";
+                v.text = (i == 1) ? "":i + "";
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
             }
 
             naPloche.Add(g);
+            Debug.Log("------------ " + string.Join(",", naPloche));
         }
     }
 
     public string SetUpBoard(int x)
     {
-        for(int i=0; i<naPloche.Count; i++)
+        /*
+        for (int i=0; i<naPloche.Count; i++)
         {
-            GameObject a = naPloche[i];
-            Destroy(a);
+            Debug.Log("------REMOVE------ " + string.Join(",", naPloche));
+            //GameObject a = naPloche[0];
+            Destroy(naPloche[0]);
         }
         //Debug.Log(naPloche.Count);
-        naPloche = new List<GameObject>();   
-
+        naPloche = new List<GameObject>();
+        */
+        GameObject g = GameObject.Find("kamene");
+        for (var i = g.transform.childCount - 1; i >= 0; i--)
+        {
+            Object.Destroy(g.transform.GetChild(i).gameObject);
+        }
         return FirstLevelEquasion(x);
+    }
+
+    public void SetInputText(string s)
+    {
+        //inputText = s;
     }
 }

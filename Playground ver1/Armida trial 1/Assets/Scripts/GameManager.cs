@@ -4,6 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,9 +12,11 @@ public class GameManager : MonoBehaviour
     private BoardManager boardScript;
     public int level = 4;
     private TextMeshProUGUI t;
+    private TextMeshProUGUI input;
+    bool p = false;
     private void Awake()
     {
-        if(instance == null) instance= this;
+        if(instance == null) instance = this;
         else Destroy(gameObject);
 
         boardScript = gameObject.GetComponent<BoardManager>();
@@ -25,13 +28,18 @@ public class GameManager : MonoBehaviour
     {
         t = GameObject.Find("txt").GetComponent<TextMeshProUGUI>();
         boardScript = gameObject.GetComponent<BoardManager>();
+        //input = GameObject.Find("Text").GetComponent<TextMeshProUGUI>();
         t.text = boardScript.SetUpBoard(5);
     }
 
     // Update is called once per frame
     void Update()
     {
-    
+        if (!p)                 //TODO dat do start
+        {
+            Init();
+            p = true;
+        }
     }
 
     private void OnLevelWasLoaded(int level)
