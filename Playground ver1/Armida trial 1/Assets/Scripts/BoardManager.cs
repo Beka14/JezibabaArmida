@@ -25,7 +25,6 @@ public class BoardManager : MonoBehaviour
         kamene = GameObject.Find("kamene");
         thermometer = GameObject.Find("Slider");
         thermoScript = thermometer.GetComponent<Thermometer>();
-        thermoScript.ChangeValue(69);
         //GetComponent<GameManager>().Init();
     }
     public string FirstLevelEquasion(int pocet_kamenov)

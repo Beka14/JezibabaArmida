@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
         if(instance == null) instance = this;
         else Destroy(gameObject);
 
-        boardScript = gameObject.GetComponent<BoardManager>();
+        //boardScript = gameObject.GetComponent<BoardManager>();
         DontDestroyOnLoad(gameObject);
         //SceneManager.LoadScene(0);
     }
@@ -61,14 +61,14 @@ public class GameManager : MonoBehaviour
     {
         if (!p)                 //TODO dat do start
         {
-            Init();
+            //Init();
             p = true;
         }
     }
 
     private void OnLevelWasLoaded(int level)
     {
-        //Init();
+        if (level == 1) Init();
     }
 
     public void LoadLevel(int i)
