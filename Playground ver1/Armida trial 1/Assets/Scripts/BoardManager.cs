@@ -15,6 +15,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] GameObject horuci;
     GameObject thermometer;
     Thermometer thermoScript;
+    int answer;
 
     List<int> vsetky = new List<int>();
     List<GameObject> naPloche = new List<GameObject>();
@@ -60,6 +61,7 @@ public class BoardManager : MonoBehaviour
                         for (int i = 0; i < x; i++) kamene.Add(horuciKamen);
                         for (int j = 0; j < y; j++) kamene.Add(studenyKamen);
                         //Debug.Log("------------ " + string.Join(",", kamene));
+                        answer = vysledna;
                         break;
                     }
                 }
@@ -74,7 +76,7 @@ public class BoardManager : MonoBehaviour
             int z = Random.Range(2, 5);
             for(int i = 0; i < z; i++)
             {
-                int x = Random.Range(0, kamene.Count);
+                int x = Random.Range(0, kamene.Count-1);
                 pole.Add(kamene[x]);        //problem??
                 kamene.RemoveAt(x);
             }
@@ -187,8 +189,8 @@ public class BoardManager : MonoBehaviour
         return FirstLevelEquasion(x);
     }
 
-    public void SetInputText(string s)
+    public int GetAnswer()
     {
-        //inputText = s;
+        return answer;
     }
 }

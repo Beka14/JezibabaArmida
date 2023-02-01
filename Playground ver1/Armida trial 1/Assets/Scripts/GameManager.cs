@@ -32,6 +32,30 @@ public class GameManager : MonoBehaviour
         t.text = boardScript.SetUpBoard(5);
     }
 
+    public void NextTask()
+    {
+        int right = boardScript.GetAnswer();
+        int left = GetInput();
+        Debug.Log(right + " == " + left);
+        if(right == left)
+        {
+            t.text = boardScript.SetUpBoard(5);
+            UpdateProgressionSlider();
+        }
+    }
+
+    public int GetInput()
+    {
+        Slider input = GameObject.Find("Numbers").GetComponent<Slider>();
+        return (int)input.value;
+    }
+
+    public void UpdateProgressionSlider()
+    {
+        Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
+        prog.value = (prog.value+1) % 6;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -44,7 +68,7 @@ public class GameManager : MonoBehaviour
 
     private void OnLevelWasLoaded(int level)
     {
-        Init();
+        //Init();
     }
 
     public void LoadLevel(int i)

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 588874953701159475}
   - component: {fileID: 588874953701159474}
   - component: {fileID: 588874953701159473}
+  - component: {fileID: 1068449957}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -60,4 +61,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   studeny: {fileID: 5783250845737671824, guid: 58d9942745c161248a18c0da8682ca71, type: 3}
   horuci: {fileID: 8324733063615776881, guid: 3b4585872cac33b4eaf79d3e21da7c4a, type: 3}
-  thermometer: {fileID: 3341669189031126287, guid: bb2606f5ee313c2479ef418b1594baa8, type: 3}
+--- !u!114 &1068449957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 588874953701159472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066ab9c3e6d378f4b8b96f638a94fd15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
