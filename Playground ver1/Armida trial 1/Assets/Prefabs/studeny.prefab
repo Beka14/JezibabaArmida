@@ -146,7 +146,6 @@ GameObject:
   - component: {fileID: 5683328116295075746}
   - component: {fileID: 2927784674088653438}
   - component: {fileID: 1363864225242120609}
-  - component: {fileID: 57475180402937408}
   m_Layer: 5
   m_Name: studeny
   m_TagString: Untagged
@@ -213,19 +212,3 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &57475180402937408
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5783250845737671824}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58db29360a03ef04cb965198735f74d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  image: {fileID: 1363864225242120609}
-  kamen: {fileID: 5783250845737671824}
-  parentAfterDrag: {fileID: 0}
-  wasInKotol: 0

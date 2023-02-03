@@ -22,11 +22,22 @@ public class BoardManager : MonoBehaviour
 
     private void Start()
     {
+        //Debug.Log("*************boardSCRIPT START**************");
+        kamene = GameObject.Find("kamene");
+        thermometer = GameObject.Find("Slider");
+        if(TryGetComponent<Thermometer>(out Thermometer thermoScript)) thermoScript = thermometer.GetComponent<Thermometer>();
+        //GetComponent<GameManager>().Init();
+    }
+    /*
+    public void Init()
+    {
+        Debug.Log("*************boardSCRIPT START**************");
         kamene = GameObject.Find("kamene");
         thermometer = GameObject.Find("Slider");
         thermoScript = thermometer.GetComponent<Thermometer>();
         //GetComponent<GameManager>().Init();
     }
+    */
     public string FirstLevelEquasion(int pocet_kamenov)
     {
         List<int> list = new List<int>();

@@ -146,7 +146,6 @@ GameObject:
   - component: {fileID: 4712608675546428121}
   - component: {fileID: 9202361620177933220}
   - component: {fileID: 6670851820541168018}
-  - component: {fileID: 2128888284804600826}
   m_Layer: 5
   m_Name: horuci
   m_TagString: Untagged
@@ -213,19 +212,3 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2128888284804600826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8324733063615776881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58db29360a03ef04cb965198735f74d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  image: {fileID: 6670851820541168018}
-  kamen: {fileID: 8324733063615776881}
-  parentAfterDrag: {fileID: 0}
-  wasInKotol: 0

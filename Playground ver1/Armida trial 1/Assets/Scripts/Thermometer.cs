@@ -31,10 +31,12 @@ public class Thermometer : MonoBehaviour
     // Update is called once per frame
     public int GetValue()
     {
+        t = GameObject.Find("temp_txt").GetComponent<TextMeshProUGUI>();
         return (int)slider.value;
     }
     public void SetValue(int i)
     {
+        t = GameObject.Find("temp_txt").GetComponent<TextMeshProUGUI>();
         slider.value = i;
         t.text = slider.value + "";
     }

@@ -19,8 +19,9 @@ public class GameManager : MonoBehaviour
         if(instance == null) instance = this;
         else Destroy(gameObject);
 
-        //boardScript = gameObject.GetComponent<BoardManager>();
+        //if(gameObject.TryGetComponent<BoardManager>(out BoardManager boardScript)) boardScript = gameObject.GetComponent<BoardManager>();
         DontDestroyOnLoad(gameObject);
+        gameObject.name = "GameManager";
         //SceneManager.LoadScene(0);
     }
 
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
         t = GameObject.Find("txt").GetComponent<TextMeshProUGUI>();
         boardScript = gameObject.GetComponent<BoardManager>();
         //input = GameObject.Find("Text").GetComponent<TextMeshProUGUI>();
+        //boardScript.Init();
         t.text = boardScript.SetUpBoard(5);
     }
 
@@ -39,9 +41,47 @@ public class GameManager : MonoBehaviour
         Debug.Log(right + " == " + left);
         if(right == left)
         {
+            StartCoroutine(ShowBubble(1));
             t.text = boardScript.SetUpBoard(5);
             UpdateProgressionSlider();
         }
+        else
+        {
+            StartCoroutine(ShowBubble(0));
+        }
+    }
+
+    IEnumerator ShowBubble(int i)
+    {
+        Button button = GameObject.Find("next_btn").GetComponent<Button>();
+        button.interactable = false;
+        Color pred;
+        Image farba;
+        Image sprava;
+        if (i == 0)
+        {
+            farba = GameObject.Find("number_fill").GetComponent<Image>();
+            pred = farba.color;
+            farba.color = new Color(255,0,0,1);
+
+            sprava = GameObject.Find("zla_sprava").GetComponent<Image>();
+            sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 1);
+            //yield return new WaitForSeconds(4);
+        }
+        else
+        {
+            farba = GameObject.Find("number_fill").GetComponent<Image>();
+            pred = farba.color;
+            farba.color = new Color(0, 255, 0, 1);
+
+            sprava = GameObject.Find("dobra_sprava").GetComponent<Image>();
+            sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 1);
+            //yield return new WaitForSeconds(4);
+        }
+        yield return new WaitForSeconds(2);
+        farba.color = pred;
+        sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 0);
+        button.interactable = true;
     }
 
     public int GetInput()
@@ -59,16 +99,22 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
         if (!p)                 //TODO dat do start
         {
             //Init();
             p = true;
         }
+        */
     }
 
-    private void OnLevelWasLoaded(int level)
+    IEnumerator OnLevelWasLoaded(int level)
     {
-        if (level == 1) Init();
+        yield return new WaitForEndOfFrame();
+        if (level == 1)
+        {
+            Init();
+        }
     }
 
     public void LoadLevel(int i)
