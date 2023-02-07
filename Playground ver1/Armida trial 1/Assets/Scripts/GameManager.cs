@@ -10,10 +10,14 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
     private BoardManager boardScript;
-    public int level = 4;
+    [HideInInspector] public PlayerStats playerStats;
+    public int level = 0;
     private TextMeshProUGUI t;
     private TextMeshProUGUI input;
     bool p = false;
+
+    bool b = true;
+
     private void Awake()
     {
         if(instance == null) instance = this;
@@ -23,6 +27,11 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         gameObject.name = "GameManager";
         //SceneManager.LoadScene(0);
+    }
+
+    private void Start()
+    {
+        playerStats = GetComponent<PlayerStats>();
     }
 
     public void Init()
@@ -42,6 +51,7 @@ public class GameManager : MonoBehaviour
         if(right == left)
         {
             StartCoroutine(ShowBubble(1));
+            playerStats.savedEq = false;
             t.text = boardScript.SetUpBoard(5);
             UpdateProgressionSlider();
         }
@@ -94,6 +104,15 @@ public class GameManager : MonoBehaviour
     {
         Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
         prog.value = (prog.value+1) % 6;
+        playerStats.level_1 += 1;
+        Debug.Log("VALUE: " + playerStats.level_1);
+    }
+
+    public void SetProgressionSlider(int value)
+    {
+        Debug.Log("settujem");
+        Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
+        prog.value = value;
     }
 
     // Update is called once per frame
@@ -108,13 +127,15 @@ public class GameManager : MonoBehaviour
         */
     }
 
-    IEnumerator OnLevelWasLoaded(int level)
+    IEnumerator OnLevelWasLoaded(int lvl)
     {
         yield return new WaitForEndOfFrame();
-        if (level == 1)
+        if (lvl == 1)
         {
             Init();
         }
+
+        level = lvl;
     }
 
     public void LoadLevel(int i)

@@ -17,17 +17,27 @@ public class Thermometer : MonoBehaviour
             t.text = slider.value+"";
         });
         slider.value = Random.Range(-60, 100);
+        t.text = slider.value+"";
     }
 
     public void ChangeValue(int i)
     {
+        //Debug.Log(slider.value);
         slider.value += i;
+        //Debug.Log(slider.value);
+        t.text = slider.value+"";
     }
 
     // Update is called once per frame
-    void Update()
+    public int GetValue()
     {
-        
+        t = GameObject.Find("temp_txt").GetComponent<TextMeshProUGUI>();
+        return (int)slider.value;
     }
-   
+    public void SetValue(int i)
+    {
+        t = GameObject.Find("temp_txt").GetComponent<TextMeshProUGUI>();
+        slider.value = i;
+        t.text = slider.value + "";
+    }
 }

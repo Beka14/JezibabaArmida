@@ -22,9 +22,9 @@ public class Thermometer : MonoBehaviour
 
     public void ChangeValue(int i)
     {
-        Debug.Log(slider.value);
+        //Debug.Log(slider.value);
         slider.value += i;
-        Debug.Log(slider.value);
+        //Debug.Log(slider.value);
         t.text = slider.value+"";
     }
 

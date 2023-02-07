@@ -96,9 +96,20 @@ public class BoardManager : MonoBehaviour
         //TODO 
 
         SetUpThermo(pociatocna);
-        InstantiateStones();
+        InstantiateStones(vsetky);
 
         //
+
+        // SAVE EQ
+
+        GameManager.instance.playerStats.kamene = vsetky;
+        GameManager.instance.playerStats.pociatocna = pociatocna;
+        GameManager.instance.playerStats.rovnica = tmp;
+        GameManager.instance.playerStats.finalna = vysledna;
+        GameManager.instance.playerStats.savedEq = true;
+
+        //
+
         return pociatocna + "" + tmp + " = " + vysledna; 
     }
 
@@ -150,11 +161,11 @@ public class BoardManager : MonoBehaviour
         thermoScript.SetValue(value);
     }
 
-    public void InstantiateStones()
+    public void InstantiateStones(List<int> stones)
     {
         kamene = GameObject.Find("kamene");
         GameObject g;
-        foreach (int i in vsetky)
+        foreach (int i in stones)
         {
             //GameObject g;
             if (i < 0)
@@ -175,7 +186,7 @@ public class BoardManager : MonoBehaviour
             }
 
             naPloche.Add(g);
-            Debug.Log("------------ " + string.Join(",", naPloche));
+            //Debug.Log("------------ " + string.Join(",", naPloche));
         }
     }
 
@@ -191,12 +202,27 @@ public class BoardManager : MonoBehaviour
         //Debug.Log(naPloche.Count);
         naPloche = new List<GameObject>();
         */
+
+        //                  TODO if stats ma ulozeny stav, nacitaj ten, ak nie nacitaj novy
+
         GameObject g = GameObject.Find("kamene");
         for (var i = g.transform.childCount - 1; i >= 0; i--)
         {
             Object.Destroy(g.transform.GetChild(i).gameObject);
         }
-        return FirstLevelEquasion(x);
+
+        if (GameManager.instance.playerStats.savedEq)
+        {
+            SetUpThermo(GameManager.instance.playerStats.pociatocna);
+            InstantiateStones(GameManager.instance.playerStats.kamene);
+            return GameManager.instance.playerStats.GetEquasion();
+        }
+
+        else
+        {
+            return FirstLevelEquasion(x);
+        }
+       
     }
 
     public int GetAnswer()
