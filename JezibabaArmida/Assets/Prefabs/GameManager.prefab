@@ -47,7 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d184fb68d791ff540b706e20498cdb56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 4
+  playerStats: {fileID: 0}
+  dolezite: 0
+  level: 0
 --- !u!114 &588874953701159473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,6 +64,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   studeny: {fileID: 5783250845737671824, guid: 58d9942745c161248a18c0da8682ca71, type: 3}
   horuci: {fileID: 8324733063615776881, guid: 3b4585872cac33b4eaf79d3e21da7c4a, type: 3}
+  minus: {fileID: 2528726160283136669, guid: bfcd91bd802b21d49823e66d8e6cc64b, type: 3}
+  plus: {fileID: 2587743340591930495, guid: cde3b9c80c174464eabc9b118d2d0f9d, type: 3}
 --- !u!114 &1068449957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,3 +90,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e7204601aec3e49bd2517d967a900c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level_1: 0
+  level_2: 0
+  level_3: 0
+  level: 0
+  savedEq: 0
+  kamene: 
+  rovnica: 
+  pociatocna: 0
+  finalna: 0

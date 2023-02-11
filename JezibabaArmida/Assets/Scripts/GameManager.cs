@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
         if(instance == null) instance = this;
         else Destroy(gameObject);
 
+        //dolezite = 0;
+
         //if(gameObject.TryGetComponent<BoardManager>(out BoardManager boardScript)) boardScript = gameObject.GetComponent<BoardManager>();
         DontDestroyOnLoad(gameObject);
         gameObject.name = "GameManager";
@@ -45,13 +47,14 @@ public class GameManager : MonoBehaviour
 
     public void NextTask()
     {
-        int right = boardScript.GetAnswer();
+        int right = boardScript.GetAnswer();        //TODO upravit aby checklo oba levels
         int left = GetInput();
         Debug.Log(right + " == " + left);
         if(right == left)
         {
             StartCoroutine(ShowBubble(1));
-            playerStats.savedEq = false;
+            if(level == 1) playerStats.savedEq = false;
+            else playerStats.savedEq2 = false;
             t.text = boardScript.SetUpBoard(5);
             UpdateProgressionSlider();
         }
@@ -104,8 +107,8 @@ public class GameManager : MonoBehaviour
     {
         Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
         prog.value = (prog.value+1) % 6;
-        playerStats.level_1 += 1;
-        Debug.Log("VALUE: " + playerStats.level_1);
+        if(level == 1) playerStats.level_1 += 1;
+        else playerStats.level_2 += 1;
     }
 
     public void SetProgressionSlider(int value)
@@ -130,16 +133,18 @@ public class GameManager : MonoBehaviour
     IEnumerator OnLevelWasLoaded(int lvl)
     {
         yield return new WaitForEndOfFrame();
-        if (lvl == 1)
+        if (lvl == 1 || lvl == 2)
         {
+            level = lvl;
             Init();
         }
 
-        level = lvl;
+        Debug.Log("GAME LEVEL:::::: " + level);
     }
 
     public void LoadLevel(int i)
     {
+        //level = i;
         SceneManager.LoadScene(i);
     }
 

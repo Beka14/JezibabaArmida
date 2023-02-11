@@ -29,7 +29,7 @@ RectTransform:
   m_GameObject: {fileID: 8264686492976034542}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.8542943, y: 3.38616, z: 0.75248}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3734781570135829652}
@@ -98,7 +98,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 7
-  m_StartCorner: 0
+  m_StartCorner: 2
   m_StartAxis: 0
   m_CellSize: {x: 10.27, y: 16.6}
   m_Spacing: {x: 1.5, y: 1.5}
@@ -197,7 +197,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5683328116295075746, guid: 58d9942745c161248a18c0da8682ca71, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 5.135
+      value: 5.13501
       objectReference: {fileID: 0}
     - target: {fileID: 5683328116295075746, guid: 58d9942745c161248a18c0da8682ca71, type: 3}
       propertyPath: m_AnchoredPosition.y

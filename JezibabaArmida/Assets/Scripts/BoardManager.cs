@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.Assertions.Must;
 using UnityEngine.UI;
 
@@ -13,12 +14,15 @@ public class BoardManager : MonoBehaviour
     GameObject kamene;
     [SerializeField] GameObject studeny;
     [SerializeField] GameObject horuci;
+    [SerializeField] GameObject minus;
+    [SerializeField] GameObject plus;
     GameObject thermometer;
     Thermometer thermoScript;
     int answer;
 
     List<int> vsetky = new List<int>();
     List<GameObject> naPloche = new List<GameObject>();
+    List<string> znamienka = new List<string>();
 
     private void Start()
     {
@@ -47,6 +51,7 @@ public class BoardManager : MonoBehaviour
         bool ok = false;
 
         vsetky = new List<int>();
+        znamienka = new List<string>();
 
         int pociatocna = Random.Range(min, max + 1);
         int studenyKamen = Random.Range(-5,-1); //studenyKamen = Random.Range(1, 5) * -1;
@@ -86,27 +91,45 @@ public class BoardManager : MonoBehaviour
             int z = Random.Range(2, 5);
             for(int i = 0; i < z; i++)
             {
-                int x = Random.Range(0, kamene.Count-1);
+                int x = Random.Range(0, kamene.Count() -1);
                 pole.Add(kamene[x]);        //problem??
                 kamene.RemoveAt(x);
             }
         }
 
-        string tmp = Stringify(pole, kamene);
+        string tmp;
+        Debug.Log("MOJ LEVEL:::: BM " + GameManager.instance.level);
+        if (GameManager.instance.level == 1) tmp = Stringify(pole, kamene);
+        else tmp = Stringify_lvl2(pole, kamene);
         //TODO 
 
         SetUpThermo(pociatocna);
-        InstantiateStones(vsetky);
+        InstantiateStones(vsetky, znamienka);
 
         //
 
         // SAVE EQ
 
-        GameManager.instance.playerStats.kamene = vsetky;
-        GameManager.instance.playerStats.pociatocna = pociatocna;
-        GameManager.instance.playerStats.rovnica = tmp;
-        GameManager.instance.playerStats.finalna = vysledna;
-        GameManager.instance.playerStats.savedEq = true;
+        if(GameManager.instance.level == 1)
+        {
+            GameManager.instance.playerStats.kamene = vsetky;
+            GameManager.instance.playerStats.pociatocna = pociatocna;
+            GameManager.instance.playerStats.rovnica = tmp;
+            GameManager.instance.playerStats.finalna = vysledna;
+            GameManager.instance.playerStats.savedEq = true;
+            GameManager.instance.playerStats.level = GameManager.instance.level;
+        }
+
+        else if (GameManager.instance.level == 2) 
+        {
+            GameManager.instance.playerStats.kamene2 = vsetky;
+            GameManager.instance.playerStats.znamienka2 = znamienka;
+            GameManager.instance.playerStats.pociatocna2 = pociatocna;
+            GameManager.instance.playerStats.rovnica2 = tmp;
+            GameManager.instance.playerStats.finalna2 = vysledna;
+            GameManager.instance.playerStats.savedEq2 = true;
+            GameManager.instance.playerStats.level = GameManager.instance.level;
+        }
 
         //
 
@@ -117,14 +140,14 @@ public class BoardManager : MonoBehaviour
     {
         //Debug.Log("------------2 " + string.Join(",", a) + " // " + string.Join(",", b));
         string sb = "";
-        int r = Random.Range(0,b.Count);
+        int r = Random.Range(0,b.Count());
         for(int i=0;i<r;i++)
         {
             sb += (b[i] < 0) ? " - " + -1*b[i] : " + "+b[i];
             vsetky.Add(b[i]);
         }
 
-        if(a.Count != 0)
+        if(a.Count() != 0)
         {
             int z = Random.Range(1,3);
             if (z % 2 == 0)
@@ -132,7 +155,7 @@ public class BoardManager : MonoBehaviour
                 sb += " + (";
             }
             else sb += " + (";
-            for (int i = 0; i < a.Count; i++)
+            for (int i = 0; i < a.Count(); i++)
             {
                 sb += (a[i] < 0) ? "-" + -1 * a[i] : "+" + a[i];        //TODO druhy level: sb.append((a.get(i) < 0) ? "-" + (-1*a.get(i)): "+" + a.get(i));
                 vsetky.Add(a[i]);
@@ -140,7 +163,7 @@ public class BoardManager : MonoBehaviour
             sb += ")";
         }
 
-        for (int i = r; i < b.Count; i++)  //i < b.Count-r
+        for (int i = r; i < b.Count(); i++)  //i < b.Count-r
         {
             sb += (b[i] < 0) ? " - " + -1 * b[i] : " + " + b[i];
             vsetky.Add(b[i]);
@@ -150,7 +173,87 @@ public class BoardManager : MonoBehaviour
         return sb;
     }
 
-    //TODO: NASTAVIT TEPLOMER
+
+
+    string Stringify_lvl2(List<int> a, List<int> b)
+    {
+        string sb = "";
+        int r = Random.Range(0, b.Count());
+        for (int i = 0; i < r; i++)
+        {
+            /*
+            int z = Random.Range(1, 4);
+            if (z % 3 == 0)
+            {
+                sb += (b[i] < 0) ? "-" + -1 * b[i] : "-" + b[i];
+                vsetky.Add((b[i] < 0) ? -1 * b[i] : -1 * b[i]);
+                znamienka.Add("-");
+            }
+            else
+            {
+                sb += (b[i] < 0) ? "-" + -1 * b[i] : "+" + b[i];
+                vsetky.Add(b[i]);
+                znamienka.Add((b[i] < 0) ? "+" : "+");
+            }
+            */
+            sb += (b[i] < 0) ? "-" + -1 * b[i] : "+" + b[i];
+            vsetky.Add(b[i]);
+            znamienka.Add((b[i] < 0) ? "+" : "+");
+        }
+
+        if (a.Count() != 0)
+        {
+            /*
+            int z = Random.Range(1, 3);
+            if (z % 2 == 0)
+            {
+                sb += " + (";
+            }
+            else sb += " + (";
+            */
+
+            for (int i = 0; i < a.Count(); i++)
+            {
+                int z = Random.Range(1, 4);
+                if (z % 3 == 0)
+                {
+                    sb += (a[i] < 0) ? "-" + -1 * a[i] : "-" + a[i];
+                    vsetky.Add((a[i] < 0) ? -1 * a[i] : -1 * a[i]);
+                    znamienka.Add("-");
+                }
+                else {
+                    sb += (a[i] < 0) ? "-" + -1 * a[i] : "+" + a[i];
+                    vsetky.Add(a[i]);
+                    znamienka.Add((a[i] < 0) ? "+" : "+");
+                }   
+            }
+            //sb += ")";
+        }
+
+        for (int i = r; i < b.Count(); i++)  //i < b.Count-r
+        {
+            int z = Random.Range(1, 4);
+            if (z % 3 == 0)
+            {
+                sb += (b[i] < 0) ? "-" + -1 * b[i] : "-" + b[i];
+                vsetky.Add((b[i] < 0) ? -1 * b[i] : -1 * b[i]);
+                znamienka.Add("-");
+            }
+            else
+            {
+                sb += (b[i] < 0) ? "-" + -1 * b[i] : "+" + b[i];
+                vsetky.Add(b[i]);
+                znamienka.Add((b[i] < 0) ? "+" : "+");
+            }
+        }
+
+        //Debug.Log("------------3 " + string.Join(",", vsetky));
+        return sb;
+    }
+
+
+
+
 
     public void SetUpThermo(int value)
     {
@@ -161,18 +264,20 @@ public class BoardManager : MonoBehaviour
         thermoScript.SetValue(value);
     }
 
-    public void InstantiateStones(List<int> stones)
+    public void InstantiateStones(List<int> stones, List<string> znam)         //TODO pridat aj znamienka na SAVE
     {
         kamene = GameObject.Find("kamene");
+        if(GameManager.instance.level == 1) kamene.GetComponent<GridLayoutGroup>().spacing = new Vector2(15,0);
+        else kamene.GetComponent<GridLayoutGroup>().spacing = new Vector2(0, 0);
         GameObject g;
-        foreach (int i in stones)
+
+        for(int i = 0; i < stones.Count; i++)
         {
-            //GameObject g;
-            if (i < 0)
+            if (stones[i] < 0)
             {
                 g = Instantiate(studeny);
                 TextMeshProUGUI v = g.transform.Find("value").GetComponent<TextMeshProUGUI>();
-                v.text = (i == -1)? "":i *-1 + "";
+                v.text = (stones[i] == -1) ? "" : stones[i] * -1 + "";
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
             }
@@ -180,14 +285,36 @@ public class BoardManager : MonoBehaviour
             {
                 g = Instantiate(horuci);
                 TextMeshProUGUI v = g.transform.Find("value").GetComponent<TextMeshProUGUI>();
-                v.text = (i == 1) ? "":i + "";
+                v.text = (stones[i] == 1) ? "" : stones[i] + "";
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
             }
 
             naPloche.Add(g);
-            //Debug.Log("------------ " + string.Join(",", naPloche));
+
+            if (znam.Count() != 0 && i+1 < znam.Count())
+            {
+                //Debug.Log("------------ " + string.Join(",", znamienka));
+                if (znam[i+1] == "-")
+                {
+                    g = Instantiate(minus);
+                    g.transform.SetParent(kamene.transform);
+                    g.transform.SetAsLastSibling();
+                }
+                else
+                {
+                    g = Instantiate(plus);
+                    g.transform.SetParent(kamene.transform);
+                    g.transform.SetAsLastSibling();
+                }
+
+                naPloche.Add(g);
+            }
+
+            //naPloche.Add(g);
+
         }
+
     }
 
     public string SetUpBoard(int x)
@@ -202,8 +329,7 @@ public class BoardManager : MonoBehaviour
         //Debug.Log(naPloche.Count);
         naPloche = new List<GameObject>();
         */
-
-        //                  TODO if stats ma ulozeny stav, nacitaj ten, ak nie nacitaj novy
+        
 
         GameObject g = GameObject.Find("kamene");
         for (var i = g.transform.childCount - 1; i >= 0; i--)
@@ -211,11 +337,20 @@ public class BoardManager : MonoBehaviour
             Object.Destroy(g.transform.GetChild(i).gameObject);
         }
 
-        if (GameManager.instance.playerStats.savedEq)
+        ////////// SAVED EQ
+        
+        if (GameManager.instance.playerStats.savedEq && GameManager.instance.level == 1)
         {
             SetUpThermo(GameManager.instance.playerStats.pociatocna);
-            InstantiateStones(GameManager.instance.playerStats.kamene);
-            return GameManager.instance.playerStats.GetEquasion();
+            InstantiateStones(GameManager.instance.playerStats.kamene, new List<string>());
+            return GameManager.instance.playerStats.GetEquasion(1);
+        }
+
+        else if (GameManager.instance.playerStats.savedEq2 && GameManager.instance.level == 2)
+        {
+            SetUpThermo(GameManager.instance.playerStats.pociatocna2);
+            InstantiateStones(GameManager.instance.playerStats.kamene2, GameManager.instance.playerStats.znamienka2);
+            return GameManager.instance.playerStats.GetEquasion(2);
         }
 
         else
@@ -223,10 +358,13 @@ public class BoardManager : MonoBehaviour
             return FirstLevelEquasion(x);
         }
        
+        ////////// SAVED EQ
+        //return FirstLevelEquasion(x);           
     }
 
     public int GetAnswer()
     {
-        return answer;
+        if(GameManager.instance.level == 1) return GameManager.instance.playerStats.finalna;
+        else return GameManager.instance.playerStats.finalna2;
     }
 }

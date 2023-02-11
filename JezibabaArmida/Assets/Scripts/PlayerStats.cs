@@ -15,14 +15,24 @@ public class PlayerStats : MonoBehaviour
     public int level_2 = 0;
     public int level_3 = 0;
 
+    public int level = 0;
+
     public bool savedEq = false;
+    public bool savedEq2 = false;
 
     /// SAVE EQ
-        
+
     public List<int> kamene = new List<int>();
     public string rovnica;
     public int pociatocna;
     public int finalna;
+
+
+    public List<int> kamene2 = new List<int>();
+    public List<string> znamienka2 = new List<string>();
+    public string rovnica2;
+    public int pociatocna2;
+    public int finalna2;
 
     /// SAVE EQ
 
@@ -50,14 +60,19 @@ public class PlayerStats : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         Debug.Log("level: " + level);
-        if(level == 1)
+        if(GameManager.instance.level == 1)
         {
             GameManager.instance.SetProgressionSlider(level_1);
         }
+        else if(GameManager.instance.level == 2)
+        {
+            GameManager.instance.SetProgressionSlider(level_2);
+        }
     }
 
-    public string GetEquasion()
+    public string GetEquasion(int l)
     {
-        return pociatocna + " + " + rovnica + " = " + finalna;
+        if(l == 1) return pociatocna + rovnica + " = " + finalna;
+        else return pociatocna2 + rovnica2 + " = " + finalna2;
     }
 }
