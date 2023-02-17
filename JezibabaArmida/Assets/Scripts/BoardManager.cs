@@ -16,13 +16,18 @@ public class BoardManager : MonoBehaviour
     [SerializeField] GameObject horuci;
     [SerializeField] GameObject minus;
     [SerializeField] GameObject plus;
+    [SerializeField] GameObject minusPar;
+    [SerializeField] GameObject plusPar;
+    [SerializeField] GameObject endPar;
     GameObject thermometer;
     Thermometer thermoScript;
+
     int answer;
 
     List<int> vsetky = new List<int>();
     List<GameObject> naPloche = new List<GameObject>();
     List<string> znamienka = new List<string>();
+    Dictionary<int, string> zatvorky = new Dictionary<int, string>();
 
     private void Start()
     {
@@ -52,6 +57,7 @@ public class BoardManager : MonoBehaviour
 
         vsetky = new List<int>();
         znamienka = new List<string>();
+        zatvorky = new Dictionary<int, string>();
 
         int pociatocna = Random.Range(min, max + 1);
         int studenyKamen = Random.Range(-5,-1); //studenyKamen = Random.Range(1, 5) * -1;
@@ -88,7 +94,7 @@ public class BoardManager : MonoBehaviour
         if (r % 2 == 0)
         {
             //zatvorka
-            int z = Random.Range(2, 5);
+            int z = Random.Range(2, kamene.Count()-1);
             for(int i = 0; i < z; i++)
             {
                 int x = Random.Range(0, kamene.Count() -1);
@@ -98,9 +104,12 @@ public class BoardManager : MonoBehaviour
         }
 
         string tmp;
-        Debug.Log("MOJ LEVEL:::: BM " + GameManager.instance.level);
         if (GameManager.instance.level == 1) tmp = Stringify(pole, kamene);
-        else tmp = Stringify_lvl2(pole, kamene);
+        else {
+            answer = pociatocna;
+            tmp = Stringify_lvl2(pole, kamene);
+        } 
+
         //TODO 
 
         SetUpThermo(pociatocna);
@@ -126,14 +135,15 @@ public class BoardManager : MonoBehaviour
             GameManager.instance.playerStats.znamienka2 = znamienka;
             GameManager.instance.playerStats.pociatocna2 = pociatocna;
             GameManager.instance.playerStats.rovnica2 = tmp;
-            GameManager.instance.playerStats.finalna2 = vysledna;
+            GameManager.instance.playerStats.finalna2 = answer;
             GameManager.instance.playerStats.savedEq2 = true;
             GameManager.instance.playerStats.level = GameManager.instance.level;
         }
 
         //
 
-        return pociatocna + "" + tmp + " = " + vysledna; 
+        Debug.Log("POROVNANIE: poc: " + vysledna + " answ: " + answer);
+        return pociatocna + "" + tmp + " = " + answer; 
     }
 
     string Stringify(List<int> a, List<int> b)
@@ -177,41 +187,81 @@ public class BoardManager : MonoBehaviour
 
     string Stringify_lvl2(List<int> a, List<int> b)
     {
+        int index = 0;
         string sb = "";
-        int r = Random.Range(0, b.Count());
+        int r = Random.Range(1, b.Count()-1);
         for (int i = 0; i < r; i++)
         {
-            /*
-            int z = Random.Range(1, 4);
-            if (z % 3 == 0)
-            {
-                sb += (b[i] < 0) ? "-" + -1 * b[i] : "-" + b[i];
-                vsetky.Add((b[i] < 0) ? -1 * b[i] : -1 * b[i]);
-                znamienka.Add("-");
-            }
-            else
-            {
-                sb += (b[i] < 0) ? "-" + -1 * b[i] : "+" + b[i];
-                vsetky.Add(b[i]);
-                znamienka.Add((b[i] < 0) ? "+" : "+");
-            }
-            */
             sb += (b[i] < 0) ? "-" + -1 * b[i] : "+" + b[i];
             vsetky.Add(b[i]);
+            answer += b[i];
             znamienka.Add((b[i] < 0) ? "+" : "+");
+            index++;
         }
 
         if (a.Count() != 0)
         {
-            /*
-            int z = Random.Range(1, 3);
-            if (z % 2 == 0)
+            int x = 0;
+            int p = Random.Range(1, 3);
+            if (p % 2 == 0)
             {
-                sb += " + (";
-            }
-            else sb += " + (";
-            */
+                sb += "-(";
+                zatvorky.Add(index,"-(");
+                for (int i = 0; i < a.Count(); i++)
+                {
+                    int z = Random.Range(1, 4);
+                    if (z % 3 == 0)
+                    {
+                        sb += (a[i] < 0) ? "-" + -1 * a[i] : "-" + a[i];
+                        vsetky.Add((a[i] < 0) ? -1 * a[i] : -1 * a[i]);
+                        x += a[i];
+                        znamienka.Add("-");
+                        index++;
+                    }
+                    else
+                    {
+                        sb += (a[i] < 0) ? "-" + -1 * a[i] : "+" + a[i];
+                        vsetky.Add(a[i]);
+                        x += a[i];
+                        znamienka.Add((a[i] < 0) ? "+" : "+");
+                        index++;
+                    }
 
+                }
+                Debug.Log("x: " + x);
+                answer += -1 * x;
+                sb += ")";
+                zatvorky.Add(index,")");
+            }
+            else
+            {
+                sb += "+(";
+                zatvorky.Add(index, "+(");
+                for (int i = 0; i < a.Count(); i++)
+                {
+                    int z = Random.Range(1, 4);
+                    if (z % 3 == 0)
+                    {
+                        sb += (a[i] < 0) ? "-" + -1 * a[i] : "-" + a[i];
+                        vsetky.Add((a[i] < 0) ? -1 * a[i] : -1 * a[i]);
+                        znamienka.Add("-");
+                        answer += a[i];
+                        index++;
+                    }
+                    else
+                    {
+                        sb += (a[i] < 0) ? "-" + -1 * a[i] : "+" + a[i];
+                        vsetky.Add(a[i]);
+                        znamienka.Add((a[i] < 0) ? "+" : "+");
+                        answer += a[i];
+                        index++;
+                    }
+                }
+                sb += ")";
+                zatvorky.Add(index, ")");
+            }
+            Debug.Log("------------3 " + string.Join(",", zatvorky));
+            /*
             for (int i = 0; i < a.Count(); i++)
             {
                 int z = Random.Range(1, 4);
@@ -227,7 +277,8 @@ public class BoardManager : MonoBehaviour
                     znamienka.Add((a[i] < 0) ? "+" : "+");
                 }   
             }
-            //sb += ")";
+            sb += ")";
+            */
         }
 
         for (int i = r; i < b.Count(); i++)  //i < b.Count-r
@@ -237,12 +288,14 @@ public class BoardManager : MonoBehaviour
             {
                 sb += (b[i] < 0) ? "-" + -1 * b[i] : "-" + b[i];
                 vsetky.Add((b[i] < 0) ? -1 * b[i] : -1 * b[i]);
+                answer += b[i];
                 znamienka.Add("-");
             }
             else
             {
                 sb += (b[i] < 0) ? "-" + -1 * b[i] : "+" + b[i];
                 vsetky.Add(b[i]);
+                answer += b[i];
                 znamienka.Add((b[i] < 0) ? "+" : "+");
             }
         }
@@ -250,10 +303,6 @@ public class BoardManager : MonoBehaviour
         //Debug.Log("------------3 " + string.Join(",", vsetky));
         return sb;
     }
-
-
-
-
 
     public void SetUpThermo(int value)
     {
@@ -266,6 +315,7 @@ public class BoardManager : MonoBehaviour
 
     public void InstantiateStones(List<int> stones, List<string> znam)         //TODO pridat aj znamienka na SAVE
     {
+        int index = 0;
         kamene = GameObject.Find("kamene");
         if(GameManager.instance.level == 1) kamene.GetComponent<GridLayoutGroup>().spacing = new Vector2(15,0);
         else kamene.GetComponent<GridLayoutGroup>().spacing = new Vector2(0, 0);
@@ -273,6 +323,7 @@ public class BoardManager : MonoBehaviour
 
         for(int i = 0; i < stones.Count; i++)
         {
+
             if (stones[i] < 0)
             {
                 g = Instantiate(studeny);
@@ -290,7 +341,24 @@ public class BoardManager : MonoBehaviour
                 g.transform.SetAsLastSibling();
             }
 
+            index++;
             naPloche.Add(g);
+
+            if (zatvorky.ContainsKey(index))
+            {
+                if (zatvorky[index] == "+(")
+                {
+                    g = Instantiate(plusPar);
+                }
+
+                else if (zatvorky[index] == "-(") g = Instantiate(minusPar);
+
+                else g = Instantiate(endPar);
+
+                g.transform.SetParent(kamene.transform);
+                g.transform.SetAsLastSibling();
+                naPloche.Add(g);
+            }
 
             if (znam.Count() != 0 && i+1 < znam.Count())
             {

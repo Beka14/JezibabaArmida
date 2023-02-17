@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
 
     public void NextTask()
     {
-        int right = boardScript.GetAnswer();        //TODO upravit aby checklo oba levels
+        int right = boardScript.GetAnswer();     
         int left = GetInput();
         Debug.Log(right + " == " + left);
         if(right == left)

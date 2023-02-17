@@ -48,7 +48,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStats: {fileID: 0}
-  dolezite: 0
   level: 0
 --- !u!114 &588874953701159473
 MonoBehaviour:
@@ -66,6 +65,9 @@ MonoBehaviour:
   horuci: {fileID: 8324733063615776881, guid: 3b4585872cac33b4eaf79d3e21da7c4a, type: 3}
   minus: {fileID: 2528726160283136669, guid: bfcd91bd802b21d49823e66d8e6cc64b, type: 3}
   plus: {fileID: 2587743340591930495, guid: cde3b9c80c174464eabc9b118d2d0f9d, type: 3}
+  minusPar: {fileID: 3103767427893852570, guid: b19c0764b589434418c6c11f1bcf78c2, type: 3}
+  plusPar: {fileID: 6590072764072169877, guid: 72e419cc59b0495449d254e502e1af68, type: 3}
+  endPar: {fileID: 1945433322448992671, guid: f03ef6c8b4a35734b9e8db5047b0bea4, type: 3}
 --- !u!114 &1068449957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,7 +97,13 @@ MonoBehaviour:
   level_3: 0
   level: 0
   savedEq: 0
+  savedEq2: 0
   kamene: 
   rovnica: 
   pociatocna: 0
   finalna: 0
+  kamene2: 
+  znamienka2: []
+  rovnica2: 
+  pociatocna2: 0
+  finalna2: 0
