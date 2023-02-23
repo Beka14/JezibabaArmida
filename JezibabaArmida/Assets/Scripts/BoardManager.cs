@@ -1,6 +1,9 @@
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
@@ -8,6 +11,8 @@ using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.Assertions.Must;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour
 {
@@ -19,6 +24,10 @@ public class BoardManager : MonoBehaviour
     [SerializeField] GameObject minusPar;
     [SerializeField] GameObject plusPar;
     [SerializeField] GameObject endPar;
+
+    [SerializeField] GameObject drag_studeny;
+    [SerializeField] GameObject drag_horuci;
+
     GameObject thermometer;
     Thermometer thermoScript;
 
@@ -37,16 +46,7 @@ public class BoardManager : MonoBehaviour
         if(TryGetComponent<Thermometer>(out Thermometer thermoScript)) thermoScript = thermometer.GetComponent<Thermometer>();
         //GetComponent<GameManager>().Init();
     }
-    /*
-    public void Init()
-    {
-        Debug.Log("*************boardSCRIPT START**************");
-        kamene = GameObject.Find("kamene");
-        thermometer = GameObject.Find("Slider");
-        thermoScript = thermometer.GetComponent<Thermometer>();
-        //GetComponent<GameManager>().Init();
-    }
-    */
+    
     public string FirstLevelEquasion(int pocet_kamenov)
     {
         List<int> list = new List<int>();
@@ -313,7 +313,14 @@ public class BoardManager : MonoBehaviour
         thermoScript.SetValue(value);
     }
 
-    public void InstantiateStones(List<int> stones, List<string> znam)         //TODO pridat aj znamienka na SAVE
+    public void SetUpThermoLVL3(int value)
+    {
+        GameObject thermometer2 = GameObject.Find("Slider2");
+        Thermometer thermo = thermometer2.GetComponent<Thermometer>();
+        thermo.SetValue(value);
+    }
+
+    public void InstantiateStones(List<int> stones, List<string> znam)     
     {
         int index = 0;
         kamene = GameObject.Find("kamene");
@@ -421,9 +428,27 @@ public class BoardManager : MonoBehaviour
             return GameManager.instance.playerStats.GetEquasion(2);
         }
 
+        else if (GameManager.instance.playerStats.savedEq3 && GameManager.instance.level == 3)
+        {
+            SetUpThermo(GameManager.instance.playerStats.pociatocna3);
+            InstantiateStonesLVL3(GameManager.instance.playerStats.kamene3);
+            //SetUpFinal(GameManager.instance.playerStats.finalna3);
+            SetUpThermoLVL3(GameManager.instance.playerStats.finalna3);
+            SetUpFinal(GameManager.instance.playerStats.finalna3);
+            SetUpThermo(GameManager.instance.playerStats.pociatocna3);
+            SetUpSolutionsNumber(GameManager.instance.playerStats.solutionsGot, GameManager.instance.playerStats.solutionsAll);
+            return "";
+        }
+
         else
         {
-            return FirstLevelEquasion(x);
+            if (GameManager.instance.level == 3) 
+            {
+                ThirdLevelEquasion();
+                return "";
+            }
+
+            else return FirstLevelEquasion(x);
         }
        
         ////////// SAVED EQ
@@ -433,6 +458,233 @@ public class BoardManager : MonoBehaviour
     public int GetAnswer()
     {
         if(GameManager.instance.level == 1) return GameManager.instance.playerStats.finalna;
-        else return GameManager.instance.playerStats.finalna2;
+        else if(GameManager.instance.level == 2) return GameManager.instance.playerStats.finalna2;
+        else return GameManager.instance.playerStats.pociatocna3;
+    }
+
+
+
+    public void ThirdLevelEquasion()
+    {
+        List<int> list = new List<int>();
+        List<int> kamene = new List<int>();
+        List<List<int>> solved = new List<List<int>>();
+        int max = 80;
+        int min = 0;
+        bool ok = false;
+
+        int pociatocna = Random.Range(min, max + 1);
+        int prvy = Random.Range(2, 8);
+        int druhy = Random.Range(2, 8);
+        int treti = Random.Range(2, 8);
+        int vysledna = Random.Range(pociatocna, pociatocna + 20);
+
+        while (!ok)
+        {
+            solved = new List<List<int>>();
+            pociatocna = Random.Range(min, max + 1);
+            prvy = Random.Range(2, 8);
+            while (prvy == druhy) druhy = Random.Range(2, 8);
+            while (treti == druhy || treti == prvy) treti = Random.Range(2, 8);
+            while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20);    //TODO ZAPORNE CISLO
+
+            Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
+
+            int target = vysledna - pociatocna;
+            List<List<int>> result = CombinationSum(new int[]{prvy,druhy,treti}, target);
+            if (result.Count() < 3 || result.Count > 6)
+            {
+                continue;
+            }
+            else if (result.Count() >= 3 && result.Count() <= 6)
+            {
+                ok = true;
+                solved = result;
+                kamene = new List<int> { prvy, druhy, treti };
+            }
+        }
+
+        Debug.Log("------------ " + solved.Count());
+        // SOLVED INSTANTIOATE
+        if (GameManager.instance.lvl3man == null) GameManager.instance.lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
+        GameManager.instance.lvl3man.SetUpAnswers(solved);
+        //
+
+        //TODO 
+
+        SetUpThermoLVL3(vysledna);
+        SetUpFinal(vysledna);
+        SetUpThermo(pociatocna);
+        SetUpSolutionsNumber(0,solved.Count());
+        InstantiateStonesLVL3(kamene);
+
+        //
+
+        // SAVE EQ
+
+        GameManager.instance.playerStats.kamene3 = kamene;
+        GameManager.instance.playerStats.solved = solved;
+        GameManager.instance.playerStats.finalna3 = vysledna;
+        GameManager.instance.playerStats.pociatocna3 = pociatocna;
+        GameManager.instance.playerStats.savedEq3 = true;
+        GameManager.instance.playerStats.solutionsGot = 0;
+        GameManager.instance.playerStats.solutionsAll = solved.Count();
+        GameManager.instance.playerStats.level = GameManager.instance.level;
+
+        //
+
+        //Debug.Log("POROVNANIE: poc: " + vysledna + " answ: " + answer);
+        //return pociatocna + "" + tmp + " = " + answer;
+    }
+
+    private void InstantiateStonesLVL3(List<int> stones)
+    {
+        kamene = GameObject.Find("kamene");
+        GameObject g;
+
+        for (int i = 0; i < stones.Count; i++)
+        {
+
+            if (stones[i] < 0)
+            {
+                g = Instantiate(drag_studeny);
+                TextMeshProUGUI v = g.transform.Find("value").GetComponent<TextMeshProUGUI>();
+                v.text = (stones[i] == -1) ? "" : stones[i] * -1 + "";
+                g.transform.SetParent(kamene.transform);
+                g.transform.SetAsLastSibling();
+                g.name = "drag_studeny";
+                naPloche.Add(g);
+            }
+            else if (stones[i] != 0)
+            {
+                g = Instantiate(drag_horuci);
+                TextMeshProUGUI v = g.transform.Find("value").GetComponent<TextMeshProUGUI>();
+                v.text = (stones[i] == 1) ? "" : stones[i] + "";
+                g.transform.SetParent(kamene.transform);
+                g.transform.SetAsLastSibling();
+                g.name = "drag_horuci";
+                naPloche.Add(g);
+            }
+
+        }
+    }
+
+    void SetUpFinal(int i)
+    {
+        Debug.Log("finalna: " + i);
+        TextMeshProUGUI t = GameObject.Find("final").GetComponent<TextMeshProUGUI>();
+        t.text = i + "";
+    }
+
+    void SetUpSolutionsNumber(int ii, int i)
+    {
+        TextMeshProUGUI t = GameObject.Find("solutions").GetComponent<TextMeshProUGUI>();
+        t.text = ii + "/" + i;
+    }
+
+    bool HasRealSolution(int a, double a1, double a2, double a3, double b)
+    {
+        double[][] matrix;
+        if(a3 != 0) matrix = new double[][] { new double[] { a1,a2,a3,b - a}, new double[] { 0,0,0,0}, new double[]{0,0,0,0}};
+        else{
+            // Create the augmented matrix without the third row
+            matrix = new double[][] { new double[] { a1, a2, b - a }, new double[] { 0, 0, 0 } };
+        }
+
+        // Reduce the matrix to row echelon form
+        for (int j = 0; j < 3; j++)
+        {
+            // Find a non-zero entry in the jth column
+            int i = j;
+            while (i < matrix.Count() && matrix[i][j] == 0)
+            {
+                i++;
+            }
+
+            if (i == matrix.Count() && matrix[i - 1][j] == 0)
+            {
+                // The matrix is already in row echelon form
+                break;
+            }
+
+            if (i != j)
+            {
+                // Swap rows i and j
+                double[] temp = matrix[i];
+                matrix[i] = matrix[j];
+                matrix[j] = temp;
+            }
+
+            // Divide the first row by the pivot element
+            double pivot = matrix[j][j];
+            matrix[j][j] = 1;
+            for (int k = j + 1; k < 4; k++)
+            {
+                matrix[j][k] /= pivot;
+            }
+
+            // Subtract a multiple of the first row from each subsequent row
+            for (i = j + 1; i < matrix.Count(); i++)
+            {
+                double factor = matrix[i][j];
+                matrix[i][j] = 0;
+                for (int k = j + 1; k < 4; k++)
+                {
+                    matrix[i][k] -= factor * matrix[j][k];
+                }
+            }
+        }
+
+        // Determine the rank of the matrix
+        int rank = 0;
+        for (int i = 0; i < matrix.Count(); i++)
+        {
+            bool nonZero = false;
+            for (int j = 0; j < 4; j++)
+            {
+                if (Math.Abs(matrix[i][j]) > 1e-9)
+                {
+                    nonZero = true;
+                    break;
+                }
+            }
+            if (nonZero)
+            {
+                rank++;
+            }
+        }
+
+        // Return true if the rank is 1, indicating a solution exists
+        return rank == 1;
+    }
+
+    public static List<List<int>> CombinationSum(int[] nums, int target)
+    {
+        List<List<int>> result = new List<List<int>>();
+        Array.Sort(nums);
+        Backtrack(nums, target, 0, new List<int>(), result, 0);
+        return result;
+    }
+
+    private static void Backtrack(int[] nums, int target, int start, List<int> list, List<List<int>> result, int depth)
+    {
+        if (target == 0)
+        {
+            result.Add(new List<int>(list));
+        }
+        if (depth >= 5) return;
+        else if (target > 0)
+        {
+            for (int i = start; i < nums.Length && nums[i] <= target; i++)
+            {
+                if (nums[i] < 0 && depth >= 5)
+                {
+                    continue;
+                }
+                list.Add(nums[i]);
+                Backtrack(nums, target - nums[i], i, list, result, depth + 1);
+                list.RemoveAt(list.Count - 1);
+            }
+        }
     }
 }

@@ -19,10 +19,11 @@ public class PlayerStats : MonoBehaviour
 
     public bool savedEq = false;
     public bool savedEq2 = false;
+    public bool savedEq3 = false;
 
     /// SAVE EQ
 
-    public List<int> kamene = new List<int>();
+    public List<int> kamene = new List<int>();          //TODO SIGLETOOOOOOOOOOOOOOOOOOOOOOOOOON
     public string rovnica;
     public int pociatocna;
     public int finalna;
@@ -33,6 +34,15 @@ public class PlayerStats : MonoBehaviour
     public string rovnica2;
     public int pociatocna2;
     public int finalna2;
+
+
+    public List<int> kamene3 = new List<int>();
+    public List<List<int>> solved = new List<List<int>>();
+    public int solutionsAll;
+    public int solutionsGot;
+    public int pociatocna3;
+    public int finalna3;
+
 
     /// SAVE EQ
 
@@ -45,7 +55,7 @@ public class PlayerStats : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("startujem");
+        //Debug.Log("startujem");
 
         Button l1 = GameObject.Find("first_lvl").GetComponent<Button>();
         Button l2 = GameObject.Find("second_lvl").GetComponent<Button>();
@@ -59,7 +69,7 @@ public class PlayerStats : MonoBehaviour
     private IEnumerator OnLevelWasLoaded(int level)
     {
         yield return new WaitForEndOfFrame();
-        Debug.Log("level: " + level);
+        //Debug.Log("level: " + level);
         if(GameManager.instance.level == 1)
         {
             GameManager.instance.SetProgressionSlider(level_1);
@@ -68,6 +78,7 @@ public class PlayerStats : MonoBehaviour
         {
             GameManager.instance.SetProgressionSlider(level_2);
         }
+        else GameManager.instance.SetProgressionSlider(level_3);
     }
 
     public string GetEquasion(int l)

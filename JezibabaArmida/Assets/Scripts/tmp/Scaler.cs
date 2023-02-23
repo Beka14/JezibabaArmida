@@ -8,8 +8,10 @@ public class Scaler : MonoBehaviour
     GridLayoutGroup glg;
     float width;
     int children;
+    bool p = false;
     void Start()
     {
+        bool p = false;
         glg = GetComponent<GridLayoutGroup>();
         width = GetComponent<RectTransform>().rect.width;
         children = 0;
@@ -19,13 +21,10 @@ public class Scaler : MonoBehaviour
     void Update()                                   //TODO nieje to bad???
     {
         children = transform.childCount;
-        if (children * glg.cellSize.x >= width)
+        if (glg.cellSize != new Vector2((width / children) - 10, (width / children) - 10))
         {
-            glg.cellSize = new Vector2(width / children, width / children);
+            glg.cellSize = new Vector2((width / children) -10, (width / children) - 10);
         }
-        else
-        {
-            glg.cellSize = new Vector2(100, 100);
-        }
+        if(glg.cellSize.x > 100) glg.cellSize = new Vector2(100, 100);
     }
 }

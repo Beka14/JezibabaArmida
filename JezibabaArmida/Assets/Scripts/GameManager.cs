@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -5,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,9 +16,8 @@ public class GameManager : MonoBehaviour
     public int level = 0;
     private TextMeshProUGUI t;
     private TextMeshProUGUI input;
-    bool p = false;
 
-    bool b = true;
+    public LVL3Manager lvl3man;
 
     private void Awake()
     {
@@ -33,7 +34,9 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("--------------- STARTING ---------------");
         playerStats = GetComponent<PlayerStats>();
+        boardScript = gameObject.GetComponent<BoardManager>();
     }
 
     public void Init()
@@ -45,23 +48,109 @@ public class GameManager : MonoBehaviour
         t.text = boardScript.SetUpBoard(5);
     }
 
+    public void InitLVL3()
+    {
+        boardScript = gameObject.GetComponent<BoardManager>();
+        //input = GameObject.Find("Text").GetComponent<TextMeshProUGUI>();
+        //boardScript.Init();
+        boardScript.SetUpBoard(0);
+    }
+
     public void NextTask()
     {
         int right = boardScript.GetAnswer();     
         int left = GetInput();
         Debug.Log(right + " == " + left);
-        if(right == left)
+        if(level == 2 || level == 1)
         {
-            StartCoroutine(ShowBubble(1));
-            if(level == 1) playerStats.savedEq = false;
-            else playerStats.savedEq2 = false;
-            t.text = boardScript.SetUpBoard(5);
-            UpdateProgressionSlider();
+            if (right == left)
+            {
+                StartCoroutine(ShowBubble(1));
+                if (level == 1) playerStats.savedEq = false;
+                else if (level == 2) playerStats.savedEq2 = false;
+                t.text = boardScript.SetUpBoard(5);
+                UpdateProgressionSlider();
+            }
+            else
+            {
+                StartCoroutine(ShowBubble(0));
+            }
         }
+
         else
         {
-            StartCoroutine(ShowBubble(0));
+            if (playerStats.solutionsGot == playerStats.solutionsAll)
+            {
+                boardScript.SetUpBoard(0);
+                UpdateProgressionSlider();
+            }
+            else
+            {
+                //VYPIS BUBLINU NECH DOKONCI ZADANIE
+            }
         }
+    }
+
+    public void CheckTask()
+    {
+        if(lvl3man == null) lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
+        //boardScript = gameObject.GetComponent<BoardManager>();
+        int right = (int)GameObject.Find("Slider").GetComponent<Slider>().value;
+        int left = GetInput();
+        int a = playerStats.solutionsGot;
+        int b = playerStats.solutionsAll;
+        Debug.Log(left + " == " + right);
+        Debug.Log(a + " / " + b);
+        if (left == right)
+        {
+           if(a == b)
+            {
+                Debug.Log("jeej rovnaju sa super mame vsetky riesenia");
+                /*
+                UpdateProgressionSlider();
+
+                GameObject g = GameObject.Find("Kotol_lvl3");                       //TODO vytiahnut do metody
+                for (var i = g.transform.childCount - 1; i >= 0; i--)
+                {
+                    Object.Destroy(g.transform.GetChild(i).gameObject);
+                }
+
+                boardScript.SetUpBoard(0);
+                */
+            }
+
+            else
+            {
+                Debug.Log("supris este nemas vsetky zadania tho");
+                UpdateSolutionsText();
+
+                List<GameObject> gameObjects = new List<GameObject>();          //PRIDAT INT NIE OBJECT
+
+                GameObject g = GameObject.Find("Kotol_lvl3");
+                for (var i = g.transform.childCount - 1; i >= 0; i--)
+                {
+                    gameObjects.Add(g.transform.GetChild(i).gameObject);
+                    Object.Destroy(g.transform.GetChild(i).gameObject);
+                }
+
+                if (lvl3man.ContainsAnswer(gameObjects))
+                {
+                    //vypis ze to uz mame
+                }
+                else
+                {
+                    //lvl3man.AddAnswer();
+                    //vypis ze super
+                }
+            }
+        }
+    }
+
+    void UpdateSolutionsText()
+    {
+        TextMeshProUGUI t = GameObject.Find("solutions").GetComponent<TextMeshProUGUI>();
+        playerStats.solutionsGot += 1;
+        t.text = playerStats.solutionsGot + "/" + playerStats.solutionsAll;
     }
 
     IEnumerator ShowBubble(int i)
@@ -99,8 +188,16 @@ public class GameManager : MonoBehaviour
 
     public int GetInput()
     {
-        Slider input = GameObject.Find("Numbers").GetComponent<Slider>();
-        return (int)input.value;
+        if(level == 1 || level == 2)
+        {
+            Slider input = GameObject.Find("Numbers").GetComponent<Slider>();
+            return (int)input.value;
+        }
+        else
+        {
+            Slider input = GameObject.Find("Slider2").GetComponent<Slider>();
+            return (int)input.value;
+        }
     }
 
     public void UpdateProgressionSlider()
@@ -108,7 +205,8 @@ public class GameManager : MonoBehaviour
         Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
         prog.value = (prog.value+1) % 6;
         if(level == 1) playerStats.level_1 += 1;
-        else playerStats.level_2 += 1;
+        else if(level == 2) playerStats.level_2 += 1;
+        else playerStats.level_3 += 1;
     }
 
     public void SetProgressionSlider(int value)
@@ -116,6 +214,24 @@ public class GameManager : MonoBehaviour
         Debug.Log("settujem");
         Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
         prog.value = value;
+    }
+
+    public void AddStoneSlider(GameObject x)
+    {
+        int e = (x.name == "drag_studeny")? -1:1;
+        TextMeshProUGUI t = x.transform.Find("value").GetComponent<TextMeshProUGUI>();
+        Slider prog = GameObject.Find("Slider").GetComponent<Slider>();
+        prog.value += (t.text == "")? e*1:e*Convert.ToInt16(t.text);
+        //prog.value += x;
+    }
+
+    public void RemoveStoneSlider(GameObject x)
+    {
+        int e = (x.name == "drag_studeny") ? -1:1;
+        TextMeshProUGUI t = x.transform.Find("value").GetComponent<TextMeshProUGUI>();
+        Slider prog = GameObject.Find("Slider").GetComponent<Slider>();
+        prog.value += (t.text == "") ? -1*e : -1*e*Convert.ToInt16(t.text);
+        //prog.value += v;
     }
 
     // Update is called once per frame
@@ -138,8 +254,13 @@ public class GameManager : MonoBehaviour
             level = lvl;
             Init();
         }
+        else if(lvl == 3)
+        {
+            level = lvl;
+            InitLVL3();
+        }
 
-        Debug.Log("GAME LEVEL:::::: " + level);
+        //Debug.Log("GAME LEVEL:::::: " + level);
     }
 
     public void LoadLevel(int i)

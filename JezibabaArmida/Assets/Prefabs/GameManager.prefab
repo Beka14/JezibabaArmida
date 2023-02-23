@@ -68,6 +68,8 @@ MonoBehaviour:
   minusPar: {fileID: 3103767427893852570, guid: b19c0764b589434418c6c11f1bcf78c2, type: 3}
   plusPar: {fileID: 6590072764072169877, guid: 72e419cc59b0495449d254e502e1af68, type: 3}
   endPar: {fileID: 1945433322448992671, guid: f03ef6c8b4a35734b9e8db5047b0bea4, type: 3}
+  drag_studeny: {fileID: 1721418451570874405, guid: c4cd5f81d1fdad84f89fddfd3b0f2dba, type: 3}
+  drag_horuci: {fileID: 7482252931305640255, guid: c504ed306fb9d354987decc6b4fbde8a, type: 3}
 --- !u!114 &1068449957
 MonoBehaviour:
   m_ObjectHideFlags: 0
