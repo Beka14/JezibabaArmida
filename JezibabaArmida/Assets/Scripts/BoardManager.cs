@@ -412,8 +412,9 @@ public class BoardManager : MonoBehaviour
             Object.Destroy(g.transform.GetChild(i).gameObject);
         }
 
+
         ////////// SAVED EQ
-        
+
         if (GameManager.instance.playerStats.savedEq && GameManager.instance.level == 1)
         {
             SetUpThermo(GameManager.instance.playerStats.pociatocna);
@@ -437,6 +438,7 @@ public class BoardManager : MonoBehaviour
             SetUpFinal(GameManager.instance.playerStats.finalna3);
             SetUpThermo(GameManager.instance.playerStats.pociatocna3);
             SetUpSolutionsNumber(GameManager.instance.playerStats.solutionsGot, GameManager.instance.playerStats.solutionsAll);
+            //GameManager.instance.lvl3man.SetUpAnswers(GameManager.instance.playerStats.solved, GameManager.instance.playerStats.answers);
             return "";
         }
 
@@ -444,6 +446,7 @@ public class BoardManager : MonoBehaviour
         {
             if (GameManager.instance.level == 3) 
             {
+                //GameManager.instance.lvl3man.ClearAnswers();
                 ThirdLevelEquasion();
                 return "";
             }
@@ -507,7 +510,7 @@ public class BoardManager : MonoBehaviour
         Debug.Log("------------ " + solved.Count());
         // SOLVED INSTANTIOATE
         if (GameManager.instance.lvl3man == null) GameManager.instance.lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
-        GameManager.instance.lvl3man.SetUpAnswers(solved);
+        GameManager.instance.lvl3man.SetUpAnswers(solved, new List<List<int>>());
         //
 
         //TODO 
@@ -527,6 +530,7 @@ public class BoardManager : MonoBehaviour
         GameManager.instance.playerStats.finalna3 = vysledna;
         GameManager.instance.playerStats.pociatocna3 = pociatocna;
         GameManager.instance.playerStats.savedEq3 = true;
+        GameManager.instance.playerStats.answers = new List<List<int>>();
         GameManager.instance.playerStats.solutionsGot = 0;
         GameManager.instance.playerStats.solutionsAll = solved.Count();
         GameManager.instance.playerStats.level = GameManager.instance.level;
@@ -672,12 +676,12 @@ public class BoardManager : MonoBehaviour
         {
             result.Add(new List<int>(list));
         }
-        if (depth >= 5) return;
+        //if (depth >= 8) return;
         else if (target > 0)
         {
             for (int i = start; i < nums.Length && nums[i] <= target; i++)
             {
-                if (nums[i] < 0 && depth >= 5)
+                if (nums[i] < 0)    //&& depth >= 8
                 {
                     continue;
                 }

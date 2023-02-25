@@ -81,12 +81,15 @@ public class GameManager : MonoBehaviour
         {
             if (playerStats.solutionsGot == playerStats.solutionsAll)
             {
-                boardScript.SetUpBoard(0);
                 UpdateProgressionSlider();
+                playerStats.savedEq3 = false;
+                boardScript.SetUpBoard(0);
             }
             else
             {
                 //VYPIS BUBLINU NECH DOKONCI ZADANIE
+                Debug.Log("not so quick cowboy");
+                StartCoroutine(ShowBubbleLVL3(3));
             }
         }
     }
@@ -103,47 +106,53 @@ public class GameManager : MonoBehaviour
         Debug.Log(a + " / " + b);
         if (left == right)
         {
-           if(a == b)
+            List<int> gameObjects = new List<int>();        
+
+            GameObject g = GameObject.Find("Kotol_lvl3");
+            for (var i = g.transform.childCount - 1; i >= 0; i--)
             {
-                Debug.Log("jeej rovnaju sa super mame vsetky riesenia");
-                /*
-                UpdateProgressionSlider();
+                gameObjects.Add(GetValueFromStone(g.transform.GetChild(i).gameObject));
+            }
 
-                GameObject g = GameObject.Find("Kotol_lvl3");                       //TODO vytiahnut do metody
-                for (var i = g.transform.childCount - 1; i >= 0; i--)
-                {
-                    Object.Destroy(g.transform.GetChild(i).gameObject);
-                }
+            //boardScript.SetUpThermo(playerStats.pociatocna3);
 
-                boardScript.SetUpBoard(0);
-                */
+            if (lvl3man.ContainsAnswer(gameObjects))
+            {
+                //super, nemame este a objavila sa teraz aj sa zapocitali riesenia
+                UpdateSolutionsText();
+                StartCoroutine(ShowBubbleLVL3(0));
             }
 
             else
             {
-                Debug.Log("supris este nemas vsetky zadania tho");
-                UpdateSolutionsText();
+                //vypis ze to uz mame
+                Debug.Log("uz som tam lol");
+                StartCoroutine(ShowBubbleLVL3(1));
 
-                List<GameObject> gameObjects = new List<GameObject>();          //PRIDAT INT NIE OBJECT
-
-                GameObject g = GameObject.Find("Kotol_lvl3");
-                for (var i = g.transform.childCount - 1; i >= 0; i--)
-                {
-                    gameObjects.Add(g.transform.GetChild(i).gameObject);
-                    Object.Destroy(g.transform.GetChild(i).gameObject);
-                }
-
-                if (lvl3man.ContainsAnswer(gameObjects))
-                {
-                    //vypis ze to uz mame
-                }
-                else
-                {
-                    //lvl3man.AddAnswer();
-                    //vypis ze super
-                }
             }
+
+            boardScript.SetUpThermo(playerStats.pociatocna3);
         }
+
+        if (playerStats.solutionsGot == playerStats.solutionsAll)
+        {
+            Debug.Log("jeej rovnaju sa super mame vsetky riesenia");
+            Debug.Log("MOZES prejst na dalsiu ulohu");
+            StartCoroutine(ShowBubbleLVL3(2));
+            //prejdi na next_task
+            //UpdateProgressionSlider();
+            //playerStats.savedEq3 = false;
+            //boardScript.SetUpBoard(0);
+        }
+
+        //else StartCoroutine(ShowBubbleLVL3(4));
+    }
+
+    int GetValueFromStone(GameObject kamen)
+    {
+        TextMeshProUGUI tmp = kamen.transform.Find("value").GetComponent<TextMeshProUGUI>();
+        Object.Destroy(kamen);
+        return Convert.ToInt32(tmp.text);
     }
 
     void UpdateSolutionsText()
@@ -184,6 +193,44 @@ public class GameManager : MonoBehaviour
         farba.color = pred;
         sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 0);
         button.interactable = true;
+    }
+
+    IEnumerator ShowBubbleLVL3(int i)
+    {
+        Button button = GameObject.Find("next_btn").GetComponent<Button>();             //TODO buttons vsetky
+        button.interactable = false;
+        Button button2 = GameObject.Find("check_btn").GetComponent<Button>();           
+        button2.interactable = false;
+        Button button3 = GameObject.Find("solved_btn").GetComponent<Button>();
+        button3.interactable = false;
+        Image sprava;
+        switch (i)
+        {
+            case 0:
+                sprava = GameObject.Find("dalej_sprava").GetComponent<Image>();
+                break;
+            case 1:
+                sprava = GameObject.Find("uz_mas_sprava").GetComponent<Image>();
+                break;
+            case 2:
+                sprava = GameObject.Find("dalsia_uloha_sprava").GetComponent<Image>();
+                break;
+            case 3:
+                sprava = GameObject.Find("vsetky_sprava").GetComponent<Image>();
+                break;
+            case 4:
+                sprava = GameObject.Find("napln_sprava").GetComponent<Image>();
+                break;
+            default:
+                sprava = GameObject.Find("zla_sprava").GetComponent<Image>();
+                break;
+        }
+        sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 1);
+        yield return new WaitForSeconds(2);
+        sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 0);
+        button.interactable = true;
+        button2.interactable = true;
+        button3.interactable = true;
     }
 
     public int GetInput()

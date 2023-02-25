@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 public class LVL3Manager : MonoBehaviour
 {
@@ -12,20 +15,18 @@ public class LVL3Manager : MonoBehaviour
     [SerializeField] GameObject solvedScreen;
     [SerializeField] GameObject solved;
 
-    [SerializeField] List<List<GameObject>> odpovede;
-    private Dictionary<List<int>, GameObject> holderBook;
+    [SerializeField] List<GameObject> odpovede;
+    private Dictionary<int[], GameObject> holderBook;
     private void Start()
     {
-        odpovede = new List<List<GameObject>>();
+        odpovede = new List<GameObject>();
+        holderBook = new Dictionary<int[], GameObject>();
     }
 
-    public void AddAnswer(List<GameObject> objekt)
+    public void SetUpAnswers(List<List<int>> objekt, List<List<int>> odpov)
     {
-        odpovede.Add(objekt);
-    }
-
-    public void SetUpAnswers(List<List<int>> objekt)
-    {
+        odpovede = new List<GameObject>();
+        ClearAnswers();
         foreach(List<int> o in objekt)
         {
             List<int> pole = new List<int>();
@@ -59,23 +60,56 @@ public class LVL3Manager : MonoBehaviour
                 }
             }
 
-            //holderBook.Add(pole,h);
+            int[] p = pole.ToArray();
+            Array.Sort(p);
+            holderBook.Add(p, h);
+            Debug.Log(string.Join(",", p));
             //znizit opacity kazdeho holdera na 0
+            h.SetActive(false);
+
+            //foreach (List<int> saved in odpov)
+            //{
+               // ContainsAnswer(saved);
+            //}
+
         }
     }
 
     public void ClearAnswers()
     {
-        odpovede.Clear();
+        GameObject s = solved;
+        for (var i = s.transform.childCount - 1; i >= 0; i--)
+        {
+            Object.Destroy(s.transform.GetChild(i).gameObject);
+        }
     }
 
-    public bool ContainsAnswer(List<GameObject> objekt)
+    public bool ContainsAnswer(List<int> odpoved)
     {
-        return odpovede.Contains(objekt);
-    }
+        int[] p = odpoved.ToArray();
+        Array.Sort(p);
+        //Debug.Log(string.Join(",", p));
 
-    public void InstantiateAnswers()
-    {
-
+        foreach (int[] k in holderBook.Keys)                                 //TODO OPRAVIT aby nebol for loop
+        {
+            if ((string.Join(",", p) == string.Join(",", k)) && !odpovede.Contains(holderBook[k]))
+            {
+                Debug.Log("NACHADZA SA TU KLUC");
+                holderBook[k].SetActive(true);
+                odpovede.Add(holderBook[k]); 
+                if(!GameManager.instance.playerStats.answers.Contains(odpoved)) GameManager.instance.playerStats.answers.Add(odpoved);
+                return true;
+            }
+        }
+        /*
+        if (holderBook.ContainsKey(p))
+        {
+            Debug.Log("NACHADZA SA TU KLUC");
+            Image x = holderBook[p].GetComponent<Image>();
+            x.color = new Color(x.color.r, x.color.g, x.color.b, 1);
+            return true;
+        }
+        */
+        return false;
     }
 }

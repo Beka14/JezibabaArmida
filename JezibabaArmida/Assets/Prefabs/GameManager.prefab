@@ -49,6 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerStats: {fileID: 0}
   level: 0
+  lvl3man: {fileID: 0}
+  holder: {fileID: 5800696778703096571, guid: fafe3f5a3ea43e34f94abcb5fc6cae22, type: 3}
 --- !u!114 &588874953701159473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,6 +102,7 @@ MonoBehaviour:
   level: 0
   savedEq: 0
   savedEq2: 0
+  savedEq3: 0
   kamene: 
   rovnica: 
   pociatocna: 0
@@ -109,3 +112,8 @@ MonoBehaviour:
   rovnica2: 
   pociatocna2: 0
   finalna2: 0
+  kamene3: 
+  solutionsAll: 0
+  solutionsGot: 0
+  pociatocna3: 0
+  finalna3: 0

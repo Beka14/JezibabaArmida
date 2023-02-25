@@ -38,6 +38,7 @@ public class PlayerStats : MonoBehaviour
 
     public List<int> kamene3 = new List<int>();
     public List<List<int>> solved = new List<List<int>>();
+    public List<List<int>> answers = new List<List<int>>();
     public int solutionsAll;
     public int solutionsGot;
     public int pociatocna3;
