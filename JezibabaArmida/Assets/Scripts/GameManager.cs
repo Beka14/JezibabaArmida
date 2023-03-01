@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
         boardScript = gameObject.GetComponent<BoardManager>();
         //input = GameObject.Find("Text").GetComponent<TextMeshProUGUI>();
         //boardScript.Init();
+        lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
         boardScript.SetUpBoard(0);
     }
 
@@ -81,9 +82,11 @@ public class GameManager : MonoBehaviour
         {
             if (playerStats.solutionsGot == playerStats.solutionsAll)
             {
-                UpdateProgressionSlider();
+                Debug.Log("dostal som sa sem ");
                 playerStats.savedEq3 = false;
+                UpdateProgressionSlider();
                 boardScript.SetUpBoard(0);
+                //UpdateProgressionSlider();
             }
             else
             {
@@ -104,6 +107,12 @@ public class GameManager : MonoBehaviour
         int b = playerStats.solutionsAll;
         Debug.Log(left + " == " + right);
         Debug.Log(a + " / " + b);
+
+        if (playerStats.solutionsGot == playerStats.solutionsAll)
+        {
+            StartCoroutine(ShowBubbleLVL3(2));
+        }
+
         if (left == right)
         {
             List<int> gameObjects = new List<int>();        
@@ -132,17 +141,6 @@ public class GameManager : MonoBehaviour
             }
 
             boardScript.SetUpThermo(playerStats.pociatocna3);
-        }
-
-        if (playerStats.solutionsGot == playerStats.solutionsAll)
-        {
-            Debug.Log("jeej rovnaju sa super mame vsetky riesenia");
-            Debug.Log("MOZES prejst na dalsiu ulohu");
-            StartCoroutine(ShowBubbleLVL3(2));
-            //prejdi na next_task
-            //UpdateProgressionSlider();
-            //playerStats.savedEq3 = false;
-            //boardScript.SetUpBoard(0);
         }
 
         //else StartCoroutine(ShowBubbleLVL3(4));
@@ -250,7 +248,7 @@ public class GameManager : MonoBehaviour
     public void UpdateProgressionSlider()
     {
         Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
-        prog.value = (prog.value+1) % 6;
+        prog.value = (prog.value+1) % 10;
         if(level == 1) playerStats.level_1 += 1;
         else if(level == 2) playerStats.level_2 += 1;
         else playerStats.level_3 += 1;
@@ -279,6 +277,17 @@ public class GameManager : MonoBehaviour
         Slider prog = GameObject.Find("Slider").GetComponent<Slider>();
         prog.value += (t.text == "") ? -1*e : -1*e*Convert.ToInt16(t.text);
         //prog.value += v;
+    }
+
+    public int GetSliderValue()
+    {
+        Slider prog = GameObject.Find("Slider").GetComponent<Slider>();
+        return Convert.ToInt32(prog.value);
+    }
+
+    public int GetFinalValue()
+    {
+        return boardScript.GetAnswer();
     }
 
     // Update is called once per frame

@@ -15,17 +15,17 @@ public class LVL3Manager : MonoBehaviour
     [SerializeField] GameObject solvedScreen;
     [SerializeField] GameObject solved;
 
-    [SerializeField] List<GameObject> odpovede;
+    [SerializeField] public List<List<int>> odpovede;
     private Dictionary<int[], GameObject> holderBook;
     private void Start()
     {
-        odpovede = new List<GameObject>();
+        odpovede = new List<List<int>>();
         holderBook = new Dictionary<int[], GameObject>();
     }
 
     public void SetUpAnswers(List<List<int>> objekt, List<List<int>> odpov)
     {
-        odpovede = new List<GameObject>();
+        odpovede = new List<List<int>>();
         ClearAnswers();
         foreach(List<int> o in objekt)
         {
@@ -35,6 +35,7 @@ public class LVL3Manager : MonoBehaviour
             h.transform.SetParent(solved.transform);
             h.transform.SetAsLastSibling();
             h.name = "holder";
+            h.transform.localScale = new Vector3(1, 1, 1);
             foreach (int i in o)
             {
                 //setup stones parent holder
@@ -47,6 +48,7 @@ public class LVL3Manager : MonoBehaviour
                     v.text = (i == -1) ? "" : i * -1 + "";
                     g.transform.SetParent(h.transform);
                     g.transform.SetAsLastSibling();
+                    g.transform.localScale = new Vector3(1, 1, 1);
                     g.name = "studeny";
                 }
                 else
@@ -56,6 +58,7 @@ public class LVL3Manager : MonoBehaviour
                     v.text = (i == 1) ? "" : i + "";
                     g.transform.SetParent(h.transform);
                     g.transform.SetAsLastSibling();
+                    g.transform.localScale = new Vector3(1, 1, 1);
                     g.name = "studeny";
                 }
             }
@@ -63,16 +66,83 @@ public class LVL3Manager : MonoBehaviour
             int[] p = pole.ToArray();
             Array.Sort(p);
             holderBook.Add(p, h);
-            Debug.Log(string.Join(",", p));
+            //Debug.Log(string.Join(",", p));
             //znizit opacity kazdeho holdera na 0
             h.SetActive(false);
 
             //foreach (List<int> saved in odpov)
             //{
-               // ContainsAnswer(saved);
+            // ContainsAnswer(saved);
             //}
 
+            GameManager.instance.playerStats.solved.Add(p.ToList<int>());
         }
+        
+        GameManager.instance.playerStats.answers = odpovede;
+    }
+
+    IEnumerator InstantiateAnswers(List<List<int>> objekt, List<List<int>> odpov)
+    {
+        yield return new WaitForEndOfFrame();
+        holderBook = new Dictionary<int[], GameObject>();
+        //ClearAnswers();
+        //Debug.Log(objekt.Count() + " odppved count: " + odpov.Count());
+        foreach (List<int> o in objekt)
+        {
+            List<int> pole = new List<int>();
+            //inst holder, setup parent
+            GameObject h = Instantiate(holder);
+            h.transform.SetParent(solved.transform);
+            h.transform.SetAsLastSibling();
+            h.name = "holder";
+            h.transform.localScale = new Vector3(1, 1, 1);
+            foreach (int i in o)
+            {
+                //setup stones parent holder
+                pole.Add(i);
+                GameObject g;
+                if (i < 0)
+                {
+                    g = Instantiate(studeny);
+                    TextMeshProUGUI v = g.transform.Find("value").GetComponent<TextMeshProUGUI>();
+                    v.text = (i == -1) ? "" : i * -1 + "";
+                    g.transform.SetParent(h.transform);
+                    g.transform.SetAsLastSibling();
+                    g.transform.localScale = new Vector3(1, 1, 1);
+                    g.name = "studeny";
+                }
+                else
+                {
+                    g = Instantiate(horuci);
+                    TextMeshProUGUI v = g.transform.Find("value").GetComponent<TextMeshProUGUI>();
+                    v.text = (i == 1) ? "" : i + "";
+                    g.transform.SetParent(h.transform);
+                    g.transform.SetAsLastSibling();
+                    g.transform.localScale = new Vector3(1, 1, 1);
+                    g.name = "studeny";
+                }
+            }
+
+            int[] p = pole.ToArray();
+            Array.Sort(p);
+            holderBook.Add(p, h);
+            //Debug.Log(string.Join(",", p));
+            //znizit opacity kazdeho holdera na 0
+            h.SetActive(false);
+        }
+
+        //odpovede = odpov;
+        odpovede = new List<List<int>>();
+
+        foreach (List<int> saved in odpov)
+        {
+            ContainsAnswer(saved);
+        }
+    }
+
+    public void InstantiateAnswersStart(List<List<int>> objekt, List<List<int>> odpov)
+    {
+        StartCoroutine(InstantiateAnswers(objekt, odpov));
     }
 
     public void ClearAnswers()
@@ -88,16 +158,22 @@ public class LVL3Manager : MonoBehaviour
     {
         int[] p = odpoved.ToArray();
         Array.Sort(p);
-        //Debug.Log(string.Join(",", p));
+        bool obsahuje = false;
+
+        foreach (List<int> i in odpovede)                                           //TODO OPRAVIT aby nebol for loop
+        {
+            if (string.Join(",", i) == string.Join(",", p)) obsahuje = true;
+        }
 
         foreach (int[] k in holderBook.Keys)                                 //TODO OPRAVIT aby nebol for loop
         {
-            if ((string.Join(",", p) == string.Join(",", k)) && !odpovede.Contains(holderBook[k]))
+            if ((string.Join(",", p) == string.Join(",", k)) && !obsahuje)
             {
-                Debug.Log("NACHADZA SA TU KLUC");
+                //Debug.Log("NACHADZA SA TU KLUC");
                 holderBook[k].SetActive(true);
-                odpovede.Add(holderBook[k]); 
-                if(!GameManager.instance.playerStats.answers.Contains(odpoved)) GameManager.instance.playerStats.answers.Add(odpoved);
+                odpovede.Add(k.ToList<int>());
+                //Debug.Log(string.Join(" -- ", k.ToList<int>()));
+                if(!GameManager.instance.playerStats.answers.Contains(odpoved))GameManager.instance.playerStats.answers.Add(odpoved);
                 return true;
             }
         }

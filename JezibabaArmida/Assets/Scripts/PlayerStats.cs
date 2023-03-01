@@ -23,7 +23,7 @@ public class PlayerStats : MonoBehaviour
 
     /// SAVE EQ
 
-    public List<int> kamene = new List<int>();          //TODO SIGLETOOOOOOOOOOOOOOOOOOOOOOOOOON
+    public List<int> kamene = new List<int>();          
     public string rovnica;
     public int pociatocna;
     public int finalna;
@@ -79,7 +79,7 @@ public class PlayerStats : MonoBehaviour
         {
             GameManager.instance.SetProgressionSlider(level_2);
         }
-        else GameManager.instance.SetProgressionSlider(level_3);
+        else if(GameManager.instance.level == 3) GameManager.instance.SetProgressionSlider(level_3);
     }
 
     public string GetEquasion(int l)

@@ -1,15 +1,8 @@
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.Analytics;
-using UnityEngine.Assertions.Must;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -91,7 +84,7 @@ public class BoardManager : MonoBehaviour
 
         int r = Random.Range(1,3);
         List<int> pole = new List<int>();
-        if (r % 2 == 0)
+        if (r % 2 == 0 && kamene.Count() > 3)
         {
             //zatvorka
             int z = Random.Range(2, kamene.Count()-1);
@@ -338,6 +331,7 @@ public class BoardManager : MonoBehaviour
                 v.text = (stones[i] == -1) ? "" : stones[i] * -1 + "";
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
+                g.transform.localScale = new Vector3(1, 1, 1);
             }
             else
             {
@@ -346,6 +340,7 @@ public class BoardManager : MonoBehaviour
                 v.text = (stones[i] == 1) ? "" : stones[i] + "";
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
+                g.transform.localScale = new Vector3(1, 1, 1);
             }
 
             index++;
@@ -356,6 +351,7 @@ public class BoardManager : MonoBehaviour
                 if (zatvorky[index] == "+(")
                 {
                     g = Instantiate(plusPar);
+                    g.transform.localScale = new Vector3(1, 1, 1);
                 }
 
                 else if (zatvorky[index] == "-(") g = Instantiate(minusPar);
@@ -364,6 +360,7 @@ public class BoardManager : MonoBehaviour
 
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
+                g.transform.localScale = new Vector3(1, 1, 1);
                 naPloche.Add(g);
             }
 
@@ -375,21 +372,22 @@ public class BoardManager : MonoBehaviour
                     g = Instantiate(minus);
                     g.transform.SetParent(kamene.transform);
                     g.transform.SetAsLastSibling();
+                    g.transform.localScale = new Vector3(0.4f, 0.4f, 1);
                 }
                 else
                 {
                     g = Instantiate(plus);
                     g.transform.SetParent(kamene.transform);
                     g.transform.SetAsLastSibling();
+                    g.transform.localScale = new Vector3(0.4f, 0.4f, 1);
                 }
 
                 naPloche.Add(g);
             }
 
             //naPloche.Add(g);
-
+            //g.transform.localScale = new Vector3(1, 1, 1);
         }
-
     }
 
     public string SetUpBoard(int x)
@@ -438,6 +436,9 @@ public class BoardManager : MonoBehaviour
             SetUpFinal(GameManager.instance.playerStats.finalna3);
             SetUpThermo(GameManager.instance.playerStats.pociatocna3);
             SetUpSolutionsNumber(GameManager.instance.playerStats.solutionsGot, GameManager.instance.playerStats.solutionsAll);
+            //TODO naspat dat solutions do lvl3managera
+            GameManager.instance.lvl3man.InstantiateAnswersStart(GameManager.instance.playerStats.solved, GameManager.instance.playerStats.answers);
+
             //GameManager.instance.lvl3man.SetUpAnswers(GameManager.instance.playerStats.solved, GameManager.instance.playerStats.answers);
             return "";
         }
@@ -557,6 +558,7 @@ public class BoardManager : MonoBehaviour
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
                 g.name = "drag_studeny";
+                g.transform.localScale = new Vector3(1, 1, 1);
                 naPloche.Add(g);
             }
             else if (stones[i] != 0)
@@ -567,6 +569,7 @@ public class BoardManager : MonoBehaviour
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
                 g.name = "drag_horuci";
+                g.transform.localScale = new Vector3(1, 1, 1);
                 naPloche.Add(g);
             }
 

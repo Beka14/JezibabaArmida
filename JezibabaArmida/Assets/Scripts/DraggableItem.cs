@@ -31,6 +31,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 i.color = new Color(i.color.r, i.color.g, i.color.b, 0);
                 o.transform.SetParent(transform.parent);
                 o.name = kamen.name;
+                o.transform.localScale = new Vector3(1, 1, 1);
 
                 parentAfterDrag = transform.parent;
                 transform.SetParent(transform.root);
@@ -54,6 +55,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (!mozemHodit && !mozemVyhodit)
         {
             transform.position = Input.mousePosition;
+            //transform.localScale = new Vector3(1, 1, 1);
         }
     }
 

@@ -30,7 +30,7 @@ public class DragItemLVL3 : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
                 GameObject o = Instantiate(kamen, Input.mousePosition, kamen.transform.rotation);
                 o.transform.SetParent(transform.parent);
                 o.name = kamen.name;
-                o.transform.localScale = new Vector3(1, 0.88f, 1);
+                o.transform.localScale = new Vector3(1, 1, 1);
 
                 txt = kamen.transform.Find("value").GetComponent<GameObject>();
 

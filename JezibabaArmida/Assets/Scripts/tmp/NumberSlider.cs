@@ -16,6 +16,9 @@ public class NumberSlider : MonoBehaviour
         });
         slider.value = Random.Range(-60, 100);
         t.text = slider.value + "";
+
+        //slider.minValue = -1 * (GameManager.instance.GetFinalValue() + Random.Range(3,18));
+        //slider.maxValue = GameManager.instance.GetFinalValue() + Random.Range(3, 19);
     }
 
     public void ChangeValue(int i)
@@ -26,7 +29,6 @@ public class NumberSlider : MonoBehaviour
         t.text = slider.value + "";
     }
 
-    // Update is called once per frame
     public int GetValue()
     {
         return (int)slider.value;
