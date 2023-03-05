@@ -20,9 +20,12 @@ public class BoardManager : MonoBehaviour
 
     [SerializeField] GameObject drag_studeny;
     [SerializeField] GameObject drag_horuci;
+    [SerializeField] GameObject drag_studeny2;
+    [SerializeField] GameObject drag_horuci2;
 
     GameObject thermometer;
     Thermometer thermoScript;
+    NumberSlider numberSlider;
 
     int answer;
 
@@ -36,6 +39,7 @@ public class BoardManager : MonoBehaviour
         //Debug.Log("*************boardSCRIPT START**************");
         kamene = GameObject.Find("kamene");
         thermometer = GameObject.Find("Slider");
+        numberSlider = GameObject.Find("Numbers").GetComponent<NumberSlider>();
         if(TryGetComponent<Thermometer>(out Thermometer thermoScript)) thermoScript = thermometer.GetComponent<Thermometer>();
         //GetComponent<GameManager>().Init();
     }
@@ -88,7 +92,7 @@ public class BoardManager : MonoBehaviour
         {
             //zatvorka
             int z = Random.Range(2, kamene.Count()-1);
-            for(int i = 0; i < z; i++)
+            for(int i = z; i >=0 ; i--)                      //for(int i = 0; i < z; i++)
             {
                 int x = Random.Range(0, kamene.Count() -1);
                 pole.Add(kamene[x]);        //problem??
@@ -98,7 +102,8 @@ public class BoardManager : MonoBehaviour
 
         string tmp;
         if (GameManager.instance.level == 1) tmp = Stringify(pole, kamene);
-        else {
+        else
+        {
             answer = pociatocna;
             tmp = Stringify_lvl2(pole, kamene);
         } 
@@ -107,6 +112,8 @@ public class BoardManager : MonoBehaviour
 
         SetUpThermo(pociatocna);
         InstantiateStones(vsetky, znamienka);
+        if(numberSlider == null) numberSlider = GameObject.Find("Numbers").GetComponent<NumberSlider>();
+        numberSlider.SetMinMax(vysledna);
 
         //
 
@@ -126,6 +133,7 @@ public class BoardManager : MonoBehaviour
         {
             GameManager.instance.playerStats.kamene2 = vsetky;
             GameManager.instance.playerStats.znamienka2 = znamienka;
+            GameManager.instance.playerStats.zatvorky = zatvorky;
             GameManager.instance.playerStats.pociatocna2 = pociatocna;
             GameManager.instance.playerStats.rovnica2 = tmp;
             GameManager.instance.playerStats.finalna2 = answer;
@@ -410,12 +418,21 @@ public class BoardManager : MonoBehaviour
             Object.Destroy(g.transform.GetChild(i).gameObject);
         }
 
+        if(GameManager.instance.playerStats.zaporne)
+        {
+            GameObject gg = GameObject.Find("kamene2");
+            for (var i = gg.transform.childCount - 1; i >= 0; i--)
+            {
+                Object.Destroy(gg.transform.GetChild(i).gameObject);
+            }
+        }
 
         ////////// SAVED EQ
 
         if (GameManager.instance.playerStats.savedEq && GameManager.instance.level == 1)
         {
             SetUpThermo(GameManager.instance.playerStats.pociatocna);
+            zatvorky = new Dictionary<int, string>();
             InstantiateStones(GameManager.instance.playerStats.kamene, new List<string>());
             return GameManager.instance.playerStats.GetEquasion(1);
         }
@@ -423,14 +440,24 @@ public class BoardManager : MonoBehaviour
         else if (GameManager.instance.playerStats.savedEq2 && GameManager.instance.level == 2)
         {
             SetUpThermo(GameManager.instance.playerStats.pociatocna2);
+            zatvorky = GameManager.instance.playerStats.zatvorky;
             InstantiateStones(GameManager.instance.playerStats.kamene2, GameManager.instance.playerStats.znamienka2);
             return GameManager.instance.playerStats.GetEquasion(2);
         }
 
         else if (GameManager.instance.playerStats.savedEq3 && GameManager.instance.level == 3)
         {
+            /*
+            if(GameManager.instance.playerStats.level_3 == 2)
+            {
+                GameManager.instance.playerStats.savedEq3 = false;
+                ThirdLevelEquasion(true);
+                return "";
+            }
+            */
+
             SetUpThermo(GameManager.instance.playerStats.pociatocna3);
-            InstantiateStonesLVL3(GameManager.instance.playerStats.kamene3);
+            InstantiateStonesLVL3(GameManager.instance.playerStats.kameneNaPloche, GameManager.instance.playerStats.zaporne);
             //SetUpFinal(GameManager.instance.playerStats.finalna3);
             SetUpThermoLVL3(GameManager.instance.playerStats.finalna3);
             SetUpFinal(GameManager.instance.playerStats.finalna3);
@@ -448,6 +475,12 @@ public class BoardManager : MonoBehaviour
             if (GameManager.instance.level == 3) 
             {
                 //GameManager.instance.lvl3man.ClearAnswers();
+                if (GameManager.instance.playerStats.level_3 == 1)
+                {
+                    ThirdLevelEquasion(true);
+                    return "";
+                }
+
                 ThirdLevelEquasion();
                 return "";
             }
@@ -468,8 +501,9 @@ public class BoardManager : MonoBehaviour
 
 
 
-    public void ThirdLevelEquasion()
+    public void ThirdLevelEquasion(bool zaporne = false)
     {
+        //zaporne = true;                     //TODO po debugu vymazat
         List<int> list = new List<int>();
         List<int> kamene = new List<int>();
         List<List<int>> solved = new List<List<int>>();
@@ -483,7 +517,7 @@ public class BoardManager : MonoBehaviour
         int treti = Random.Range(2, 8);
         int vysledna = Random.Range(pociatocna, pociatocna + 20);
 
-        while (!ok)
+        if(!zaporne) while (!ok)
         {
             solved = new List<List<int>>();
             pociatocna = Random.Range(min, max + 1);
@@ -495,7 +529,7 @@ public class BoardManager : MonoBehaviour
             Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
 
             int target = vysledna - pociatocna;
-            List<List<int>> result = CombinationSum(new int[]{prvy,druhy,treti}, target);
+            List<List<int>> result = CombinationSum(new int[]{prvy,druhy,treti}, target, false);
             if (result.Count() < 3 || result.Count > 6)
             {
                 continue;
@@ -505,6 +539,31 @@ public class BoardManager : MonoBehaviour
                 ok = true;
                 solved = result;
                 kamene = new List<int> { prvy, druhy, treti };
+            }
+        }
+
+        else while (!ok)
+        {
+            solved = new List<List<int>>();
+            pociatocna = Random.Range(min, max + 1);
+            prvy = Random.Range(2, 9);                                                          //TODO skusit s 2 kamenmi
+            while (prvy == druhy || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
+            while (treti == druhy || treti == prvy) treti = -1 * Random.Range(2, 8);
+            while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20);    //TODO ZAPORNE CISLO
+
+            Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
+
+            int target = vysledna - pociatocna;
+            List<List<int>> result = CombinationSum(new int[] { prvy, druhy, treti }, target, true);         //druhy
+            if (result.Count() < 2 || result.Count > 6)
+            {
+                continue;
+            }
+            else if (result.Count() >= 2 && result.Count() <= 6)
+            {
+                ok = true;
+                solved = result;
+                kamene = MakeStones(result);
             }
         }
 
@@ -520,17 +579,19 @@ public class BoardManager : MonoBehaviour
         SetUpFinal(vysledna);
         SetUpThermo(pociatocna);
         SetUpSolutionsNumber(0,solved.Count());
-        InstantiateStonesLVL3(kamene);
+        InstantiateStonesLVL3(kamene, zaporne);
 
         //
 
         // SAVE EQ
 
         GameManager.instance.playerStats.kamene3 = kamene;
+        GameManager.instance.playerStats.kameneNaPloche = kamene;
         GameManager.instance.playerStats.solved = solved;
         GameManager.instance.playerStats.finalna3 = vysledna;
         GameManager.instance.playerStats.pociatocna3 = pociatocna;
         GameManager.instance.playerStats.savedEq3 = true;
+        GameManager.instance.playerStats.zaporne = zaporne;
         GameManager.instance.playerStats.answers = new List<List<int>>();
         GameManager.instance.playerStats.solutionsGot = 0;
         GameManager.instance.playerStats.solutionsAll = solved.Count();
@@ -542,9 +603,36 @@ public class BoardManager : MonoBehaviour
         //return pociatocna + "" + tmp + " = " + answer;
     }
 
-    private void InstantiateStonesLVL3(List<int> stones)
+    List<int> MakeStones(List<List<int>> s)
     {
-        kamene = GameObject.Find("kamene");
+        List<int> k = new List<int>();
+        foreach(List<int> v in s)
+        {
+            foreach(int w in v) k.Add(w);   
+        }
+
+        for(int i=0; i < k.Count; i++)
+        {
+            int tmp = k[i];
+            int ri = Random.Range(i, k.Count);
+            k[i] = k[ri];
+            k[ri] = tmp;
+        }
+
+        return k;
+    }
+
+    public void InstantiateStonesLVL3(List<int> stones, bool zaporne)
+    {
+        if (!zaporne)
+        {
+            kamene = GameObject.Find("kamene");
+        }
+        else 
+        {
+            kamene = GameObject.Find("kamene2");
+        }
+
         GameObject g;
 
         for (int i = 0; i < stones.Count; i++)
@@ -552,23 +640,23 @@ public class BoardManager : MonoBehaviour
 
             if (stones[i] < 0)
             {
-                g = Instantiate(drag_studeny);
+                g = (zaporne)? Instantiate(drag_studeny2):Instantiate(drag_studeny);
                 TextMeshProUGUI v = g.transform.Find("value").GetComponent<TextMeshProUGUI>();
                 v.text = (stones[i] == -1) ? "" : stones[i] * -1 + "";
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
-                g.name = "drag_studeny";
+                g.name = "drag_studeny2";
                 g.transform.localScale = new Vector3(1, 1, 1);
                 naPloche.Add(g);
             }
             else if (stones[i] != 0)
             {
-                g = Instantiate(drag_horuci);
+                g = (zaporne)? Instantiate(drag_horuci2) : Instantiate(drag_horuci);
                 TextMeshProUGUI v = g.transform.Find("value").GetComponent<TextMeshProUGUI>();
                 v.text = (stones[i] == 1) ? "" : stones[i] + "";
                 g.transform.SetParent(kamene.transform);
                 g.transform.SetAsLastSibling();
-                g.name = "drag_horuci";
+                g.name = "drag_horuci2";
                 g.transform.localScale = new Vector3(1, 1, 1);
                 naPloche.Add(g);
             }
@@ -665,31 +753,31 @@ public class BoardManager : MonoBehaviour
         return rank == 1;
     }
 
-    public static List<List<int>> CombinationSum(int[] nums, int target)
+    public static List<List<int>> CombinationSum(int[] nums, int target, bool depth)
     {
         List<List<int>> result = new List<List<int>>();
         Array.Sort(nums);
-        Backtrack(nums, target, 0, new List<int>(), result, 0);
+        Backtrack(nums, target, 0, new List<int>(), result, 0, depth);
         return result;
     }
 
-    private static void Backtrack(int[] nums, int target, int start, List<int> list, List<List<int>> result, int depth)
+    private static void Backtrack(int[] nums, int target, int start, List<int> list, List<List<int>> result, int depth, bool d)
     {
         if (target == 0)
         {
             result.Add(new List<int>(list));
         }
-        //if (depth >= 8) return;
+        if (depth >= 10 && d) return;
         else if (target > 0)
         {
             for (int i = start; i < nums.Length && nums[i] <= target; i++)
             {
-                if (nums[i] < 0)    //&& depth >= 8
+                if (nums[i] < 0 && (depth >= 10 && d))    //&& depth >= 8
                 {
                     continue;
                 }
                 list.Add(nums[i]);
-                Backtrack(nums, target - nums[i], i, list, result, depth + 1);
+                Backtrack(nums, target - nums[i], i, list, result, depth + 1, d);
                 list.RemoveAt(list.Count - 1);
             }
         }

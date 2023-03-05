@@ -66,7 +66,7 @@ public class LVL3Manager : MonoBehaviour
             int[] p = pole.ToArray();
             Array.Sort(p);
             holderBook.Add(p, h);
-            //Debug.Log(string.Join(",", p));
+            Debug.Log(string.Join(",", p));
             //znizit opacity kazdeho holdera na 0
             h.SetActive(false);
 

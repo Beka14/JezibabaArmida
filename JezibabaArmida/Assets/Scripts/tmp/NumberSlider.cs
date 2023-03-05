@@ -14,7 +14,7 @@ public class NumberSlider : MonoBehaviour
         slider.onValueChanged.AddListener(e => {
             t.text = slider.value + "";
         });
-        slider.value = Random.Range(-60, 100);
+        slider.value = Random.Range(0, 20);
         t.text = slider.value + "";
 
         //slider.minValue = -1 * (GameManager.instance.GetFinalValue() + Random.Range(3,18));
@@ -37,5 +37,12 @@ public class NumberSlider : MonoBehaviour
     {
         slider.value = i;
         t.text = slider.value + "";
+    }
+
+    public void SetMinMax(int max)
+    {
+        slider.minValue = max - Random.Range(10,26);
+        slider.maxValue = max + Random.Range(3, 19);
+        ChangeValue(0);
     }
 }

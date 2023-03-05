@@ -31,14 +31,17 @@ public class PlayerStats : MonoBehaviour
 
     public List<int> kamene2 = new List<int>();
     public List<string> znamienka2 = new List<string>();
+    public Dictionary<int, string> zatvorky = new Dictionary<int, string>();
     public string rovnica2;
     public int pociatocna2;
     public int finalna2;
 
 
     public List<int> kamene3 = new List<int>();
+    public List<int> kameneNaPloche = new List<int>();
     public List<List<int>> solved = new List<List<int>>();
     public List<List<int>> answers = new List<List<int>>();
+    public bool zaporne;
     public int solutionsAll;
     public int solutionsGot;
     public int pociatocna3;

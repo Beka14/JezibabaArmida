@@ -9,6 +9,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 {
     public Image image;
     [SerializeField] GameObject kamen;
+    [SerializeField] GameObject Kotol;
     public Transform parentAfterDrag;
     public bool wasInKotol = false;
     bool mozemHodit = false;
@@ -16,6 +17,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (Kotol == null) Kotol = GameObject.Find("Kotol");
         image.color = new Color(image.color.r, image.color.g, image.color.b, 1);
         int v = PlaygroundManager.instance.GetThermoValue();
         mozemHodit = (kamen.name == "studeny" && v == -60 && !wasInKotol) || (kamen.name == "horuci" && v == 100 && !wasInKotol);
@@ -65,14 +67,14 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             //Debug.Log(parentAfterDrag.name);
             //Debug.Log(transform.parent.name);
-            if (parentAfterDrag.name == "Kotol" && transform.parent.name == "Canvas" && wasInKotol)
+            if ((parentAfterDrag.name == "Kotol" || parentAfterDrag.name == "hod") && transform.parent.name == "Canvas" && wasInKotol)
             {
                 //Debug.Log("vyhod");
                 if (gameObject.name == "studeny") PlaygroundManager.instance.RemoveStone(kamen);
                 else PlaygroundManager.instance.RemoveStone(kamen);
                 Destroy(gameObject);
             }
-            else if (parentAfterDrag.name == "Kotol" && transform.parent.name == "Canvas")
+            else if ((parentAfterDrag.name == "Kotol" || parentAfterDrag.name == "hod") && transform.parent.name == "Canvas")
             {
                 //Debug.Log("prihod");
                 if (gameObject.name == "studeny") PlaygroundManager.instance.AddStone(kamen);
@@ -87,7 +89,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 Destroy(gameObject);
             }
 
-            transform.SetParent(parentAfterDrag);
+            transform.SetParent(Kotol.transform);       //parentAfterDrag
             image.raycastTarget = true;
             transform.localScale = new Vector3(1, 1, 1);
         }

@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour
         if (left == right)
         {
             List<int> gameObjects = new List<int>();        
-
+            
             GameObject g = GameObject.Find("Kotol_lvl3");
             for (var i = g.transform.childCount - 1; i >= 0; i--)
             {
@@ -130,17 +130,35 @@ public class GameManager : MonoBehaviour
                 //super, nemame este a objavila sa teraz aj sa zapocitali riesenia
                 UpdateSolutionsText();
                 StartCoroutine(ShowBubbleLVL3(0));
+
+                // ulozit lvl3.2 kamene na ploche
+
+                if (playerStats.zaporne)
+                {
+                    for (var i = gameObjects.Count - 1; i >= 0; i--)
+                    {
+                        playerStats.kameneNaPloche.Remove(gameObjects[i]);
+                    }
+                }
+
+                //
             }
 
             else
             {
                 //vypis ze to uz mame
+                if (playerStats.zaporne == true)
+                {
+                    //boardScript.SetUpThermo(playerStats.finalna3);
+                    boardScript.InstantiateStonesLVL3(gameObjects, true);
+                }
                 Debug.Log("uz som tam lol");
                 StartCoroutine(ShowBubbleLVL3(1));
 
             }
 
             boardScript.SetUpThermo(playerStats.pociatocna3);
+
         }
 
         //else StartCoroutine(ShowBubbleLVL3(4));
@@ -149,8 +167,10 @@ public class GameManager : MonoBehaviour
     int GetValueFromStone(GameObject kamen)
     {
         TextMeshProUGUI tmp = kamen.transform.Find("value").GetComponent<TextMeshProUGUI>();
+        int i = 1;
+        if (kamen.name == "drag_studeny" || kamen.name == "drag_studeny2") i = -1;
         Object.Destroy(kamen);
-        return Convert.ToInt32(tmp.text);
+        return (Convert.ToInt32(tmp.text) * i);
     }
 
     void UpdateSolutionsText()
@@ -166,12 +186,15 @@ public class GameManager : MonoBehaviour
         button.interactable = false;
         Color pred;
         Image farba;
+        Image image;
         Image sprava;
         if (i == 0)
         {
             farba = GameObject.Find("number_fill").GetComponent<Image>();
+            image = GameObject.Find("Image").GetComponent<Image>();
             pred = farba.color;
             farba.color = new Color(255,0,0,1);
+            image.color = new Color(255, 0, 0, 1);
 
             sprava = GameObject.Find("zla_sprava").GetComponent<Image>();
             sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 1);
@@ -180,8 +203,10 @@ public class GameManager : MonoBehaviour
         else
         {
             farba = GameObject.Find("number_fill").GetComponent<Image>();
+            image = GameObject.Find("Image").GetComponent<Image>();
             pred = farba.color;
             farba.color = new Color(0, 255, 0, 1);
+            image.color = new Color(0, 255, 0, 1);
 
             sprava = GameObject.Find("dobra_sprava").GetComponent<Image>();
             sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 1);
@@ -189,6 +214,7 @@ public class GameManager : MonoBehaviour
         }
         yield return new WaitForSeconds(2);
         farba.color = pred;
+        image.color = pred;
         sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 0);
         button.interactable = true;
     }
@@ -263,7 +289,7 @@ public class GameManager : MonoBehaviour
 
     public void AddStoneSlider(GameObject x)
     {
-        int e = (x.name == "drag_studeny")? -1:1;
+        int e = (x.name == "drag_studeny" || x.name == "drag_studeny2") ? -1:1;
         TextMeshProUGUI t = x.transform.Find("value").GetComponent<TextMeshProUGUI>();
         Slider prog = GameObject.Find("Slider").GetComponent<Slider>();
         prog.value += (t.text == "")? e*1:e*Convert.ToInt16(t.text);
@@ -272,7 +298,7 @@ public class GameManager : MonoBehaviour
 
     public void RemoveStoneSlider(GameObject x)
     {
-        int e = (x.name == "drag_studeny") ? -1:1;
+        int e = (x.name == "drag_studeny" || x.name == "drag_studeny2") ? -1:1;
         TextMeshProUGUI t = x.transform.Find("value").GetComponent<TextMeshProUGUI>();
         Slider prog = GameObject.Find("Slider").GetComponent<Slider>();
         prog.value += (t.text == "") ? -1*e : -1*e*Convert.ToInt16(t.text);

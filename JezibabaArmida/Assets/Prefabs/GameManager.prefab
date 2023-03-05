@@ -50,7 +50,6 @@ MonoBehaviour:
   playerStats: {fileID: 0}
   level: 0
   lvl3man: {fileID: 0}
-  holder: {fileID: 5800696778703096571, guid: fafe3f5a3ea43e34f94abcb5fc6cae22, type: 3}
 --- !u!114 &588874953701159473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,6 +71,8 @@ MonoBehaviour:
   endPar: {fileID: 1945433322448992671, guid: f03ef6c8b4a35734b9e8db5047b0bea4, type: 3}
   drag_studeny: {fileID: 1721418451570874405, guid: c4cd5f81d1fdad84f89fddfd3b0f2dba, type: 3}
   drag_horuci: {fileID: 7482252931305640255, guid: c504ed306fb9d354987decc6b4fbde8a, type: 3}
+  drag_studeny2: {fileID: 1587435509632744583, guid: e56036995ebac184997c8fc786d9fdbb, type: 3}
+  drag_horuci2: {fileID: 8153123073874917457, guid: 11b73866c878ef14f8195e3b11c36236, type: 3}
 --- !u!114 &1068449957
 MonoBehaviour:
   m_ObjectHideFlags: 0
