@@ -161,6 +161,11 @@ public class GameManager : MonoBehaviour
 
         }
 
+        if (playerStats.solutionsGot == playerStats.solutionsAll)
+        {
+            StartCoroutine(ShowBubbleLVL3(2));
+        }
+
         //else StartCoroutine(ShowBubbleLVL3(4));
     }
 
@@ -275,13 +280,14 @@ public class GameManager : MonoBehaviour
     {
         Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
         prog.value = (prog.value+1) % 10;
-        if(level == 1) playerStats.level_1 += 1;
-        else if(level == 2) playerStats.level_2 += 1;
-        else playerStats.level_3 += 1;
+        if(level == 1) playerStats.level_1 = (playerStats.level_1+1)%10;
+        else if(level == 2) playerStats.level_2 = (playerStats.level_2+1)%10;
+        else playerStats.level_3 = (playerStats.level_3 + 1) % 10;
     }
 
     public void SetProgressionSlider(int value)
     {
+        if (GameObject.Find("Progression") == null) return;
         Debug.Log("settujem");
         Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
         prog.value = value;

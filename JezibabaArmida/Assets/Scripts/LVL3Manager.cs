@@ -14,6 +14,7 @@ public class LVL3Manager : MonoBehaviour
     [SerializeField] GameObject horuci;
     [SerializeField] GameObject solvedScreen;
     [SerializeField] GameObject solved;
+    [SerializeField] GameObject reset_btn;
 
     [SerializeField] public List<List<int>> odpovede;
     private Dictionary<int[], GameObject> holderBook;
@@ -23,9 +24,29 @@ public class LVL3Manager : MonoBehaviour
         holderBook = new Dictionary<int[], GameObject>();
     }
 
+    public void TurnOnButton()
+    {
+        reset_btn.SetActive(true);
+        Image i = GameObject.Find("kamene2").GetComponent<Image>();
+        i.color = new Color(i.color.r,i.color.g,i.color.b,0.5f);
+    }
+
+    public void TurnOffButton()
+    {
+        reset_btn.SetActive(false);
+        Image i = GameObject.Find("kamene2").GetComponent<Image>();
+        i.color = new Color(i.color.r, i.color.g, i.color.b, 0f);
+    }
+
+    public void ResetStones()
+    {
+        Debug.Log("reset nijee este bye");
+    }
+
     public void SetUpAnswers(List<List<int>> objekt, List<List<int>> odpov)
     {
         odpovede = new List<List<int>>();
+        holderBook = new Dictionary<int[], GameObject>();
         ClearAnswers();
         foreach(List<int> o in objekt)
         {

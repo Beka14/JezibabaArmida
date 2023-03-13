@@ -67,7 +67,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             //Debug.Log(parentAfterDrag.name);
             //Debug.Log(transform.parent.name);
-            if ((parentAfterDrag.name == "Kotol" || parentAfterDrag.name == "hod") && transform.parent.name == "Canvas" && wasInKotol)
+            if (transform.parent.name == "Canvas" && wasInKotol) //(parentAfterDrag.name == "Kotol" || parentAfterDrag.name == "hod" || parentAfterDrag.name == "hod") && 
             {
                 //Debug.Log("vyhod");
                 if (gameObject.name == "studeny") PlaygroundManager.instance.RemoveStone(kamen);

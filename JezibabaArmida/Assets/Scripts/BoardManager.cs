@@ -44,12 +44,12 @@ public class BoardManager : MonoBehaviour
         //GetComponent<GameManager>().Init();
     }
     
-    public string FirstLevelEquasion(int pocet_kamenov)
+    public string FirstLevelEquasion(int mink, int maxk, int pocet_kamenov, bool zatvorka = false, int pocet_zatvorke = 2, bool minus = false, bool vymena_znam = false)
     {
         List<int> list = new List<int>();
         List<int> kamene = new List<int>();
-        int max = 48;
-        int min = 11;
+        int max = 68;
+        int min = 1;
         bool ok = false;
 
         vsetky = new List<int>();
@@ -57,22 +57,22 @@ public class BoardManager : MonoBehaviour
         zatvorky = new Dictionary<int, string>();
 
         int pociatocna = Random.Range(min, max + 1);
-        int studenyKamen = Random.Range(-5,-1); //studenyKamen = Random.Range(1, 5) * -1;
-        int horuciKamen = Random.Range(1, 5);
+        int studenyKamen = Random.Range(-maxk,-mink); //studenyKamen = Random.Range(1, 5) * -1;
+        int horuciKamen = Random.Range(mink, maxk);
         int vysledna = Random.Range(min, max + 1);
 
         while (!ok)
         {
-            pociatocna = Random.Range(min, max+1);
-            studenyKamen = Random.Range(-5,-1); //studenyKamen = Random.Range(1, 5) * -1;
-            horuciKamen = Random.Range(1, 5);
-            vysledna = Random.Range(min, max + 1);
+            pociatocna = Random.Range(-min, max+1);
+            while(studenyKamen==0) studenyKamen = Random.Range(-maxk, -mink); //studenyKamen = Random.Range(1, 5) * -1;
+            while(horuciKamen == 0 || horuciKamen == studenyKamen*-1) horuciKamen = Random.Range(mink, maxk+1);
+            vysledna = Random.Range(-min, max + 1);
 
-            for(int x=0; x < 1000; x++)
+            for(int x=1; x < 1000; x++)
             {
-                for(int y=0; y < 1000; y++)
+                for(int y=1; y < 1000; y++)
                 {
-                    if ((pociatocna + (horuciKamen * x) + (studenyKamen * y) == vysledna) && x + y <= pocet_kamenov && x != 0 && y != 0)
+                    if ((pociatocna + (horuciKamen * x) + (studenyKamen * y) == vysledna) && x + y == pocet_kamenov)
                     {
                         kamene = new List<int>();
                         ok = true;
@@ -88,10 +88,10 @@ public class BoardManager : MonoBehaviour
 
         int r = Random.Range(1,3);
         List<int> pole = new List<int>();
-        if (r % 2 == 0 && kamene.Count() > 3)
+        //zatvorky
+        if (kamene.Count() > 3 && zatvorka)
         {
-            //zatvorka
-            int z = Random.Range(2, kamene.Count()-1);
+            int z = Random.Range(pocet_zatvorke-2, pocet_zatvorke);
             for(int i = z; i >=0 ; i--)                      //for(int i = 0; i < z; i++)
             {
                 int x = Random.Range(0, kamene.Count() -1);
@@ -105,7 +105,7 @@ public class BoardManager : MonoBehaviour
         else
         {
             answer = pociatocna;
-            tmp = Stringify_lvl2(pole, kamene);
+            tmp = Stringify_lvl2(pole, kamene, minus, vymena_znam);
         } 
 
         //TODO 
@@ -186,11 +186,12 @@ public class BoardManager : MonoBehaviour
 
 
 
-    string Stringify_lvl2(List<int> a, List<int> b)
+    string Stringify_lvl2(List<int> a, List<int> b, bool minus, bool vymena)
     {
         int index = 0;
         string sb = "";
-        int r = Random.Range(1, b.Count()-1);
+        int r = (vymena)? Random.Range(1, b.Count()-1):0;
+        //vymenenie znamienok pre kamene
         for (int i = 0; i < r; i++)
         {
             sb += (b[i] < 0) ? "-" + -1 * b[i] : "+" + b[i];
@@ -200,11 +201,12 @@ public class BoardManager : MonoBehaviour
             index++;
         }
 
+        //a su kamene v zatvorke
         if (a.Count() != 0)
         {
             int x = 0;
             int p = Random.Range(1, 3);
-            if (p % 2 == 0)
+            if (p % 2 == 0 && minus)
             {
                 sb += "-(";
                 zatvorky.Add(index,"-(");
@@ -261,25 +263,7 @@ public class BoardManager : MonoBehaviour
                 sb += ")";
                 zatvorky.Add(index, ")");
             }
-            Debug.Log("------------3 " + string.Join(",", zatvorky));
-            /*
-            for (int i = 0; i < a.Count(); i++)
-            {
-                int z = Random.Range(1, 4);
-                if (z % 3 == 0)
-                {
-                    sb += (a[i] < 0) ? "-" + -1 * a[i] : "-" + a[i];
-                    vsetky.Add((a[i] < 0) ? -1 * a[i] : -1 * a[i]);
-                    znamienka.Add("-");
-                }
-                else {
-                    sb += (a[i] < 0) ? "-" + -1 * a[i] : "+" + a[i];
-                    vsetky.Add(a[i]);
-                    znamienka.Add((a[i] < 0) ? "+" : "+");
-                }   
-            }
-            sb += ")";
-            */
+            //Debug.Log("------------3 " + string.Join(",", zatvorky));
         }
 
         for (int i = r; i < b.Count(); i++)  //i < b.Count-r
@@ -323,6 +307,7 @@ public class BoardManager : MonoBehaviour
 
     public void InstantiateStones(List<int> stones, List<string> znam)     
     {
+        bool poZatvorke = false;
         int index = 0;
         kamene = GameObject.Find("kamene");
         if(GameManager.instance.level == 1) kamene.GetComponent<GridLayoutGroup>().spacing = new Vector2(15,0);
@@ -360,9 +345,14 @@ public class BoardManager : MonoBehaviour
                 {
                     g = Instantiate(plusPar);
                     g.transform.localScale = new Vector3(1, 1, 1);
+                    poZatvorke = true;
                 }
 
-                else if (zatvorky[index] == "-(") g = Instantiate(minusPar);
+                else if (zatvorky[index] == "-(") 
+                {
+                    g = Instantiate(minusPar);
+                    poZatvorke = true;
+                }
 
                 else g = Instantiate(endPar);
 
@@ -377,6 +367,10 @@ public class BoardManager : MonoBehaviour
                 //Debug.Log("------------ " + string.Join(",", znamienka));
                 if (znam[i+1] == "-")
                 {
+                    if (poZatvorke)
+                    {
+                        poZatvorke = false;
+                    }
                     g = Instantiate(minus);
                     g.transform.SetParent(kamene.transform);
                     g.transform.SetAsLastSibling();
@@ -384,6 +378,11 @@ public class BoardManager : MonoBehaviour
                 }
                 else
                 {
+                    if (poZatvorke)
+                    {
+                        poZatvorke = false;
+                        continue;
+                    }
                     g = Instantiate(plus);
                     g.transform.SetParent(kamene.transform);
                     g.transform.SetAsLastSibling();
@@ -400,30 +399,33 @@ public class BoardManager : MonoBehaviour
 
     public string SetUpBoard(int x)
     {
-        /*
-        for (int i=0; i<naPloche.Count; i++)
+        if(GameManager.instance.level != 3)
         {
-            Debug.Log("------REMOVE------ " + string.Join(",", naPloche));
-            //GameObject a = naPloche[0];
-            Destroy(naPloche[0]);
-        }
-        //Debug.Log(naPloche.Count);
-        naPloche = new List<GameObject>();
-        */
-        
-
-        GameObject g = GameObject.Find("kamene");
-        for (var i = g.transform.childCount - 1; i >= 0; i--)
-        {
-            Object.Destroy(g.transform.GetChild(i).gameObject);
+            GameObject g = GameObject.Find("kamene");
+            for (var i = g.transform.childCount - 1; i >= 0; i--)
+            {
+                Object.Destroy(g.transform.GetChild(i).gameObject);
+            }
         }
 
-        if(GameManager.instance.playerStats.zaporne)
+        else if(GameManager.instance.playerStats.zaporne)
         {
             GameObject gg = GameObject.Find("kamene2");
             for (var i = gg.transform.childCount - 1; i >= 0; i--)
             {
                 Object.Destroy(gg.transform.GetChild(i).gameObject);
+            }
+        }
+
+        else if(GameManager.instance.level == 3)
+        {
+            for(int i = 1; i <= 3; i++)
+            {
+                GameObject gg = GameObject.Find("kamene"+i+"i");
+                for (var ii = gg.transform.childCount - 1; ii >= 0; ii--)
+                {
+                    Object.Destroy(gg.transform.GetChild(ii).gameObject);
+                }
             }
         }
 
@@ -472,24 +474,80 @@ public class BoardManager : MonoBehaviour
 
         else
         {
-            if (GameManager.instance.level == 3) 
+            if (GameManager.instance.level == 3)
             {
+                int[] b = GetTaskBounds(GameManager.instance.level);
                 //GameManager.instance.lvl3man.ClearAnswers();
+                /*
                 if (GameManager.instance.playerStats.level_3 == 1)
                 {
                     ThirdLevelEquasion(true);
                     return "";
                 }
+                */
 
-                ThirdLevelEquasion();
+                ThirdLevelEquasion((b[0] == 1) ? true : false, (b[1] == 1) ? true : false, b[2], b[3], b[4], b[5]);
                 return "";
             }
 
-            else return FirstLevelEquasion(x);
+            else if(GameManager.instance.level == 2)
+            {
+                int[] b = GetTaskBounds(GameManager.instance.level);
+                return FirstLevelEquasion(b[0], b[1], b[2], (b[3]==1)?true:false, b[4], (b[5] == 1) ? true : false, (b[6] == 1) ? true : false);
+            }
+
+
+            else 
+            {
+                int[] b = GetTaskBounds(GameManager.instance.level);
+                return FirstLevelEquasion(b[0], b[1], b[2]);
+            }
         }
        
         ////////// SAVED EQ
         //return FirstLevelEquasion(x);           
+    }
+
+    private int[] GetTaskBounds(int level)
+    {
+        if(level == 1)
+        {
+            int prog = GameManager.instance.playerStats.level_1;
+            int x = (int)Math.Ceiling((double)((prog + 1) / 2));
+            int min = x;
+            int max = (x+3) - (x%3);
+            return new int[]{min,max,x+3};
+        }
+
+        if(level == 2)
+        {
+            int prog = GameManager.instance.playerStats.level_2;
+            int x = (int)Math.Ceiling((double)((prog + 1) / 2));
+            int min = x;
+            int max = x + 3;
+            //bool zatvorka = false, int pocet_zatvorke = 2, bool minus = false, bool vymena_znam = false
+            int zatvorka = (prog >= 5) ? 1 : 0;
+            int pocetzat = x - 1;
+            int minus = (prog >= 7) ? 1 : 0;
+            int vymen = (prog >= 3) ? 1 : 0;
+            int pocet = (prog >= 5) ? x + 2 : x + 3;
+            return new int[] { min, max, pocet, zatvorka, pocetzat, minus, vymen};
+        }
+
+        if(level == 3)
+        {
+            //bool zaporne = false, bool twoStones = false, int mink = 2, int maxk = 8, int mins = 3, int maxs = 6
+            int prog = GameManager.instance.playerStats.level_3;
+            int[] p = {3,3,4,4,5,5,6,6,6,6};
+            int x = (int)Math.Ceiling((double)((prog + 1) / 2));
+            int zaporne = (prog >= 4)? 1 : 0;
+            if (zaporne==1) GameManager.instance.lvl3man.TurnOnButton();
+            else GameManager.instance.lvl3man.TurnOffButton();
+            int two = (prog < 2 || (prog > 4 && prog < 8))? 1 : 0;
+            return new int[] {zaporne, two, 2, 8, p[prog], p[prog]};
+        }
+
+        return new int[] { 5, 10, 5 };
     }
 
     public int GetAnswer()
@@ -499,46 +557,45 @@ public class BoardManager : MonoBehaviour
         else return GameManager.instance.playerStats.pociatocna3;
     }
 
-
-
-    public void ThirdLevelEquasion(bool zaporne = false)
+    public void ThirdLevelEquasion(bool zaporne = false, bool twoStones = false, int mink = 2, int maxk = 8, int mins = 3, int maxs = 6)
     {
         //zaporne = true;                     //TODO po debugu vymazat
         List<int> list = new List<int>();
         List<int> kamene = new List<int>();
         List<List<int>> solved = new List<List<int>>();
-        int max = 80;
-        int min = 0;
+        int max = 68;
+        int min = 11;
         bool ok = false;
 
         int pociatocna = Random.Range(min, max + 1);
-        int prvy = Random.Range(2, 8);
-        int druhy = Random.Range(2, 8);
-        int treti = Random.Range(2, 8);
+        int prvy = Random.Range(mink, maxk);
+        int druhy = Random.Range(mink, maxk);
+        int treti = Random.Range(mink, maxk);
         int vysledna = Random.Range(pociatocna, pociatocna + 20);
 
         if(!zaporne) while (!ok)
         {
             solved = new List<List<int>>();
             pociatocna = Random.Range(min, max + 1);
-            prvy = Random.Range(2, 8);
-            while (prvy == druhy) druhy = Random.Range(2, 8);
-            while (treti == druhy || treti == prvy) treti = Random.Range(2, 8);
+            prvy = Random.Range(mink, maxk);
+            vysledna = Random.Range(pociatocna, pociatocna + 20);
+            while (prvy == druhy) druhy = Random.Range(mink, maxk);
+            while (treti == druhy || treti == prvy) treti = Random.Range(mink, maxk);
             while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20);    //TODO ZAPORNE CISLO
 
             Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
 
             int target = vysledna - pociatocna;
-            List<List<int>> result = CombinationSum(new int[]{prvy,druhy,treti}, target, false);
-            if (result.Count() < 3 || result.Count > 6)
+            List<List<int>> result = (twoStones)? CombinationSum(new int[]{druhy,treti}, target, false): CombinationSum(new int[] {prvy, druhy, treti }, target, false);
+            if (result.Count() < mins || result.Count > maxs)
             {
                 continue;
             }
-            else if (result.Count() >= 3 && result.Count() <= 6)
+            else if (result.Count() >= mins && result.Count() <= maxs && result.Count != 0)
             {
                 ok = true;
                 solved = result;
-                kamene = new List<int> { prvy, druhy, treti };
+                kamene = (twoStones)? new List<int> {druhy, treti }:new List<int> { prvy, druhy, treti };
             }
         }
 
@@ -546,20 +603,21 @@ public class BoardManager : MonoBehaviour
         {
             solved = new List<List<int>>();
             pociatocna = Random.Range(min, max + 1);
-            prvy = Random.Range(2, 9);                                                          //TODO skusit s 2 kamenmi
+            prvy = Random.Range(2, 9);
+            druhy = Random.Range(-5, 8);
+            treti = -1 * Random.Range(2, 8);        //TODO skusit s 2 kamenmi
             while (prvy == druhy || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
             while (treti == druhy || treti == prvy) treti = -1 * Random.Range(2, 8);
             while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20);    //TODO ZAPORNE CISLO
-
             Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
 
             int target = vysledna - pociatocna;
-            List<List<int>> result = CombinationSum(new int[] { prvy, druhy, treti }, target, true);         //druhy
-            if (result.Count() < 2 || result.Count > 6)
+            List<List<int>> result = (twoStones) ? CombinationSum(new int[] { prvy, treti }, target, true) : CombinationSum(new int[] { prvy, druhy, treti }, target, true);
+            if (result.Count() < 3 || result.Count > 6)
             {
                 continue;
             }
-            else if (result.Count() >= 2 && result.Count() <= 6)
+            else if (result.Count() >= 3 && result.Count() <= 6)
             {
                 ok = true;
                 solved = result;
@@ -637,6 +695,7 @@ public class BoardManager : MonoBehaviour
 
         for (int i = 0; i < stones.Count; i++)
         {
+            if(!zaporne) kamene = GameObject.Find("kamene"+(i+1)+"i");
 
             if (stones[i] < 0)
             {
@@ -675,82 +734,6 @@ public class BoardManager : MonoBehaviour
     {
         TextMeshProUGUI t = GameObject.Find("solutions").GetComponent<TextMeshProUGUI>();
         t.text = ii + "/" + i;
-    }
-
-    bool HasRealSolution(int a, double a1, double a2, double a3, double b)
-    {
-        double[][] matrix;
-        if(a3 != 0) matrix = new double[][] { new double[] { a1,a2,a3,b - a}, new double[] { 0,0,0,0}, new double[]{0,0,0,0}};
-        else{
-            // Create the augmented matrix without the third row
-            matrix = new double[][] { new double[] { a1, a2, b - a }, new double[] { 0, 0, 0 } };
-        }
-
-        // Reduce the matrix to row echelon form
-        for (int j = 0; j < 3; j++)
-        {
-            // Find a non-zero entry in the jth column
-            int i = j;
-            while (i < matrix.Count() && matrix[i][j] == 0)
-            {
-                i++;
-            }
-
-            if (i == matrix.Count() && matrix[i - 1][j] == 0)
-            {
-                // The matrix is already in row echelon form
-                break;
-            }
-
-            if (i != j)
-            {
-                // Swap rows i and j
-                double[] temp = matrix[i];
-                matrix[i] = matrix[j];
-                matrix[j] = temp;
-            }
-
-            // Divide the first row by the pivot element
-            double pivot = matrix[j][j];
-            matrix[j][j] = 1;
-            for (int k = j + 1; k < 4; k++)
-            {
-                matrix[j][k] /= pivot;
-            }
-
-            // Subtract a multiple of the first row from each subsequent row
-            for (i = j + 1; i < matrix.Count(); i++)
-            {
-                double factor = matrix[i][j];
-                matrix[i][j] = 0;
-                for (int k = j + 1; k < 4; k++)
-                {
-                    matrix[i][k] -= factor * matrix[j][k];
-                }
-            }
-        }
-
-        // Determine the rank of the matrix
-        int rank = 0;
-        for (int i = 0; i < matrix.Count(); i++)
-        {
-            bool nonZero = false;
-            for (int j = 0; j < 4; j++)
-            {
-                if (Math.Abs(matrix[i][j]) > 1e-9)
-                {
-                    nonZero = true;
-                    break;
-                }
-            }
-            if (nonZero)
-            {
-                rank++;
-            }
-        }
-
-        // Return true if the rank is 1, indicating a solution exists
-        return rank == 1;
     }
 
     public static List<List<int>> CombinationSum(int[] nums, int target, bool depth)

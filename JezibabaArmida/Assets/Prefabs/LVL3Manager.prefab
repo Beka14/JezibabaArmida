@@ -49,3 +49,4 @@ MonoBehaviour:
   horuci: {fileID: 8324733063615776881, guid: 3b4585872cac33b4eaf79d3e21da7c4a, type: 3}
   solvedScreen: {fileID: 0}
   solved: {fileID: 0}
+  reset_btn: {fileID: 0}
