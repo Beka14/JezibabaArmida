@@ -457,7 +457,8 @@ public class BoardManager : MonoBehaviour
                 return "";
             }
             */
-
+            if (GameManager.instance.playerStats.zaporne) GameManager.instance.lvl3man.TurnOnButton();
+            //else GameManager.instance.lvl3man.TurnOnButton();
             SetUpThermo(GameManager.instance.playerStats.pociatocna3);
             InstantiateStonesLVL3(GameManager.instance.playerStats.kameneNaPloche, GameManager.instance.playerStats.zaporne);
             //SetUpFinal(GameManager.instance.playerStats.finalna3);
@@ -560,6 +561,7 @@ public class BoardManager : MonoBehaviour
     public void ThirdLevelEquasion(bool zaporne = false, bool twoStones = false, int mink = 2, int maxk = 8, int mins = 3, int maxs = 6)
     {
         //zaporne = true;                     //TODO po debugu vymazat
+        //GameManager.instance.lvl3man.TurnOnButton();
         List<int> list = new List<int>();
         List<int> kamene = new List<int>();
         List<List<int>> solved = new List<List<int>>();
@@ -606,8 +608,8 @@ public class BoardManager : MonoBehaviour
             prvy = Random.Range(2, 9);
             druhy = Random.Range(-5, 8);
             treti = -1 * Random.Range(2, 8);        //TODO skusit s 2 kamenmi
-            while (prvy == druhy || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
-            while (treti == druhy || treti == prvy) treti = -1 * Random.Range(2, 8);
+            while (prvy == druhy || prvy == druhy*-1 || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
+            while (treti == druhy || treti*-1 == prvy) treti = -1 * Random.Range(2, 8);
             while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20);    //TODO ZAPORNE CISLO
             Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
 
@@ -643,7 +645,8 @@ public class BoardManager : MonoBehaviour
 
         // SAVE EQ
 
-        GameManager.instance.playerStats.kamene3 = kamene;
+        GameManager.instance.playerStats.kamene3 = new List<int>();
+        GameManager.instance.playerStats.kamene3.AddRange(kamene);
         GameManager.instance.playerStats.kameneNaPloche = kamene;
         GameManager.instance.playerStats.solved = solved;
         GameManager.instance.playerStats.finalna3 = vysledna;
@@ -689,6 +692,8 @@ public class BoardManager : MonoBehaviour
         else 
         {
             kamene = GameObject.Find("kamene2");
+            Image im = kamene.GetComponent<Image>();
+            im.color = new Color(im.color.r, im.color.g, im.color.b, 0.5f);
         }
 
         GameObject g;
@@ -730,7 +735,7 @@ public class BoardManager : MonoBehaviour
         t.text = i + "";
     }
 
-    void SetUpSolutionsNumber(int ii, int i)
+    public void SetUpSolutionsNumber(int ii, int i)
     {
         TextMeshProUGUI t = GameObject.Find("solutions").GetComponent<TextMeshProUGUI>();
         t.text = ii + "/" + i;

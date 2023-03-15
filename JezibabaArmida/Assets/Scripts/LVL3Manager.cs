@@ -40,7 +40,22 @@ public class LVL3Manager : MonoBehaviour
 
     public void ResetStones()
     {
-        Debug.Log("reset nijee este bye");
+        foreach (int[] i in holderBook.Keys)
+        {
+            holderBook[i].SetActive(false);
+        }
+        GameObject gg = GameObject.Find("kamene2");
+        for (var i = gg.transform.childCount - 1; i >= 0; i--)
+        {
+            Object.Destroy(gg.transform.GetChild(i).gameObject);
+        }
+        GameManager.instance.playerStats.answers = new List<List<int>>();
+        odpovede = new List<List<int>>();
+        GameManager.instance.boardScript.InstantiateStonesLVL3(GameManager.instance.playerStats.kamene3,true);
+        GameManager.instance.playerStats.solutionsGot = 0;
+        GameManager.instance.boardScript.SetUpSolutionsNumber(0, GameManager.instance.playerStats.solutionsAll);
+        GameManager.instance.playerStats.kameneNaPloche = new List<int>();
+        GameManager.instance.playerStats.kameneNaPloche.AddRange(GameManager.instance.playerStats.kamene3);
     }
 
     public void SetUpAnswers(List<List<int>> objekt, List<List<int>> odpov)

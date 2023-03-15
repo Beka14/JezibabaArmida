@@ -66,7 +66,7 @@ public class DragItemLVL3 : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         {
             //Debug.Log(parentAfterDrag.name);
             //Debug.Log(transform.parent.name);
-            if ((parentAfterDrag.name == "Kotol_lvl3" || parentAfterDrag.name == "kamene" || parentAfterDrag.name == "hod") && transform.parent.name == "Canvas" && wasInKotol)
+            if (transform.parent.name == "Canvas" && wasInKotol) //(parentAfterDrag.name == "Kotol_lvl3" || parentAfterDrag.name == "kamene" || parentAfterDrag.name == "hod") && 
             {
                 //Debug.Log("vyhod");
                 if (gameObject.name == "drag_studeny") GameManager.instance.RemoveStoneSlider(kamen);

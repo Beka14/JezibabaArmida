@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
-    private BoardManager boardScript;
+    public BoardManager boardScript;
     [HideInInspector] public PlayerStats playerStats;
     public int level = 0;
     private TextMeshProUGUI t;
