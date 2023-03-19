@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,7 @@ public class BoardManager : MonoBehaviour
     GameObject thermometer;
     Thermometer thermoScript;
     NumberSlider numberSlider;
+    Generators generators;
 
     int answer;
 
@@ -41,9 +43,10 @@ public class BoardManager : MonoBehaviour
         thermometer = GameObject.Find("Slider");
         numberSlider = GameObject.Find("Numbers").GetComponent<NumberSlider>();
         if(TryGetComponent<Thermometer>(out Thermometer thermoScript)) thermoScript = thermometer.GetComponent<Thermometer>();
+        generators = gameObject.GetComponent<Generators>();
         //GetComponent<GameManager>().Init();
     }
-    
+
     public string FirstLevelEquasion(int mink, int maxk, int pocet_kamenov, bool zatvorka = false, int pocet_zatvorke = 2, bool minus = false, bool vymena_znam = false)
     {
         List<int> list = new List<int>();
@@ -55,12 +58,12 @@ public class BoardManager : MonoBehaviour
         vsetky = new List<int>();
         znamienka = new List<string>();
         zatvorky = new Dictionary<int, string>();
-
+        
         int pociatocna = Random.Range(min, max + 1);
         int studenyKamen = Random.Range(-maxk,-mink); //studenyKamen = Random.Range(1, 5) * -1;
         int horuciKamen = Random.Range(mink, maxk);
         int vysledna = Random.Range(min, max + 1);
-
+        
         while (!ok)
         {
             pociatocna = Random.Range(-min, max+1);
@@ -86,6 +89,23 @@ public class BoardManager : MonoBehaviour
             }
         }
 
+        if (generators==null) generators = gameObject.GetComponent<Generators>();
+        Debug.Log(pocet_kamenov + " " + mink + " " + maxk);
+        //List<List<int>> gen = generators.FirstLevelGenerator(pocet_kamenov, mink+1, maxk);
+        //generators.HelpMe(pocet_kamenov);
+        List<List<int>> gen = generators.GenerateFirstDiophine(pocet_kamenov, mink, maxk);
+
+        if (gen[0][0] != -100)
+        {
+            //Debug.Log("KAMENE -100 -100 " + string.Join(",", gen[0]));
+            
+            vysledna = gen[1][1];
+            pociatocna = gen[1][0];
+            kamene = new List<int>();
+            kamene.AddRange(gen[0]);
+            answer = vysledna;
+        }
+        
         int r = Random.Range(1,3);
         List<int> pole = new List<int>();
         //zatvorky
@@ -515,8 +535,8 @@ public class BoardManager : MonoBehaviour
         {
             int prog = GameManager.instance.playerStats.level_1;
             int x = (int)Math.Ceiling((double)((prog + 1) / 2));
-            int min = x;
-            int max = (x+3) - (x%3);
+            int min = 1+x;
+            int max = 1+(x+3) - (x%3);
             return new int[]{min,max,x+3};
         }
 
@@ -769,5 +789,212 @@ public class BoardManager : MonoBehaviour
                 list.RemoveAt(list.Count - 1);
             }
         }
+    }
+
+    public List<List<int>> GenerateFirstDiophine(int stonesCount, int minS, int maxS)
+    {
+        int firstTemp;
+        int cold = 0;
+        int hot = 0;
+        int finalTemp = 0;
+
+        firstTemp = Random.Range(1,68);
+
+        List<int[]> pocty = SplitNumber(stonesCount);
+        int r = Random.Range(0, pocty.Count);
+        cold = pocty[r][0];
+        hot = pocty[r][1];
+
+        finalTemp = MakeVysledna(firstTemp, Gcd(cold, hot));
+        int fin = finalTemp - firstTemp;
+
+        int[] p = FindLowestXY(cold, hot, fin);
+        int[] x = Generate2(cold, hot, p[0], p[1], minS, maxS);
+        int index = 0;
+        while (x[0] == -100 && index < 30)
+        {
+            index++;
+            firstTemp = Random.Range(1,68);
+            r = Random.Range(0, pocty.Count);
+            cold = pocty[r][0];
+            hot = pocty[r][1];
+
+            finalTemp = MakeVysledna(firstTemp, Gcd(cold, hot));
+            fin = finalTemp - firstTemp;
+            p = FindLowestXY(cold, hot, fin);
+            x = Generate2(cold, hot, p[0], p[1], minS, maxS);
+            if (x[0] != -100) break;
+        }
+        Debug.Log("-------------------------");
+        Debug.Log(x[0] + " " + x[1]);
+        Debug.Log("-------------------------");
+
+        List<int> k = new List<int>();
+        for (int i = 0; i < hot; i++) k.Add(x[1]);
+        for (int j = 0; j < cold; j++) k.Add(x[0]);
+
+        return new List<List<int>>() {k, new List<int> {firstTemp, finalTemp} };
+    }
+
+    public int[] Generate(int a, int b, int x0, int y0, int min, int max)
+    {
+        int d = Gcd(a, b);
+        int t = 0;
+        while (true)
+        {
+            if (x0 <= max && y0 <= max && x0 >= -min && y0 >= -min && ((x0 > 0 && y0 < 0) || (x0 < 0 && y0 > 0)))
+            {   //x0 + y0 == h && x0 != 0 && y0 != 0
+                return new int[] { x0, y0 };
+            }
+            else
+            {
+                int x = x0 + (b / d) * (t + 1);
+                int y = y0 - (a / d) * (t + 1);
+                if (x0 <= max && y0 <= max && x0 >= -min && y0 >= -min && ((x > 0 && y < 0) || (x < 0 && y > 0)))
+                {
+                    x0 = x;
+                    y0 = y;
+                }
+                else
+                {
+                    x = x0 + (b / d) * (t - 1);
+                    y = y0 - (a / d) * (t - 1);
+                    if (x0 <= max && y0 <= max && x0 >= -min && y0 >= -min && ((x > 0 && y < 0) || (x < 0 && y > 0)))
+                    {
+                        x0 = x;
+                        y0 = y;
+                    }
+                    else
+                    {
+                        return new int[] { -100, -100 };
+                    }
+                }
+            }
+            t++;
+        }
+    }
+
+    public int[] Generate2(int a, int b, int x0, int y0, int min, int max)
+    {
+        int d = Gcd(a, b);
+        int t = 0;
+        while (true)
+        {
+            if (CheckMinMax(x0,y0, min, max))
+            {   //x0 + y0 == h && x0 != 0 && y0 != 0
+                return new int[] { x0, y0 };
+            }
+            else
+            {
+                int x = x0 + (b / d) * (t + 1);
+                int y = y0 - (a / d) * (t + 1);
+                if (CheckMinMax(x, y, min, max))
+                {
+                    x0 = x;
+                    y0 = y;
+                }
+                else
+                {
+                    x = x0 + (b / d) * (t - 1);
+                    y = y0 - (a / d) * (t - 1);
+                    if (CheckMinMax(x, y, min, max))
+                    {
+                        x0 = x;
+                        y0 = y;
+                    }
+                    else if(t >= 5)         //if(t >= 5)
+                    {
+                        return new int[] { -100, -100 };
+                    }
+                }
+            }
+            t++;
+        }
+    }
+
+    public int[] FindLowestXY(int a, int b, int c)
+    {
+        int[] vals = ExtendedEuclidean(a, b);
+        int d = vals[0];
+        int p = vals[1];
+        int q = vals[2];
+        if (c % d != 0)
+        {
+            //System.out.println("no integer solutions exist");
+            return new int[] { -100, -100 };
+        }
+        int x0 = p * (c / d);
+        int y0 = q * (c / d);
+        return new int[] { x0, y0 };
+    }
+
+    public int[] ExtendedEuclidean(int a, int b)
+    {
+        if (b == 0)
+        {
+            return new int[] { a, 1, 0 };
+        }
+        int[] vals = ExtendedEuclidean(b, a % b);
+        int d = vals[0];
+        int p = vals[2];
+        int q = vals[1] - (a / b) * vals[2];
+        return new int[] { d, p, q };
+    }
+
+    public int Gcd(int a, int b)
+    {
+        if (b == 0)
+        {
+            return a;
+        }
+        return Gcd(b, a % b);
+    }
+
+    public int MakeVysledna(int firstTemp, int d)
+    {
+        int vysledna = Random.Range(firstTemp, firstTemp+30);
+        int fin = vysledna - firstTemp;
+        while (fin % d != 0 || vysledna == firstTemp)
+        {
+            vysledna = Random.Range(firstTemp, firstTemp + 30);
+            fin = vysledna - firstTemp;
+        }
+        return vysledna;
+    }
+
+    public List<int[]> SplitNumber(int n)
+    {
+        List<int[]> l = new List<int[]>();
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (i + j == n)
+                {
+                    int[] x = new int[] { i, j };
+                    Array.Sort(x);
+                    if (!l.Contains(x))
+                    {
+                        l.Add(x);
+                        //System.out.println(x[0] + " " + x[1]);
+                    }
+                }
+            }
+        }
+        return l;
+    }
+
+    public bool CheckMinMax(int x, int y, int min, int max)
+    {
+        int[] p = new int[] { x, y };
+        Array.Sort(p);
+        x = p[0];
+        y = p[1];
+        if(x <= -min && x >= -max && y >= min && y <= max)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

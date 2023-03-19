@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 588874953701159475}
   - component: {fileID: 588874953701159474}
   - component: {fileID: 588874953701159473}
-  - component: {fileID: 1068449957}
   - component: {fileID: 1566774427}
+  - component: {fileID: 6505467261317120507}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d184fb68d791ff540b706e20498cdb56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boardScript: {fileID: 0}
   playerStats: {fileID: 0}
   level: 0
   lvl3man: {fileID: 0}
@@ -73,18 +74,6 @@ MonoBehaviour:
   drag_horuci: {fileID: 7482252931305640255, guid: c504ed306fb9d354987decc6b4fbde8a, type: 3}
   drag_studeny2: {fileID: 1587435509632744583, guid: e56036995ebac184997c8fc786d9fdbb, type: 3}
   drag_horuci2: {fileID: 8153123073874917457, guid: 11b73866c878ef14f8195e3b11c36236, type: 3}
---- !u!114 &1068449957
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 588874953701159472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 066ab9c3e6d378f4b8b96f638a94fd15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1566774427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,7 +103,21 @@ MonoBehaviour:
   pociatocna2: 0
   finalna2: 0
   kamene3: 
+  kameneNaPloche: 
+  zaporne: 0
   solutionsAll: 0
   solutionsGot: 0
   pociatocna3: 0
   finalna3: 0
+--- !u!114 &6505467261317120507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 588874953701159472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f983a198e27a4c446948d015c3bd9509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
