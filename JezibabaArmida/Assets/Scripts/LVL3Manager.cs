@@ -134,11 +134,6 @@ public class LVL3Manager : MonoBehaviour
             //znizit opacity kazdeho holdera na 0
             h.SetActive(false);
 
-            //foreach (List<int> saved in odpov)
-            //{
-            // ContainsAnswer(saved);
-            //}
-
             if(GameManager.instance.level==3) GameManager.instance.playerStats.solved.Add(p.ToList<int>());
             else GameManager.instance.playerStats.solved4.Add(p.ToList<int>());
         }
@@ -151,8 +146,7 @@ public class LVL3Manager : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         holderBook = new Dictionary<int[], GameObject>();
-        //ClearAnswers();
-        //Debug.Log(objekt.Count() + " odppved count: " + odpov.Count());
+        ;
         foreach (List<int> o in objekt)
         {
             List<int> pole = new List<int>();
@@ -192,12 +186,9 @@ public class LVL3Manager : MonoBehaviour
             int[] p = pole.ToArray();
             Array.Sort(p);
             holderBook.Add(p, h);
-            //Debug.Log(string.Join(",", p));
-            //znizit opacity kazdeho holdera na 0
             h.SetActive(false);
         }
 
-        //odpovede = odpov;
         odpovede = new List<List<int>>();
 
         foreach (List<int> saved in odpov)
@@ -226,19 +217,17 @@ public class LVL3Manager : MonoBehaviour
         Array.Sort(p);
         bool obsahuje = false;
 
-        foreach (List<int> i in odpovede)                                           //TODO OPRAVIT aby nebol for loop
+        foreach (List<int> i in odpovede)                                           
         {
             if (string.Join(",", i) == string.Join(",", p)) obsahuje = true;
         }
 
-        foreach (int[] k in holderBook.Keys)                                 //TODO OPRAVIT aby nebol for loop
+        foreach (int[] k in holderBook.Keys)                              
         {
             if ((string.Join(",", p) == string.Join(",", k)) && !obsahuje)
             {
-                //Debug.Log("NACHADZA SA TU KLUC");
                 holderBook[k].SetActive(true);
                 odpovede.Add(k.ToList<int>());
-                //Debug.Log(string.Join(" -- ", k.ToList<int>()));
                 if(GameManager.instance.level == 3 && !GameManager.instance.playerStats.answers.Contains(odpoved)) GameManager.instance.playerStats.answers.Add(odpoved);
                 else if (GameManager.instance.level == 4 && !GameManager.instance.playerStats.answers4.Contains(odpoved)) GameManager.instance.playerStats.answers4.Add(odpoved);
                 return true;

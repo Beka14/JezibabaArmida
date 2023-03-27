@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public PlayerStats playerStats;
     public int level = 0;
     private TextMeshProUGUI t;
-    private TextMeshProUGUI input;
     private int gotSolutions;
     private int allSolutions;
 
@@ -26,18 +25,15 @@ public class GameManager : MonoBehaviour
         if(instance == null) instance = this;
         else Destroy(gameObject);
 
-        //dolezite = 0;
-
-        //if(gameObject.TryGetComponent<BoardManager>(out BoardManager boardScript)) boardScript = gameObject.GetComponent<BoardManager>();
         DontDestroyOnLoad(gameObject);
+
         gameObject.name = "GameManager";
-        //SceneManager.LoadScene(0);
     }
 
     private void Start()
     {
         Debug.Log("--------------- STARTING ---------------");
-        playerStats = GetComponent<PlayerStats>();
+        playerStats = gameObject.GetComponent<PlayerStats>();
         boardScript = gameObject.GetComponent<BoardManager>();
     }
 
@@ -45,8 +41,6 @@ public class GameManager : MonoBehaviour
     {
         t = GameObject.Find("txt").GetComponent<TextMeshProUGUI>();
         boardScript = gameObject.GetComponent<BoardManager>();
-        //input = GameObject.Find("Text").GetComponent<TextMeshProUGUI>();
-        //boardScript.Init();
         t.text = boardScript.SetUpBoard();
     }
 
@@ -57,16 +51,8 @@ public class GameManager : MonoBehaviour
         boardScript.SetUpBoard();
     }
 
-    public void InitLVL4()
-    {
-        //boardScript = gameObject.GetComponent<BoardManager>();
-        lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
-        boardScript.SetUpBoard();
-    }
-
     public void InfineSolutions()
     {
-        Debug.Log("INFINE");
         StartCoroutine(ShowBubbleLVL3(2));
         playerStats.savedEq4 = false;
         playerStats.infine = false;
@@ -77,7 +63,6 @@ public class GameManager : MonoBehaviour
 
     public void NoSolutions()
     {
-        Debug.Log("NO SOLUTIONS");
         StartCoroutine(ShowBubbleLVL3(2));
         playerStats.savedEq4 = false;
         playerStats.noSolutions = false;
@@ -90,7 +75,7 @@ public class GameManager : MonoBehaviour
     {
         int right = boardScript.GetAnswer();     
         int left = GetInput();
-        Debug.Log(right + " == " + left);
+        //Debug.Log(right + " == " + left);
         if(level == 2 || level == 1)
         {
             if (right == left)
@@ -124,7 +109,6 @@ public class GameManager : MonoBehaviour
                 //
                 UpdateProgressionSlider();
                 boardScript.SetUpBoard();
-                //UpdateProgressionSlider();
             }
             else
             {
@@ -139,11 +123,10 @@ public class GameManager : MonoBehaviour
         if(lvl3man == null) lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
         gotSolutions = (level == 3)? playerStats.solutionsGot : playerStats.solutionsGot4;
         allSolutions = (level == 3) ? playerStats.solutionsAll : playerStats.solutionsAll4;
-        //boardScript = gameObject.GetComponent<BoardManager>();
         int right = (int)GameObject.Find("Slider").GetComponent<Slider>().value;
         int left = GetInput();
-        Debug.Log(left + " == " + right);
-        Debug.Log(gotSolutions + " / " + allSolutions);
+        //Debug.Log(left + " == " + right);
+        //Debug.Log(gotSolutions + " / " + allSolutions);
 
         if (gotSolutions == allSolutions)
         {
@@ -191,7 +174,7 @@ public class GameManager : MonoBehaviour
                     //boardScript.SetUpThermo(playerStats.finalna3);
                     boardScript.InstantiateStonesLVL3(gameObjects, true);
                 }
-                Debug.Log("uz som tam lol");
+                //Debug.Log("uz som tam lol");
                 StartCoroutine(ShowBubbleLVL3(1));
 
             }
@@ -205,7 +188,6 @@ public class GameManager : MonoBehaviour
             StartCoroutine(ShowBubbleLVL3(2));
         }
 
-        //else StartCoroutine(ShowBubbleLVL3(4));
     }
 
     int GetValueFromStone(GameObject kamen)
@@ -335,7 +317,6 @@ public class GameManager : MonoBehaviour
     public void SetProgressionSlider(int value)
     {
         if (GameObject.Find("Progression") == null) return;
-        Debug.Log("settujem");
         Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
         prog.value = value;
     }
@@ -375,15 +356,10 @@ public class GameManager : MonoBehaviour
             level = lvl;
             Init();
         }
-        else if(lvl == 3)
+        else if(lvl == 3 || lvl == 4)
         {
             level = lvl;
             InitLVL3();
-        }
-        else if(lvl == 4)
-        {
-            level = lvl;
-            InitLVL4();
         }
     }
 

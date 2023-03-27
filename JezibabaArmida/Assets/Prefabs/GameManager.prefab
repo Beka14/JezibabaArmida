@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 588874953701159473}
   - component: {fileID: 1566774427}
   - component: {fileID: 6505467261317120507}
+  - component: {fileID: 2833452945128290405}
+  - component: {fileID: 2084534328}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -89,10 +91,12 @@ MonoBehaviour:
   level_1: 0
   level_2: 0
   level_3: 0
+  level_4: 0
   level: 0
   savedEq: 0
   savedEq2: 0
   savedEq3: 0
+  savedEq4: 0
   kamene: 
   rovnica: 
   pociatocna: 0
@@ -109,6 +113,14 @@ MonoBehaviour:
   solutionsGot: 0
   pociatocna3: 0
   finalna3: 0
+  kamene4: 
+  kameneNaPloche4: 
+  solutionsAll4: 0
+  solutionsGot4: 0
+  pociatocna4: 0
+  finalna4: 0
+  infine: 0
+  noSolutions: 0
 --- !u!114 &6505467261317120507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,5 +131,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f983a198e27a4c446948d015c3bd9509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2833452945128290405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 588874953701159472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e59880cef3d17d4087abe9f8d2fa8f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2084534328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 588874953701159472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3c2b9844c71eb54cb38685e7c4b3dcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

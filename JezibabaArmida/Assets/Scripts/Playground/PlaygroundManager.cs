@@ -8,7 +8,6 @@ public class PlaygroundManager : MonoBehaviour
 {
     public static PlaygroundManager instance = null;
     [SerializeField] GameObject kotol;
-    Kotol kotolScript;
     Thermometer thermometer;
 
     List<GameObject> kamene = new List<GameObject>();
@@ -22,7 +21,6 @@ public class PlaygroundManager : MonoBehaviour
         if (instance == null) instance = this;
         else Destroy(gameObject);
 
-        kotolScript = GetComponent<Kotol>();
         thermometer = GetComponent<Thermometer>();
 
         RectTransform rc = kotol.GetComponent<RectTransform>();

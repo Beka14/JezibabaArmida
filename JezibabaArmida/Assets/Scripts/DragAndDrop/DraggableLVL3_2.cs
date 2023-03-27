@@ -56,14 +56,14 @@ public class DraggableLVL3_2 : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             //Debug.Log(parentAfterDrag.name);
             //Debug.Log(transform.parent.name);
-            if ((parentAfterDrag.name == "Kotol_lvl3" || parentAfterDrag.name == "hod") && transform.parent.name == "Canvas" && wasInKotol)
+            if (transform.parent.name == "Canvas" && wasInKotol) //(parentAfterDrag.name == "Kotol_lvl3" || parentAfterDrag.name == "hod") && 
             {
                 //Debug.Log("vyhod");
                 GameManager.instance.RemoveStoneSlider(kamen);
                 kamen.transform.SetParent(kamene.transform);
                 //Destroy(gameObject);
             }
-            else if ((parentAfterDrag.name == "Kotol_lvl3" || parentAfterDrag.name == "hod") && transform.parent.name == "Canvas" && !wasInKotol)
+            else if (transform.parent.name == "Canvas" && !wasInKotol)
             {
                 //Debug.Log("prihod");
                 GameManager.instance.AddStoneSlider(kamen);
