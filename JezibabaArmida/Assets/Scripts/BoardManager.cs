@@ -36,6 +36,8 @@ public class BoardManager : MonoBehaviour
     List<string> znamienka = new List<string>();
     Dictionary<int, string> zatvorky = new Dictionary<int, string>();
 
+    List<List<int>> zasobnik = new List<List<int>>(); 
+
     private void Start()
     {
         //Debug.Log("*************boardSCRIPT START**************");
@@ -95,7 +97,7 @@ public class BoardManager : MonoBehaviour
         //generators.HelpMe(pocet_kamenov);
         List<List<int>> gen = generators.GenerateFirstDiophine(pocet_kamenov, mink, maxk);
 
-        if (gen[0][0] != -100)
+        if (gen[0][0] != -100 && !ContainsItem(gen[0]))
         {
             //Debug.Log("KAMENE -100 -100 " + string.Join(",", gen[0]));
             
@@ -105,6 +107,9 @@ public class BoardManager : MonoBehaviour
             kamene.AddRange(gen[0]);
             answer = vysledna;
         }
+
+        //if (ContainsItem(kamene)) Debug.Log("ROVNAKE");
+        zasobnik.Add(kamene);
         
         int r = Random.Range(1,3);
         List<int> pole = new List<int>();
@@ -165,6 +170,15 @@ public class BoardManager : MonoBehaviour
 
         Debug.Log("POROVNANIE: poc: " + vysledna + " answ: " + answer);
         return pociatocna + "" + tmp + " = " + answer; 
+    }
+
+    bool ContainsItem(List<int> z)
+    {
+        foreach (List<int> i in zasobnik)
+        {
+            if(string.Join(",", i) == string.Join(",", z)) return true;
+        }
+        return false;
     }
 
     string Stringify(List<int> a, List<int> b)
@@ -417,35 +431,30 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public string SetUpBoard(int x)
+    public string SetUpBoard()
     {
-        if(GameManager.instance.level != 3)
+        if(GameManager.instance.level != 3 && GameManager.instance.level != 4)
         {
-            GameObject g = GameObject.Find("kamene");
-            for (var i = g.transform.childCount - 1; i >= 0; i--)
-            {
-                Object.Destroy(g.transform.GetChild(i).gameObject);
-            }
+            GameManager.instance.DeleteStonesFromKotol("kamene");
         }
 
         else if(GameManager.instance.playerStats.zaporne)
         {
-            GameObject gg = GameObject.Find("kamene2");
-            for (var i = gg.transform.childCount - 1; i >= 0; i--)
-            {
-                Object.Destroy(gg.transform.GetChild(i).gameObject);
-            }
+            GameManager.instance.DeleteStonesFromKotol("kamene2");
         }
 
-        else if(GameManager.instance.level == 3)
+        else if(GameManager.instance.level == 3 || GameManager.instance.level == 4)
         {
             for(int i = 1; i <= 3; i++)
             {
+                /*
                 GameObject gg = GameObject.Find("kamene"+i+"i");
                 for (var ii = gg.transform.childCount - 1; ii >= 0; ii--)
                 {
                     Object.Destroy(gg.transform.GetChild(ii).gameObject);
                 }
+                */
+                GameManager.instance.DeleteStonesFromKotol("kamene" + i + "i");
             }
         }
 
@@ -469,14 +478,6 @@ public class BoardManager : MonoBehaviour
 
         else if (GameManager.instance.playerStats.savedEq3 && GameManager.instance.level == 3)
         {
-            /*
-            if(GameManager.instance.playerStats.level_3 == 2)
-            {
-                GameManager.instance.playerStats.savedEq3 = false;
-                ThirdLevelEquasion(true);
-                return "";
-            }
-            */
             if (GameManager.instance.playerStats.zaporne) GameManager.instance.lvl3man.TurnOnButton();
             //else GameManager.instance.lvl3man.TurnOnButton();
             SetUpThermo(GameManager.instance.playerStats.pociatocna3);
@@ -493,21 +494,34 @@ public class BoardManager : MonoBehaviour
             return "";
         }
 
+        else if (GameManager.instance.playerStats.savedEq4 && GameManager.instance.level == 4)
+        {
+            SetUpThermo(GameManager.instance.playerStats.pociatocna4);
+            InstantiateStonesLVL3(GameManager.instance.playerStats.kamene4, false);
+            SetUpThermoLVL3(GameManager.instance.playerStats.finalna4);
+            SetUpFinal(GameManager.instance.playerStats.finalna4);
+            SetUpThermo(GameManager.instance.playerStats.pociatocna4);
+            SetUpSolutionsNumber(GameManager.instance.playerStats.solutionsGot4, GameManager.instance.playerStats.solutionsAll4);
+            //TODO naspat dat solutions do lvl3managera
+            GameManager.instance.lvl3man.InstantiateAnswersStart(GameManager.instance.playerStats.solved4, GameManager.instance.playerStats.answers4);
+            GameManager.instance.lvl3man.ShowButtons();
+            //GameManager.instance.lvl3man.SetUpAnswers(GameManager.instance.playerStats.solved, GameManager.instance.playerStats.answers);
+            return "";
+        }
+
         else
         {
             if (GameManager.instance.level == 3)
             {
                 int[] b = GetTaskBounds(GameManager.instance.level);
-                //GameManager.instance.lvl3man.ClearAnswers();
-                /*
-                if (GameManager.instance.playerStats.level_3 == 1)
-                {
-                    ThirdLevelEquasion(true);
-                    return "";
-                }
-                */
-
                 ThirdLevelEquasion((b[0] == 1) ? true : false, (b[1] == 1) ? true : false, b[2], b[3], b[4], b[5]);
+                return "";
+            }
+
+            else if(GameManager.instance.level == 4)
+            {
+                int[] b = GetTaskBounds(GameManager.instance.level);
+                FourthLevelEquasion((b[0] == 1) ? true : false);
                 return "";
             }
 
@@ -544,8 +558,8 @@ public class BoardManager : MonoBehaviour
         {
             int prog = GameManager.instance.playerStats.level_2;
             int x = (int)Math.Ceiling((double)((prog + 1) / 2));
-            int min = x;
-            int max = x + 3;
+            int min = 1+x;
+            int max = 1 + (x + 3) - (x % 3);
             //bool zatvorka = false, int pocet_zatvorke = 2, bool minus = false, bool vymena_znam = false
             int zatvorka = (prog >= 5) ? 1 : 0;
             int pocetzat = x - 1;
@@ -568,14 +582,24 @@ public class BoardManager : MonoBehaviour
             return new int[] {zaporne, two, 2, 8, p[prog], p[prog]};
         }
 
+        if(level == 4)
+        {
+            int prog = GameManager.instance.playerStats.level_4;
+            int[] p = { 3, 3, 4, 4, 5, 5, 6, 6, 6, 6 };
+            int x = (int)Math.Ceiling((double)((prog + 1) / 2));
+            int two = (prog < 2 || (prog > 4 && prog < 7)) ? 1 : 0;
+            return new int[] { two, 2, 8, p[prog], p[prog] };
+        }
+
         return new int[] { 5, 10, 5 };
     }
 
     public int GetAnswer()
     {
-        if(GameManager.instance.level == 1) return GameManager.instance.playerStats.finalna;
-        else if(GameManager.instance.level == 2) return GameManager.instance.playerStats.finalna2;
-        else return GameManager.instance.playerStats.pociatocna3;
+        if (GameManager.instance.level == 1) return GameManager.instance.playerStats.finalna;
+        else if (GameManager.instance.level == 2) return GameManager.instance.playerStats.finalna2;
+        else if (GameManager.instance.level == 3) return GameManager.instance.playerStats.pociatocna3;
+        else return GameManager.instance.playerStats.pociatocna4;
     }
 
     public void ThirdLevelEquasion(bool zaporne = false, bool twoStones = false, int mink = 2, int maxk = 8, int mins = 3, int maxs = 6)
@@ -603,9 +627,9 @@ public class BoardManager : MonoBehaviour
             vysledna = Random.Range(pociatocna, pociatocna + 20);
             while (prvy == druhy) druhy = Random.Range(mink, maxk);
             while (treti == druhy || treti == prvy) treti = Random.Range(mink, maxk);
-            while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20);    //TODO ZAPORNE CISLO
+            while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20);   
 
-            Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
+            //Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
 
             int target = vysledna - pociatocna;
             List<List<int>> result = (twoStones)? CombinationSum(new int[]{druhy,treti}, target, false): CombinationSum(new int[] {prvy, druhy, treti }, target, false);
@@ -627,10 +651,10 @@ public class BoardManager : MonoBehaviour
             pociatocna = Random.Range(min, max + 1);
             prvy = Random.Range(2, 9);
             druhy = Random.Range(-5, 8);
-            treti = -1 * Random.Range(2, 8);        //TODO skusit s 2 kamenmi
+            treti = -1 * Random.Range(2, 8);      
             while (prvy == druhy || prvy == druhy*-1 || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
             while (treti == druhy || treti*-1 == prvy) treti = -1 * Random.Range(2, 8);
-            while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20);    //TODO ZAPORNE CISLO
+            while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20); 
             Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
 
             int target = vysledna - pociatocna;
@@ -684,6 +708,123 @@ public class BoardManager : MonoBehaviour
         //return pociatocna + "" + tmp + " = " + answer;
     }
 
+    public void FourthLevelEquasion(bool twoStones = false, int mink = 2, int maxk = 8, int mins = 3, int maxs = 6)
+    {
+        List<int> list = new List<int>();
+        List<int> kamene = new List<int>();
+        List<List<int>> solved = new List<List<int>>();
+        int max = 68;
+        int min = 11;
+        bool ok = false;
+
+        int pociatocna = Random.Range(min, max + 1);
+        int prvy = Random.Range(mink, maxk);
+        int druhy = Random.Range(mink, maxk);
+        int treti = Random.Range(mink, maxk);
+        int vysledna = Random.Range(pociatocna, pociatocna + 20);
+        int r = Random.Range(1, 7);
+
+        if (r%2==0) while (!ok)
+        {
+            solved = new List<List<int>>();
+            pociatocna = Random.Range(min, max + 1);
+            prvy = Random.Range(mink, maxk);
+            vysledna = Random.Range(pociatocna, pociatocna + 20);
+            while (prvy == druhy) druhy = Random.Range(mink, maxk);
+            while (treti == druhy || treti == prvy) treti = Random.Range(mink, maxk);
+            while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20); 
+            int target = vysledna - pociatocna;
+
+            if (twoStones && target%Gcd(druhy,treti) != 0 && r == 1)
+            {
+                Debug.Log("NO SOLUTIONS " + Gcd(druhy, treti));
+                GameManager.instance.playerStats.noSolutions = true;
+                ok = true;
+                kamene = new List<int> { druhy, treti };
+                break;
+            }
+
+            List<List<int>> result = (twoStones) ? CombinationSum(new int[] { druhy, treti }, target, false) : CombinationSum(new int[] { prvy, druhy, treti }, target, false);
+            if (result.Count() < mins || result.Count > maxs)
+            {
+                continue;
+            }
+            else if (result.Count() >= mins && result.Count() <= maxs && result.Count != 0)
+            {
+                ok = true;
+                solved = result;
+                kamene = (twoStones) ? new List<int> { druhy, treti } : new List<int> { prvy, druhy, treti };
+            }
+        }
+
+        else 
+            while (!ok)
+            {
+                solved = new List<List<int>>();
+                pociatocna = Random.Range(min, max + 1);
+                prvy = Random.Range(2, 9);
+                druhy = Random.Range(-5, 8);
+                treti = -1 * Random.Range(2, 8);     
+                while (prvy == druhy || prvy == druhy * -1 || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
+                while (treti == druhy || treti * -1 == prvy) treti = -1 * Random.Range(2, 8);
+                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 20);
+                int target = vysledna - pociatocna;
+
+                if (twoStones && target%Gcd(prvy, treti) != 0 && r == 1)
+                {
+                    Debug.Log("NO SOLUTIONS " + Gcd(prvy, treti));
+                    GameManager.instance.playerStats.noSolutions = true;
+                    ok = true;
+                    kamene = new List<int> { prvy, treti };
+                    break;
+                }
+
+                List<List<int>> result = (twoStones) ? CombinationSum(new int[] { prvy, treti }, target, true) : CombinationSum(new int[] { prvy, druhy, treti }, target, true);
+                if (result.Count() < 3 || result.Count > 6)
+                {
+                    continue;
+                }
+                else if (result.Count() >= 3 && result.Count() <= 6)
+                {
+                    GameManager.instance.playerStats.infine = true;
+                    ok = true;
+                    solved = result;
+                    kamene = (twoStones) ? new List<int> { prvy, treti } : new List<int> { prvy, druhy, treti };
+                }
+            }
+
+        // SOLVED INSTANTIOATE
+        if (GameManager.instance.lvl3man == null) GameManager.instance.lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
+        GameManager.instance.lvl3man.SetUpAnswers(solved, new List<List<int>>());
+        //
+
+        //TODO 
+
+        SetUpThermoLVL3(vysledna);
+        SetUpFinal(vysledna);
+        SetUpThermo(pociatocna);
+        int pseudoSolutions = Random.Range(4, 7);
+        SetUpSolutionsNumber(0, (GameManager.instance.playerStats.noSolutions)?pseudoSolutions:solved.Count());
+        InstantiateStonesLVL3(kamene, false);
+
+        //
+
+        // SAVE EQ
+
+        GameManager.instance.playerStats.kamene4 = new List<int>();
+        GameManager.instance.playerStats.kamene4.AddRange(kamene);
+        GameManager.instance.playerStats.kameneNaPloche4 = kamene;
+        GameManager.instance.playerStats.solved4 = solved;
+        GameManager.instance.playerStats.finalna4 = vysledna;
+        GameManager.instance.playerStats.pociatocna4 = pociatocna;
+        GameManager.instance.playerStats.savedEq4 = true;
+        GameManager.instance.playerStats.answers4 = new List<List<int>>();
+        GameManager.instance.playerStats.solutionsGot4 = 0;
+        GameManager.instance.playerStats.solutionsAll4 = (GameManager.instance.playerStats.noSolutions) ? pseudoSolutions : solved.Count();
+        GameManager.instance.playerStats.level = GameManager.instance.level;
+
+    }
+
     List<int> MakeStones(List<List<int>> s)
     {
         List<int> k = new List<int>();
@@ -701,6 +842,15 @@ public class BoardManager : MonoBehaviour
         }
 
         return k;
+    }
+
+    public int Gcd(int a, int b)
+    {
+        if (b == 0)
+        {
+            return a;
+        }
+        return Gcd(b, a % b);
     }
 
     public void InstantiateStonesLVL3(List<int> stones, bool zaporne)
@@ -789,212 +939,5 @@ public class BoardManager : MonoBehaviour
                 list.RemoveAt(list.Count - 1);
             }
         }
-    }
-
-    public List<List<int>> GenerateFirstDiophine(int stonesCount, int minS, int maxS)
-    {
-        int firstTemp;
-        int cold = 0;
-        int hot = 0;
-        int finalTemp = 0;
-
-        firstTemp = Random.Range(1,68);
-
-        List<int[]> pocty = SplitNumber(stonesCount);
-        int r = Random.Range(0, pocty.Count);
-        cold = pocty[r][0];
-        hot = pocty[r][1];
-
-        finalTemp = MakeVysledna(firstTemp, Gcd(cold, hot));
-        int fin = finalTemp - firstTemp;
-
-        int[] p = FindLowestXY(cold, hot, fin);
-        int[] x = Generate2(cold, hot, p[0], p[1], minS, maxS);
-        int index = 0;
-        while (x[0] == -100 && index < 30)
-        {
-            index++;
-            firstTemp = Random.Range(1,68);
-            r = Random.Range(0, pocty.Count);
-            cold = pocty[r][0];
-            hot = pocty[r][1];
-
-            finalTemp = MakeVysledna(firstTemp, Gcd(cold, hot));
-            fin = finalTemp - firstTemp;
-            p = FindLowestXY(cold, hot, fin);
-            x = Generate2(cold, hot, p[0], p[1], minS, maxS);
-            if (x[0] != -100) break;
-        }
-        Debug.Log("-------------------------");
-        Debug.Log(x[0] + " " + x[1]);
-        Debug.Log("-------------------------");
-
-        List<int> k = new List<int>();
-        for (int i = 0; i < hot; i++) k.Add(x[1]);
-        for (int j = 0; j < cold; j++) k.Add(x[0]);
-
-        return new List<List<int>>() {k, new List<int> {firstTemp, finalTemp} };
-    }
-
-    public int[] Generate(int a, int b, int x0, int y0, int min, int max)
-    {
-        int d = Gcd(a, b);
-        int t = 0;
-        while (true)
-        {
-            if (x0 <= max && y0 <= max && x0 >= -min && y0 >= -min && ((x0 > 0 && y0 < 0) || (x0 < 0 && y0 > 0)))
-            {   //x0 + y0 == h && x0 != 0 && y0 != 0
-                return new int[] { x0, y0 };
-            }
-            else
-            {
-                int x = x0 + (b / d) * (t + 1);
-                int y = y0 - (a / d) * (t + 1);
-                if (x0 <= max && y0 <= max && x0 >= -min && y0 >= -min && ((x > 0 && y < 0) || (x < 0 && y > 0)))
-                {
-                    x0 = x;
-                    y0 = y;
-                }
-                else
-                {
-                    x = x0 + (b / d) * (t - 1);
-                    y = y0 - (a / d) * (t - 1);
-                    if (x0 <= max && y0 <= max && x0 >= -min && y0 >= -min && ((x > 0 && y < 0) || (x < 0 && y > 0)))
-                    {
-                        x0 = x;
-                        y0 = y;
-                    }
-                    else
-                    {
-                        return new int[] { -100, -100 };
-                    }
-                }
-            }
-            t++;
-        }
-    }
-
-    public int[] Generate2(int a, int b, int x0, int y0, int min, int max)
-    {
-        int d = Gcd(a, b);
-        int t = 0;
-        while (true)
-        {
-            if (CheckMinMax(x0,y0, min, max))
-            {   //x0 + y0 == h && x0 != 0 && y0 != 0
-                return new int[] { x0, y0 };
-            }
-            else
-            {
-                int x = x0 + (b / d) * (t + 1);
-                int y = y0 - (a / d) * (t + 1);
-                if (CheckMinMax(x, y, min, max))
-                {
-                    x0 = x;
-                    y0 = y;
-                }
-                else
-                {
-                    x = x0 + (b / d) * (t - 1);
-                    y = y0 - (a / d) * (t - 1);
-                    if (CheckMinMax(x, y, min, max))
-                    {
-                        x0 = x;
-                        y0 = y;
-                    }
-                    else if(t >= 5)         //if(t >= 5)
-                    {
-                        return new int[] { -100, -100 };
-                    }
-                }
-            }
-            t++;
-        }
-    }
-
-    public int[] FindLowestXY(int a, int b, int c)
-    {
-        int[] vals = ExtendedEuclidean(a, b);
-        int d = vals[0];
-        int p = vals[1];
-        int q = vals[2];
-        if (c % d != 0)
-        {
-            //System.out.println("no integer solutions exist");
-            return new int[] { -100, -100 };
-        }
-        int x0 = p * (c / d);
-        int y0 = q * (c / d);
-        return new int[] { x0, y0 };
-    }
-
-    public int[] ExtendedEuclidean(int a, int b)
-    {
-        if (b == 0)
-        {
-            return new int[] { a, 1, 0 };
-        }
-        int[] vals = ExtendedEuclidean(b, a % b);
-        int d = vals[0];
-        int p = vals[2];
-        int q = vals[1] - (a / b) * vals[2];
-        return new int[] { d, p, q };
-    }
-
-    public int Gcd(int a, int b)
-    {
-        if (b == 0)
-        {
-            return a;
-        }
-        return Gcd(b, a % b);
-    }
-
-    public int MakeVysledna(int firstTemp, int d)
-    {
-        int vysledna = Random.Range(firstTemp, firstTemp+30);
-        int fin = vysledna - firstTemp;
-        while (fin % d != 0 || vysledna == firstTemp)
-        {
-            vysledna = Random.Range(firstTemp, firstTemp + 30);
-            fin = vysledna - firstTemp;
-        }
-        return vysledna;
-    }
-
-    public List<int[]> SplitNumber(int n)
-    {
-        List<int[]> l = new List<int[]>();
-        for (int i = 0; i < n; i++)
-        {
-            for (int j = 0; j < n; j++)
-            {
-                if (i + j == n)
-                {
-                    int[] x = new int[] { i, j };
-                    Array.Sort(x);
-                    if (!l.Contains(x))
-                    {
-                        l.Add(x);
-                        //System.out.println(x[0] + " " + x[1]);
-                    }
-                }
-            }
-        }
-        return l;
-    }
-
-    public bool CheckMinMax(int x, int y, int min, int max)
-    {
-        int[] p = new int[] { x, y };
-        Array.Sort(p);
-        x = p[0];
-        y = p[1];
-        if(x <= -min && x >= -max && y >= min && y <= max)
-        {
-            return true;
-        }
-
-        return false;
     }
 }

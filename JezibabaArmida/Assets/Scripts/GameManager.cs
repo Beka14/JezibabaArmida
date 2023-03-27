@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public int level = 0;
     private TextMeshProUGUI t;
     private TextMeshProUGUI input;
+    private int gotSolutions;
+    private int allSolutions;
 
     public LVL3Manager lvl3man;
 
@@ -45,16 +47,43 @@ public class GameManager : MonoBehaviour
         boardScript = gameObject.GetComponent<BoardManager>();
         //input = GameObject.Find("Text").GetComponent<TextMeshProUGUI>();
         //boardScript.Init();
-        t.text = boardScript.SetUpBoard(5);
+        t.text = boardScript.SetUpBoard();
     }
 
     public void InitLVL3()
     {
         boardScript = gameObject.GetComponent<BoardManager>();
-        //input = GameObject.Find("Text").GetComponent<TextMeshProUGUI>();
-        //boardScript.Init();
         lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
-        boardScript.SetUpBoard(0);
+        boardScript.SetUpBoard();
+    }
+
+    public void InitLVL4()
+    {
+        //boardScript = gameObject.GetComponent<BoardManager>();
+        lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
+        boardScript.SetUpBoard();
+    }
+
+    public void InfineSolutions()
+    {
+        Debug.Log("INFINE");
+        StartCoroutine(ShowBubbleLVL3(2));
+        playerStats.savedEq4 = false;
+        playerStats.infine = false;
+        DeleteStonesFromKotol("Kotol_lvl3");
+        UpdateProgressionSlider();
+        boardScript.SetUpBoard();
+    }
+
+    public void NoSolutions()
+    {
+        Debug.Log("NO SOLUTIONS");
+        StartCoroutine(ShowBubbleLVL3(2));
+        playerStats.savedEq4 = false;
+        playerStats.noSolutions = false;
+        DeleteStonesFromKotol("Kotol_lvl3");
+        UpdateProgressionSlider();
+        boardScript.SetUpBoard();
     }
 
     public void NextTask()
@@ -69,7 +98,7 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(ShowBubble(1));
                 if (level == 1) playerStats.savedEq = false;
                 else if (level == 2) playerStats.savedEq2 = false;
-                t.text = boardScript.SetUpBoard(5);
+                t.text = boardScript.SetUpBoard();
                 UpdateProgressionSlider();
             }
             else
@@ -80,18 +109,26 @@ public class GameManager : MonoBehaviour
 
         else
         {
-            if (playerStats.solutionsGot == playerStats.solutionsAll)
+            if(playerStats.infine || playerStats.noSolutions)
             {
-                Debug.Log("dostal som sa sem ");
-                playerStats.savedEq3 = false;
+                StartCoroutine(ShowBubbleLVL3(6));
+                return;
+            }
+            gotSolutions = (level == 3) ? playerStats.solutionsGot : playerStats.solutionsGot4;
+            allSolutions = (level == 3) ? playerStats.solutionsAll : playerStats.solutionsAll4;
+            if (gotSolutions == allSolutions)
+            {
+                if(level==3) playerStats.savedEq3 = false; else playerStats.savedEq4 = false;
+                //VYMAZ KAMENE
+                DeleteStonesFromKotol("Kotol_lvl3");
+                //
                 UpdateProgressionSlider();
-                boardScript.SetUpBoard(0);
+                boardScript.SetUpBoard();
                 //UpdateProgressionSlider();
             }
             else
             {
                 //VYPIS BUBLINU NECH DOKONCI ZADANIE
-                Debug.Log("not so quick cowboy");
                 StartCoroutine(ShowBubbleLVL3(3));
             }
         }
@@ -100,15 +137,15 @@ public class GameManager : MonoBehaviour
     public void CheckTask()
     {
         if(lvl3man == null) lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
+        gotSolutions = (level == 3)? playerStats.solutionsGot : playerStats.solutionsGot4;
+        allSolutions = (level == 3) ? playerStats.solutionsAll : playerStats.solutionsAll4;
         //boardScript = gameObject.GetComponent<BoardManager>();
         int right = (int)GameObject.Find("Slider").GetComponent<Slider>().value;
         int left = GetInput();
-        int a = playerStats.solutionsGot;
-        int b = playerStats.solutionsAll;
         Debug.Log(left + " == " + right);
-        Debug.Log(a + " / " + b);
+        Debug.Log(gotSolutions + " / " + allSolutions);
 
-        if (playerStats.solutionsGot == playerStats.solutionsAll)
+        if (gotSolutions == allSolutions)
         {
             StartCoroutine(ShowBubbleLVL3(2));
         }
@@ -141,6 +178,8 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
+                gotSolutions = (level == 3) ? playerStats.solutionsGot : playerStats.solutionsGot4;
+                allSolutions = (level == 3) ? playerStats.solutionsAll : playerStats.solutionsAll4;
                 //
             }
 
@@ -157,11 +196,11 @@ public class GameManager : MonoBehaviour
 
             }
 
-            boardScript.SetUpThermo(playerStats.pociatocna3);
+            if (level == 3) boardScript.SetUpThermo(playerStats.pociatocna3); else boardScript.SetUpThermo(playerStats.pociatocna4);
 
         }
 
-        if (playerStats.solutionsGot == playerStats.solutionsAll)
+        if (gotSolutions == allSolutions)
         {
             StartCoroutine(ShowBubbleLVL3(2));
         }
@@ -178,17 +217,33 @@ public class GameManager : MonoBehaviour
         return (Convert.ToInt32(tmp.text) * i);
     }
 
+    public void DeleteStonesFromKotol(string kotol)
+    {
+        GameObject g = GameObject.Find(kotol);
+        for (var i = g.transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(g.transform.GetChild(i).gameObject);
+        }
+    }
+
     void UpdateSolutionsText()
     {
         TextMeshProUGUI t = GameObject.Find("solutions").GetComponent<TextMeshProUGUI>();
-        playerStats.solutionsGot += 1;
-        t.text = playerStats.solutionsGot + "/" + playerStats.solutionsAll;
+        if(level == 3)
+        {
+            playerStats.solutionsGot += 1;
+            t.text = playerStats.solutionsGot + "/" + playerStats.solutionsAll;
+        }
+        else
+        {
+            playerStats.solutionsGot4 += 1;
+            t.text = playerStats.solutionsGot4 + "/" + playerStats.solutionsAll4;
+        }
     }
 
     IEnumerator ShowBubble(int i)
     {
-        Button button = GameObject.Find("next_btn").GetComponent<Button>();
-        button.interactable = false;
+        InactivateButtons(true);
         Color pred;
         Image farba;
         Image image;
@@ -203,7 +258,6 @@ public class GameManager : MonoBehaviour
 
             sprava = GameObject.Find("zla_sprava").GetComponent<Image>();
             sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 1);
-            //yield return new WaitForSeconds(4);
         }
         else
         {
@@ -215,23 +269,17 @@ public class GameManager : MonoBehaviour
 
             sprava = GameObject.Find("dobra_sprava").GetComponent<Image>();
             sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 1);
-            //yield return new WaitForSeconds(4);
         }
         yield return new WaitForSeconds(2);
         farba.color = pred;
         image.color = pred;
         sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 0);
-        button.interactable = true;
+        InactivateButtons(false);
     }
 
     IEnumerator ShowBubbleLVL3(int i)
     {
-        Button button = GameObject.Find("next_btn").GetComponent<Button>();             //TODO buttons vsetky
-        button.interactable = false;
-        Button button2 = GameObject.Find("check_btn").GetComponent<Button>();           
-        button2.interactable = false;
-        Button button3 = GameObject.Find("solved_btn").GetComponent<Button>();
-        button3.interactable = false;
+        InactivateButtons(true);
         Image sprava;
         switch (i)
         {
@@ -257,9 +305,7 @@ public class GameManager : MonoBehaviour
         sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 1);
         yield return new WaitForSeconds(2);
         sprava.color = new Color(sprava.color.r, sprava.color.g, sprava.color.b, 0);
-        button.interactable = true;
-        button2.interactable = true;
-        button3.interactable = true;
+        InactivateButtons(false);
     }
 
     public int GetInput()
@@ -282,7 +328,8 @@ public class GameManager : MonoBehaviour
         prog.value = (prog.value+1) % 10;
         if(level == 1) playerStats.level_1 = (playerStats.level_1+1)%10;
         else if(level == 2) playerStats.level_2 = (playerStats.level_2+1)%10;
-        else playerStats.level_3 = (playerStats.level_3 + 1) % 10;
+        else if(level == 3) playerStats.level_3 = (playerStats.level_3 + 1) % 10;
+        else playerStats.level_4 = (playerStats.level_4 + 1) % 10;
     }
 
     public void SetProgressionSlider(int value)
@@ -299,7 +346,6 @@ public class GameManager : MonoBehaviour
         TextMeshProUGUI t = x.transform.Find("value").GetComponent<TextMeshProUGUI>();
         Slider prog = GameObject.Find("Slider").GetComponent<Slider>();
         prog.value += (t.text == "")? e*1:e*Convert.ToInt16(t.text);
-        //prog.value += x;
     }
 
     public void RemoveStoneSlider(GameObject x)
@@ -308,7 +354,6 @@ public class GameManager : MonoBehaviour
         TextMeshProUGUI t = x.transform.Find("value").GetComponent<TextMeshProUGUI>();
         Slider prog = GameObject.Find("Slider").GetComponent<Slider>();
         prog.value += (t.text == "") ? -1*e : -1*e*Convert.ToInt16(t.text);
-        //prog.value += v;
     }
 
     public int GetSliderValue()
@@ -320,18 +365,6 @@ public class GameManager : MonoBehaviour
     public int GetFinalValue()
     {
         return boardScript.GetAnswer();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        /*
-        if (!p)                 //TODO dat do start
-        {
-            //Init();
-            p = true;
-        }
-        */
     }
 
     IEnumerator OnLevelWasLoaded(int lvl)
@@ -347,14 +380,26 @@ public class GameManager : MonoBehaviour
             level = lvl;
             InitLVL3();
         }
-
-        //Debug.Log("GAME LEVEL:::::: " + level);
+        else if(lvl == 4)
+        {
+            level = lvl;
+            InitLVL4();
+        }
     }
 
     public void LoadLevel(int i)
     {
-        //level = i;
         SceneManager.LoadScene(i);
+    }
+
+    void InactivateButtons(bool off)
+    {
+        GameObject g = GameObject.Find("Buttons");
+        for (var i = g.transform.childCount - 1; i >= 0; i--)
+        {
+            Button b = g.transform.GetChild(i).gameObject.GetComponent<Button>();
+            b.interactable = (off)? false: true;
+        }
     }
 
 }

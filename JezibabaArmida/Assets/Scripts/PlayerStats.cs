@@ -14,12 +14,14 @@ public class PlayerStats : MonoBehaviour
     public int level_1 = 0;
     public int level_2 = 0;
     public int level_3 = 0;
+    public int level_4 = 0;
 
     public int level = 0;
 
     public bool savedEq = false;
     public bool savedEq2 = false;
     public bool savedEq3 = false;
+    public bool savedEq4 = false;
 
     /// SAVE EQ
 
@@ -48,6 +50,17 @@ public class PlayerStats : MonoBehaviour
     public int finalna3;
 
 
+    public List<int> kamene4 = new List<int>();
+    public List<int> kameneNaPloche4 = new List<int>();
+    public List<List<int>> solved4 = new List<List<int>>();
+    public List<List<int>> answers4 = new List<List<int>>();
+    public int solutionsAll4;
+    public int solutionsGot4;
+    public int pociatocna4;
+    public int finalna4;
+    public bool infine;
+    public bool noSolutions;
+
     /// SAVE EQ
 
     private void Awake()
@@ -64,10 +77,9 @@ public class PlayerStats : MonoBehaviour
         Button l1 = GameObject.Find("first_lvl").GetComponent<Button>();
         Button l2 = GameObject.Find("second_lvl").GetComponent<Button>();
         Button l3 = GameObject.Find("third_lvl").GetComponent<Button>();
-
+        Button l4 = GameObject.Find("fourth_lvl").GetComponent<Button>();
         //if (!levels[1]) l2.interactable = false;    
         //if (!levels[2]) l3.interactable = false;
-
     }
 
     private IEnumerator OnLevelWasLoaded(int level)
@@ -83,6 +95,7 @@ public class PlayerStats : MonoBehaviour
             GameManager.instance.SetProgressionSlider(level_2);
         }
         else if(GameManager.instance.level == 3) GameManager.instance.SetProgressionSlider(level_3);
+        else GameManager.instance.SetProgressionSlider(level_4);
     }
 
     public string GetEquasion(int l)

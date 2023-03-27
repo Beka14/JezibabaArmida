@@ -15,6 +15,8 @@ public class LVL3Manager : MonoBehaviour
     [SerializeField] GameObject solvedScreen;
     [SerializeField] GameObject solved;
     [SerializeField] GameObject reset_btn;
+    [SerializeField] GameObject infine_btn;
+    [SerializeField] GameObject noSolutions_btn;
 
     [SerializeField] public List<List<int>> odpovede;
     private Dictionary<int[], GameObject> holderBook;
@@ -22,6 +24,21 @@ public class LVL3Manager : MonoBehaviour
     {
         odpovede = new List<List<int>>();
         holderBook = new Dictionary<int[], GameObject>();
+    }
+
+    public void ShowButtons()
+    {
+        if (GameManager.instance.level == 3) return;
+        infine_btn.SetActive(true);
+        noSolutions_btn.SetActive(true);
+    }
+
+    void ResetButtons()
+    {
+        CancelInvoke();
+        infine_btn.SetActive(false);
+        noSolutions_btn.SetActive(false);
+        Invoke("ShowButtons", 15f);
     }
 
     public void TurnOnButton()
@@ -44,22 +61,33 @@ public class LVL3Manager : MonoBehaviour
         {
             holderBook[i].SetActive(false);
         }
-        GameObject gg = GameObject.Find("kamene2");
-        for (var i = gg.transform.childCount - 1; i >= 0; i--)
+
+        GameManager.instance.DeleteStonesFromKotol("kamene2");
+
+        if(GameManager.instance.level == 3)
         {
-            Object.Destroy(gg.transform.GetChild(i).gameObject);
+            GameManager.instance.playerStats.answers = new List<List<int>>();
+            odpovede = new List<List<int>>();
+            GameManager.instance.boardScript.InstantiateStonesLVL3(GameManager.instance.playerStats.kamene3, true);
+            GameManager.instance.playerStats.solutionsGot = 0;
+            GameManager.instance.boardScript.SetUpSolutionsNumber(0, GameManager.instance.playerStats.solutionsAll);
+            GameManager.instance.playerStats.kameneNaPloche = new List<int>();
+            GameManager.instance.playerStats.kameneNaPloche.AddRange(GameManager.instance.playerStats.kamene3);
         }
-        GameManager.instance.playerStats.answers = new List<List<int>>();
-        odpovede = new List<List<int>>();
-        GameManager.instance.boardScript.InstantiateStonesLVL3(GameManager.instance.playerStats.kamene3,true);
-        GameManager.instance.playerStats.solutionsGot = 0;
-        GameManager.instance.boardScript.SetUpSolutionsNumber(0, GameManager.instance.playerStats.solutionsAll);
-        GameManager.instance.playerStats.kameneNaPloche = new List<int>();
-        GameManager.instance.playerStats.kameneNaPloche.AddRange(GameManager.instance.playerStats.kamene3);
+        else
+        {
+            GameManager.instance.playerStats.answers4 = new List<List<int>>();
+            odpovede = new List<List<int>>();
+            GameManager.instance.boardScript.InstantiateStonesLVL3(GameManager.instance.playerStats.kamene4, false);
+            GameManager.instance.playerStats.solutionsGot4 = 0;
+            GameManager.instance.boardScript.SetUpSolutionsNumber(0, GameManager.instance.playerStats.solutionsAll4);
+            GameManager.instance.playerStats.kamene4 = new List<int>();
+        }
     }
 
     public void SetUpAnswers(List<List<int>> objekt, List<List<int>> odpov)
     {
+        ResetButtons();
         odpovede = new List<List<int>>();
         holderBook = new Dictionary<int[], GameObject>();
         ClearAnswers();
@@ -111,10 +139,12 @@ public class LVL3Manager : MonoBehaviour
             // ContainsAnswer(saved);
             //}
 
-            GameManager.instance.playerStats.solved.Add(p.ToList<int>());
+            if(GameManager.instance.level==3) GameManager.instance.playerStats.solved.Add(p.ToList<int>());
+            else GameManager.instance.playerStats.solved4.Add(p.ToList<int>());
         }
         
-        GameManager.instance.playerStats.answers = odpovede;
+        if(GameManager.instance.level == 3) GameManager.instance.playerStats.answers = odpovede;
+        else GameManager.instance.playerStats.answers4 = odpovede;
     }
 
     IEnumerator InstantiateAnswers(List<List<int>> objekt, List<List<int>> odpov)
@@ -209,19 +239,13 @@ public class LVL3Manager : MonoBehaviour
                 holderBook[k].SetActive(true);
                 odpovede.Add(k.ToList<int>());
                 //Debug.Log(string.Join(" -- ", k.ToList<int>()));
-                if(!GameManager.instance.playerStats.answers.Contains(odpoved))GameManager.instance.playerStats.answers.Add(odpoved);
+                if(GameManager.instance.level == 3 && !GameManager.instance.playerStats.answers.Contains(odpoved)) GameManager.instance.playerStats.answers.Add(odpoved);
+                else if (GameManager.instance.level == 4 && !GameManager.instance.playerStats.answers4.Contains(odpoved)) GameManager.instance.playerStats.answers4.Add(odpoved);
                 return true;
             }
         }
-        /*
-        if (holderBook.ContainsKey(p))
-        {
-            Debug.Log("NACHADZA SA TU KLUC");
-            Image x = holderBook[p].GetComponent<Image>();
-            x.color = new Color(x.color.r, x.color.g, x.color.b, 1);
-            return true;
-        }
-        */
+
         return false;
     }
+
 }

@@ -50,3 +50,5 @@ MonoBehaviour:
   solvedScreen: {fileID: 0}
   solved: {fileID: 0}
   reset_btn: {fileID: 0}
+  infine_btn: {fileID: 0}
+  noSolutions_btn: {fileID: 0}
