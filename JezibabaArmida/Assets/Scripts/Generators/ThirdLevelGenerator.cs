@@ -20,7 +20,7 @@ public class ThirdLevelGenerator : MonoBehaviour
         int prvy;
         int druhy = Random.Range(mink, maxk);
         int treti = Random.Range(mink, maxk);
-        int vysledna = Random.Range(pociatocna, pociatocna + 30);
+        int vysledna = Random.Range(pociatocna, pociatocna + 25);
 
         if (!zaporne) while (!ok)
             {
@@ -30,7 +30,7 @@ public class ThirdLevelGenerator : MonoBehaviour
                 vysledna = Random.Range(pociatocna, pociatocna + 20);
                 while (prvy == druhy) druhy = Random.Range(mink, maxk);
                 while (treti == druhy || treti == prvy) treti = Random.Range(mink, maxk);
-                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 30);
+                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 25);
 
                 //Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
 
@@ -56,7 +56,7 @@ public class ThirdLevelGenerator : MonoBehaviour
                 treti = -1 * Random.Range(2, 8);
                 while (prvy == druhy || prvy == druhy * -1 || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
                 while (treti == druhy || treti * -1 == prvy) treti = -1 * Random.Range(2, 8);
-                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 30);
+                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 25);
                 //Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
 
                 int target = vysledna - pociatocna;
@@ -114,7 +114,7 @@ public class ThirdLevelGenerator : MonoBehaviour
         int prvy;
         int druhy = Random.Range(mink, maxk);
         int treti = Random.Range(mink, maxk);
-        int vysledna = Random.Range(pociatocna, pociatocna + 30);
+        int vysledna = Random.Range(pociatocna, pociatocna + 25);
         int r = Random.Range(1, 7);
 
         if (r % 2 == 0) while (!ok)
@@ -124,7 +124,7 @@ public class ThirdLevelGenerator : MonoBehaviour
                 prvy = Random.Range(mink, maxk);
                 while (prvy == druhy) druhy = Random.Range(mink, maxk);
                 while (treti == druhy || treti == prvy) treti = Random.Range(mink, maxk);
-                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 30);
+                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 25);
                 int target = vysledna - pociatocna;
 
                 if (twoStones && target % Gcd(druhy, treti) != 0 && r == 1)
@@ -156,7 +156,7 @@ public class ThirdLevelGenerator : MonoBehaviour
                 treti = -1 * Random.Range(2, 8);
                 while (prvy == druhy || prvy == druhy * -1 || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
                 while (treti == druhy || treti * -1 == prvy) treti = -1 * Random.Range(2, 8);
-                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 30);
+                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 25);
                 int target = vysledna - pociatocna;
 
                 if (twoStones && target % Gcd(prvy, treti) != 0 && r == 1)

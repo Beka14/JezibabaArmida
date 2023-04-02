@@ -162,7 +162,7 @@ public class BoardManager : MonoBehaviour
             GameManager.instance.DeleteStonesFromKotol("kamene");
         }
 
-        else if(GameManager.instance.playerStats.zaporne)
+        else if(GameManager.instance.playerStats.zaporne && GameManager.instance.level == 3)
         {
             GameManager.instance.DeleteStonesFromKotol("kamene2");
         }
@@ -233,7 +233,7 @@ public class BoardManager : MonoBehaviour
             else if(GameManager.instance.level == 4)
             {
                 int[] b = GetTaskBounds(GameManager.instance.level);
-                thirdLevelGenerator.FourthLevelEquasion((b[0] == 1) ? true : false);
+                thirdLevelGenerator.FourthLevelEquasion((b[0] == 1) ? true : false, b[1], b[2], b[3], b[4]);
                 return "";
             }
 
@@ -281,9 +281,9 @@ public class BoardManager : MonoBehaviour
         {
             //bool zaporne = false, bool twoStones = false, int mink = 2, int maxk = 8, int mins = 3, int maxs = 6
             int prog = GameManager.instance.playerStats.level_3;
-            int[] p = {3,3,4,4,5,5,6,6,6,6};
+            int[] p = {3,3,4,4,5,3,4,3,5,6};
             int x = (int)Math.Ceiling((double)((prog + 1) / 2));
-            int zaporne = (prog >= 4)? 1 : 0;
+            int zaporne = (prog >= 5)? 1 : 0;
             if (zaporne==1) GameManager.instance.lvl3man.TurnOnButton();
             else GameManager.instance.lvl3man.TurnOffButton();
             int two = (prog < 2 || (prog > 4 && prog < 8))? 1 : 0;
@@ -293,7 +293,7 @@ public class BoardManager : MonoBehaviour
         if(level == 4)
         {
             int prog = GameManager.instance.playerStats.level_4;
-            int[] p = { 3, 3, 4, 4, 5, 5, 6, 6, 6, 6 };
+            int[] p = { 3, 3, 3, 4, 4, 4, 5, 5, 6, 6 };
             int x = (int)Math.Ceiling((double)((prog + 1) / 2));
             int two = (prog < 2 || (prog > 4 && prog < 7)) ? 1 : 0;
             return new int[] { two, 2, 8, p[prog], p[prog] };
