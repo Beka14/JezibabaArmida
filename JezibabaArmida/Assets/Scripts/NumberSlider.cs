@@ -41,6 +41,7 @@ public class NumberSlider : MonoBehaviour
 
     public void SetMinMax(int max)
     {
+        Debug.Log("VALUE: "+ max);
         slider.minValue = max - Random.Range(10,26);
         slider.maxValue = max + Random.Range(3, 19);
         //ChangeValue(0);

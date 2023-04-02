@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 
 public class ThirdLevelGenerator : MonoBehaviour
 {
+    List<List<int>> zasobnik = new List<List<int>>();
     public void ThirdLevelEquasion(bool zaporne = false, bool twoStones = false, int mink = 2, int maxk = 8, int mins = 3, int maxs = 6)
     {
         List<int> kamene = new List<int>();
@@ -38,9 +39,11 @@ public class ThirdLevelGenerator : MonoBehaviour
                 
                 if (result.Count() >= mins && result.Count() <= maxs && result.Count != 0)
                 {
+                    kamene = (twoStones) ? new List<int> { druhy, treti } : new List<int> { prvy, druhy, treti };
+                    if (ContainsItem(kamene)) continue;
                     ok = true;
                     solved = result;
-                    kamene = (twoStones) ? new List<int> { druhy, treti } : new List<int> { prvy, druhy, treti };
+                    zasobnik.Add(kamene);
                 }
             }
 
@@ -234,6 +237,15 @@ public class ThirdLevelGenerator : MonoBehaviour
             return a;
         }
         return Gcd(b, a % b);
+    }
+
+    bool ContainsItem(List<int> z)
+    {
+        foreach (List<int> i in zasobnik)
+        {
+            if (string.Join(",", i) == string.Join(",", z)) return true;
+        }
+        return false;
     }
 
     public static List<List<int>> CombinationSum(int[] nums, int target, bool depth)

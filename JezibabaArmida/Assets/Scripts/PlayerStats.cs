@@ -1,12 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerStats : MonoBehaviour
 {
-    bool[] levels = {true,false,false};
+    bool[] levels = {true,false,false,false};
 
     public int level_1 = 0;
     public int level_2 = 0;
@@ -58,20 +60,14 @@ public class PlayerStats : MonoBehaviour
     public bool infine;
     public bool noSolutions;
 
-    void Start()
-    {
-        /*
-        Button l1 = GameObject.Find("first_lvl").GetComponent<Button>();
-        Button l2 = GameObject.Find("second_lvl").GetComponent<Button>();
-        Button l3 = GameObject.Find("third_lvl").GetComponent<Button>();
-        Button l4 = GameObject.Find("fourth_lvl").GetComponent<Button>();
-        */
-    }
-
     private IEnumerator OnLevelWasLoaded(int level)
     {
         yield return new WaitForEndOfFrame();
-        if(GameManager.instance.level == 1)
+        if (level == 0)
+        {
+            
+        }
+        else if(GameManager.instance.level == 1)
         {
             GameManager.instance.SetProgressionSlider(level_1);
         }
@@ -87,5 +83,31 @@ public class PlayerStats : MonoBehaviour
     {
         if(l == 1) return pociatocna + rovnica + " = " + finalna;
         else return pociatocna2 + rovnica2 + " = " + finalna2;
+    }
+
+    private void Update()
+    {
+        if (level_1 == 5 || level_2 == 5 || level_3 == 5) UnlockLevel();
+    }
+
+    void UnlockLevel()
+    {
+        if(level_1 == 5 && levels[1] == false)
+        {
+            GameManager.instance.UnlockLevel(2);
+            levels[1] = true;
+        }
+
+        else if(level_2 == 5 && levels[2] == false)
+        {
+            GameManager.instance.UnlockLevel(3);
+            levels[2] = true;
+        }
+
+        else if (level_3 == 5 && levels[3] == false)
+        {
+            GameManager.instance.UnlockLevel(4);
+            levels[3] = true;
+        }
     }
 }

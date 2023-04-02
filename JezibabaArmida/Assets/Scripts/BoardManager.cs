@@ -59,7 +59,7 @@ public class BoardManager : MonoBehaviour
     public void SetUpNumberSlider()
     {
         if (numberSlider == null) numberSlider = GameObject.Find("Numbers").GetComponent<NumberSlider>();
-        if(GameManager.instance.playerStats.level == 1) numberSlider.SetMinMax(GameManager.instance.playerStats.finalna);
+        if(GameManager.instance.level == 1) numberSlider.SetMinMax(GameManager.instance.playerStats.finalna);
         else numberSlider.SetMinMax(GameManager.instance.playerStats.finalna2);
     }
 
@@ -76,6 +76,60 @@ public class BoardManager : MonoBehaviour
 
         for(int i = 0; i < stones.Count; i++)
         {
+            if (zatvorky.ContainsKey(index))
+            {
+                if (zatvorky[index] == "+(")
+                {
+                    g = Instantiate(plusPar);
+                    g.transform.localScale = new Vector3(1, 1, 1);
+                    poZatvorke = true;
+                }
+
+                else if (zatvorky[index] == "-(")
+                {
+                    g = Instantiate(minusPar);
+                    poZatvorke = true;
+                }
+
+                else g = Instantiate(endPar);
+
+                g.transform.SetParent(kamene.transform);
+                g.transform.SetAsLastSibling();
+                g.transform.localScale = new Vector3(1, 1, 1);
+                naPloche.Add(g);
+            }
+
+            if (znam.Count() != 0 && i < znam.Count())      //i+1
+            {
+                if (znam[i] == "-")             //i+1
+                {
+                    if (poZatvorke)
+                    {
+                        poZatvorke = false;
+                    }
+                    g = Instantiate(minus);
+                    g.transform.SetParent(kamene.transform);
+                    g.transform.SetAsLastSibling();
+                    g.transform.localScale = new Vector3(0.4f, 0.4f, 1);
+                    naPloche.Add(g);
+                }
+                else
+                {
+                    if (poZatvorke)
+                    {
+                        poZatvorke = false;
+                    }
+                    else if(i != 0)
+                    {
+                        g = Instantiate(plus);
+                        g.transform.SetParent(kamene.transform);
+                        g.transform.SetAsLastSibling();
+                        g.transform.localScale = new Vector3(0.4f, 0.4f, 1);
+                        naPloche.Add(g);
+                    }
+                    
+                }
+            }
 
             if (stones[i] < 0)
             {
@@ -98,59 +152,6 @@ public class BoardManager : MonoBehaviour
 
             index++;
             naPloche.Add(g);
-
-            if (zatvorky.ContainsKey(index))
-            {
-                if (zatvorky[index] == "+(")
-                {
-                    g = Instantiate(plusPar);
-                    g.transform.localScale = new Vector3(1, 1, 1);
-                    poZatvorke = true;
-                }
-
-                else if (zatvorky[index] == "-(") 
-                {
-                    g = Instantiate(minusPar);
-                    poZatvorke = true;
-                }
-
-                else g = Instantiate(endPar);
-
-                g.transform.SetParent(kamene.transform);
-                g.transform.SetAsLastSibling();
-                g.transform.localScale = new Vector3(1, 1, 1);
-                naPloche.Add(g);
-            }
-
-            if (znam.Count() != 0 && i+1 < znam.Count())
-            {
-                if (znam[i+1] == "-")
-                {
-                    if (poZatvorke)
-                    {
-                        poZatvorke = false;
-                    }
-                    g = Instantiate(minus);
-                    g.transform.SetParent(kamene.transform);
-                    g.transform.SetAsLastSibling();
-                    g.transform.localScale = new Vector3(0.4f, 0.4f, 1);
-                }
-                else
-                {
-                    if (poZatvorke)
-                    {
-                        poZatvorke = false;
-                        continue;
-                    }
-                    g = Instantiate(plus);
-                    g.transform.SetParent(kamene.transform);
-                    g.transform.SetAsLastSibling();
-                    g.transform.localScale = new Vector3(0.4f, 0.4f, 1);
-                }
-
-                naPloche.Add(g);
-            }
-
         }
     }
 
@@ -264,6 +265,7 @@ public class BoardManager : MonoBehaviour
         if(level == 2)
         {
             int prog = GameManager.instance.playerStats.level_2;
+            Debug.Log(prog);
             int x = (int)Math.Ceiling((double)((prog + 1) / 2));
             int min = 1+x;
             int max = 1 + (x + 3) - (x % 3);

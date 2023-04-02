@@ -18,6 +18,7 @@ public class ButtonScript : MonoBehaviour
     {
         //Debug.Log("klik");
         GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        //gm.CheckTask();
         gm.NextTask();
     }
 }

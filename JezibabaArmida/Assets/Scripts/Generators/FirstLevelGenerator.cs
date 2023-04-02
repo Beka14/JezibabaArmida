@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class FirstLevelGenerator : MonoBehaviour
 {
-    int answer;
+    public int answer;
     List<int> vsetky = new List<int>();
     public List<string> znamienka = new List<string>();
     public Dictionary<int, string> zatvorky = new Dictionary<int, string>();
@@ -57,6 +57,7 @@ public class FirstLevelGenerator : MonoBehaviour
         //Debug.Log(pocet_kamenov + " " + mink + " " + maxk);
         List<List<int>> gen = generators.GenerateFirstDiophine(pocet_kamenov, mink, maxk);
 
+        
         if (gen[0][0] != -100 && !ContainsItem(gen[0]))
         {
             vysledna = gen[1][1];
@@ -65,6 +66,7 @@ public class FirstLevelGenerator : MonoBehaviour
             kamene.AddRange(gen[0]);
             answer = vysledna;
         }
+        
 
         zasobnik.Add(kamene);
 
@@ -90,12 +92,11 @@ public class FirstLevelGenerator : MonoBehaviour
         }
 
         //TODO 
-
+        /*
         GameManager.instance.boardScript.SetUpThermo(pociatocna);
-        GameManager.instance.boardScript.InstantiateStones(vsetky, znamienka);
         if (numberSlider == null) numberSlider = GameObject.Find("Numbers").GetComponent<NumberSlider>();
-        numberSlider.SetMinMax(vysledna);
-
+        GameManager.instance.boardScript.InstantiateStones(vsetky, znamienka);
+        */
         //
 
         // SAVE EQ
@@ -121,6 +122,10 @@ public class FirstLevelGenerator : MonoBehaviour
             GameManager.instance.playerStats.savedEq2 = true;
             GameManager.instance.playerStats.level = GameManager.instance.level;
         }
+
+        GameManager.instance.boardScript.SetUpThermo(pociatocna);
+        if (numberSlider == null) numberSlider = GameObject.Find("Numbers").GetComponent<NumberSlider>();
+        GameManager.instance.boardScript.InstantiateStones(vsetky, znamienka);
 
         return pociatocna + "" + tmp + " = " + answer;
     }
@@ -183,13 +188,14 @@ public class FirstLevelGenerator : MonoBehaviour
             znamienka.Add((b[i] < 0) ? "+" : "+");
             index++;
         }
+        
 
         //a su kamene v zatvorke
         if (a.Count() != 0)
         {
             int x = 0;
             int p = Random.Range(1, 3);
-            if (p % 2 == 0 && minus)
+            if (p % 2 == 0)
             {
                 sb += "-(";
                 zatvorky.Add(index, "-(");
@@ -250,7 +256,7 @@ public class FirstLevelGenerator : MonoBehaviour
         for (int i = r; i < b.Count(); i++) 
         {
             int z = Random.Range(1, 4);
-            if (z % 3 == 0)
+            if (z % 3 == 0 && vymena)
             {
                 sb += (b[i] < 0) ? "-" + -1 * b[i] : "-" + b[i];
                 vsetky.Add((b[i] < 0) ? -1 * b[i] : -1 * b[i]);

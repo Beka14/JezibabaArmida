@@ -52,6 +52,9 @@ MonoBehaviour:
   boardScript: {fileID: 0}
   playerStats: {fileID: 0}
   level: 0
+  icon2: {fileID: 4195579619803859639, guid: a5bd6ef179a5b0f48934418f96fd367f, type: 3}
+  icon3: {fileID: 2056323582455477134, guid: e7032f8c53db8914f98e16566de0f73e, type: 3}
+  icon4: {fileID: 2797720658393472938, guid: 3a4440abc4f9ba045a979cf6bfd5da86, type: 3}
   lvl3man: {fileID: 0}
 --- !u!114 &588874953701159473
 MonoBehaviour:
@@ -145,6 +148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e59880cef3d17d4087abe9f8d2fa8f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  answer: 0
+  znamienka: []
 --- !u!114 &2084534328
 MonoBehaviour:
   m_ObjectHideFlags: 0

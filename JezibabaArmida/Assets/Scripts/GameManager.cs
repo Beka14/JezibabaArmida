@@ -18,6 +18,10 @@ public class GameManager : MonoBehaviour
     private int gotSolutions;
     private int allSolutions;
 
+    [SerializeField] GameObject icon2;
+    [SerializeField] GameObject icon3;
+    [SerializeField] GameObject icon4;
+
     public LVL3Manager lvl3man;
 
     private void Awake()
@@ -39,9 +43,10 @@ public class GameManager : MonoBehaviour
 
     public void Init()
     {
-        t = GameObject.Find("txt").GetComponent<TextMeshProUGUI>();
+        //t = GameObject.Find("txt").GetComponent<TextMeshProUGUI>();
         boardScript = gameObject.GetComponent<BoardManager>();
-        t.text = boardScript.SetUpBoard();
+        //t.text = boardScript.SetUpBoard();
+        boardScript.SetUpBoard();
     }
 
     public void InitLVL3()
@@ -80,11 +85,12 @@ public class GameManager : MonoBehaviour
         {
             if (right == left)
             {
+                UpdateProgressionSlider();
+                ConfettiAnimation();
                 StartCoroutine(ShowBubble(1));
                 if (level == 1) playerStats.savedEq = false;
                 else if (level == 2) playerStats.savedEq2 = false;
-                t.text = boardScript.SetUpBoard();
-                UpdateProgressionSlider();
+                boardScript.SetUpBoard();
             }
             else
             {
@@ -103,11 +109,12 @@ public class GameManager : MonoBehaviour
             allSolutions = (level == 3) ? playerStats.solutionsAll : playerStats.solutionsAll4;
             if (gotSolutions == allSolutions)
             {
-                if(level==3) playerStats.savedEq3 = false; else playerStats.savedEq4 = false;
+                UpdateProgressionSlider();
+                ConfettiAnimation();
+                if (level==3) playerStats.savedEq3 = false; else playerStats.savedEq4 = false;
                 //VYMAZ KAMENE
                 DeleteStonesFromKotol("Kotol_lvl3");
                 //
-                UpdateProgressionSlider();
                 boardScript.SetUpBoard();
             }
             else
@@ -308,8 +315,8 @@ public class GameManager : MonoBehaviour
     {
         Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
         prog.value = (prog.value+1) % 10;
-        if(level == 1) playerStats.level_1 = (playerStats.level_1+1)%10;
-        else if(level == 2) playerStats.level_2 = (playerStats.level_2+1)%10;
+        if(level == 1) playerStats.level_1 = (playerStats.level_1+1)% 10;
+        else if(level == 2) playerStats.level_2 = (playerStats.level_2+1)% 10;
         else if(level == 3) playerStats.level_3 = (playerStats.level_3 + 1) % 10;
         else playerStats.level_4 = (playerStats.level_4 + 1) % 10;
     }
@@ -378,4 +385,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void ConfettiAnimation()
+    {
+        ConfettiAnimator a = GameObject.Find("Confetti").GetComponent<ConfettiAnimator>();
+        StartCoroutine(a.Animate());
+    }
+
+    public void UnlockLevel(int i)
+    {
+        switch (i)
+        {
+            case 2:
+                icon2.GetComponent<Button>().interactable = true;
+                icon2.transform.Find("txt2").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
+                break;
+            case 3:
+                icon3.GetComponent<Button>().interactable = true;
+                icon3.transform.Find("txt3").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
+                break;
+            case 4:
+                icon4.GetComponent<Button>().interactable = true;
+                icon4.transform.Find("txt4").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
+                break;
+        }
+    }
 }
