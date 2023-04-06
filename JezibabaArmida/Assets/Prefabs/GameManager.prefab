@@ -55,6 +55,10 @@ MonoBehaviour:
   icon2: {fileID: 4195579619803859639, guid: a5bd6ef179a5b0f48934418f96fd367f, type: 3}
   icon3: {fileID: 2056323582455477134, guid: e7032f8c53db8914f98e16566de0f73e, type: 3}
   icon4: {fileID: 2797720658393472938, guid: 3a4440abc4f9ba045a979cf6bfd5da86, type: 3}
+  reset_icon1: {fileID: 6594359763135224453, guid: fe5a240665317ad49a0b67443dfc2c53, type: 3}
+  reset_icon2: {fileID: 6581845484638251469, guid: 4fd9aa44e3b9b0447aa19adf3bcfbac8, type: 3}
+  reset_icon3: {fileID: 7696576893155203909, guid: 26e4f7076445e2447b5e74cb1995e7f5, type: 3}
+  reset_icon4: {fileID: 5802760219528885934, guid: 81a217990dd0aba43b4b40134796ea7c, type: 3}
   lvl3man: {fileID: 0}
 --- !u!114 &588874953701159473
 MonoBehaviour:

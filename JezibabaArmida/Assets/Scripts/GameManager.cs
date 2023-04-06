@@ -22,6 +22,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject icon3;
     [SerializeField] GameObject icon4;
 
+    [SerializeField] GameObject reset_icon2;
+    [SerializeField] GameObject reset_icon3;
+    [SerializeField] GameObject reset_icon4;
+
     public LVL3Manager lvl3man;
 
     private void Awake()
@@ -397,16 +401,45 @@ public class GameManager : MonoBehaviour
         {
             case 2:
                 icon2.GetComponent<Button>().interactable = true;
+                reset_icon2.GetComponent<Button>().interactable = true;
                 icon2.transform.Find("txt2").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
                 break;
             case 3:
                 icon3.GetComponent<Button>().interactable = true;
+                reset_icon3.GetComponent<Button>().interactable = true;
                 icon3.transform.Find("txt3").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
                 break;
             case 4:
                 icon4.GetComponent<Button>().interactable = true;
+                reset_icon4.GetComponent<Button>().interactable = true;
                 icon4.transform.Find("txt4").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
                 break;
         }
     }
+
+    public void ResetLevel(int i)
+    {
+        switch (i)
+        {
+            case 1:
+                playerStats.level_1 = 0;
+                playerStats.savedEq = false;
+                break;
+            case 2:
+                playerStats.level_2 = 0;
+                playerStats.savedEq2 = false;
+                break;
+            case 3:
+                playerStats.level_3 = 0;
+                playerStats.savedEq3 = false;
+                break;
+            case 4:
+                playerStats.level_4 = 0;
+                playerStats.savedEq4 = false;
+                break;
+            default:
+                break;
+        }
+    }
+
 }
