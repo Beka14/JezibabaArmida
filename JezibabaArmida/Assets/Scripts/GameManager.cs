@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance = null;
     public BoardManager boardScript;
     [HideInInspector] public PlayerStats playerStats;
+    AudioManager audioManager;
     public int level = 0;
     private TextMeshProUGUI t;
     private int gotSolutions;
@@ -43,6 +44,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("--------------- STARTING ---------------");
         playerStats = gameObject.GetComponent<PlayerStats>();
         boardScript = gameObject.GetComponent<BoardManager>();
+        audioManager = gameObject.GetComponent<AudioManager>();
     }
 
     public void Init()
@@ -194,10 +196,16 @@ public class GameManager : MonoBehaviour
 
         }
 
+        else
+        {
+            StartCoroutine(ShowBubbleLVL3(4));
+        }
+
         if (gotSolutions == allSolutions)
         {
             StartCoroutine(ShowBubbleLVL3(2));
         }
+
 
     }
 
@@ -243,6 +251,7 @@ public class GameManager : MonoBehaviour
         Image sprava;
         if (i == 0)
         {
+            audioManager.PlaySound(13);
             farba = GameObject.Find("number_fill").GetComponent<Image>();
             image = GameObject.Find("Image").GetComponent<Image>();
             pred = farba.color;
@@ -254,6 +263,10 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            //1,3,4,14
+            int[] pole = { 1, 3, 4, 14 };
+            int x = UnityEngine.Random.Range(1,4);
+            audioManager.PlaySound(pole[x]);
             farba = GameObject.Find("number_fill").GetComponent<Image>();
             image = GameObject.Find("Image").GetComponent<Image>();
             pred = farba.color;
@@ -277,21 +290,29 @@ public class GameManager : MonoBehaviour
         switch (i)
         {
             case 0:
+                int[] pole = { 1, 3, 4, 14 };
+                int x = UnityEngine.Random.Range(1, 4);
+                audioManager.PlaySound(pole[x]);
                 sprava = GameObject.Find("dalej_sprava").GetComponent<Image>();
                 break;
             case 1:
+                audioManager.PlaySound(15);
                 sprava = GameObject.Find("uz_mas_sprava").GetComponent<Image>();
                 break;
             case 2:
+                audioManager.PlaySound(5);
                 sprava = GameObject.Find("dalsia_uloha_sprava").GetComponent<Image>();
                 break;
             case 3:
+                audioManager.PlaySound(6);
                 sprava = GameObject.Find("vsetky_sprava").GetComponent<Image>();
                 break;
             case 4:
+                audioManager.PlaySound(12);
                 sprava = GameObject.Find("napln_sprava").GetComponent<Image>();
                 break;
             default:
+                audioManager.PlaySound(8);
                 sprava = GameObject.Find("zla_sprava").GetComponent<Image>();
                 break;
         }
@@ -415,6 +436,12 @@ public class GameManager : MonoBehaviour
                 icon4.transform.Find("txt4").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
                 break;
         }
+    }
+
+    public void UnlockEditor()
+    {
+        Image i = GameObject.Find("editor_btn").GetComponent<Image>();
+        i.color = new Color(255,255,255,255);
     }
 
     public void ResetLevel(int i)

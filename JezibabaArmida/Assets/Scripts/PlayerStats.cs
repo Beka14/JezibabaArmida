@@ -22,6 +22,8 @@ public class PlayerStats : MonoBehaviour
     public bool savedEq3 = false;
     public bool savedEq4 = false;
 
+    public bool editor1 = false;
+
     /// SAVE EQ
 
     public List<int> kamene = new List<int>();          
@@ -70,6 +72,7 @@ public class PlayerStats : MonoBehaviour
         else if(GameManager.instance.level == 1)
         {
             GameManager.instance.SetProgressionSlider(level_1);
+            if(editor1) GameManager.instance.UnlockEditor();
         }
         else if(GameManager.instance.level == 2)
         {
@@ -88,6 +91,11 @@ public class PlayerStats : MonoBehaviour
     private void Update()
     {
         if (level_1 == 5 || level_2 == 5 || level_3 == 5) UnlockLevel();
+        if (level_1 == 9)
+        {
+            GameManager.instance.UnlockEditor();
+            editor1 = true;
+        }
     }
 
     void UnlockLevel()
