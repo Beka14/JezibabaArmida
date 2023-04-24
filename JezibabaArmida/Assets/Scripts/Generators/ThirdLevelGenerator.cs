@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +8,8 @@ using Random = UnityEngine.Random;
 
 public class ThirdLevelGenerator : MonoBehaviour
 {
-    List<List<int>> zasobnik = new List<List<int>>();
+    List<int[]> zasobnik = new List<int[]>();
+    List<int[]> zasobnik2 = new List<int[]>();
     public void ThirdLevelEquasion(bool zaporne = false, bool twoStones = false, int mink = 2, int maxk = 8, int mins = 3, int maxs = 6)
     {
         List<int> kamene = new List<int>();
@@ -27,7 +29,7 @@ public class ThirdLevelGenerator : MonoBehaviour
                 solved = new List<List<int>>();
                 pociatocna = Random.Range(min, max + 1);
                 prvy = Random.Range(mink, maxk);
-                vysledna = Random.Range(pociatocna, pociatocna + 20);
+                vysledna = Random.Range(pociatocna+1, pociatocna + 20);
                 while (prvy == druhy) druhy = Random.Range(mink, maxk);
                 while (treti == druhy || treti == prvy) treti = Random.Range(mink, maxk);
                 while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 25);
@@ -40,10 +42,12 @@ public class ThirdLevelGenerator : MonoBehaviour
                 if (result.Count() >= mins && result.Count() <= maxs && result.Count != 0)
                 {
                     kamene = (twoStones) ? new List<int> { druhy, treti } : new List<int> { prvy, druhy, treti };
-                    if (ContainsItem(kamene)) continue;
+                    int[] k = kamene.ToArray();
+                    Array.Sort(k);
+                    if (ContainsItem(k)) continue;
                     ok = true;
                     solved = result;
-                    zasobnik.Add(kamene);
+                    zasobnik.Add(k);
                 }
             }
 
@@ -54,6 +58,7 @@ public class ThirdLevelGenerator : MonoBehaviour
                 prvy = Random.Range(2, 9);
                 druhy = Random.Range(-5, 8);
                 treti = -1 * Random.Range(2, 8);
+                vysledna = Random.Range(pociatocna+1, pociatocna + 25);
                 while (prvy == druhy || prvy == druhy * -1 || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
                 while (treti == druhy || treti * -1 == prvy) treti = -1 * Random.Range(2, 8);
                 while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 25);
@@ -64,9 +69,13 @@ public class ThirdLevelGenerator : MonoBehaviour
                 
                 if (result.Count() >= 3 && result.Count() <= 6)
                 {
+                    int[] k = (twoStones) ? new int[]{ prvy, treti } : new int[]{ prvy, druhy, treti };
+                    Array.Sort(k);
+                    if (ContainsItem(k)) continue;
                     ok = true;
                     solved = result;
                     kamene = MakeStones(result);
+                    zasobnik.Add(k);
                 }
             }
 
@@ -114,7 +123,7 @@ public class ThirdLevelGenerator : MonoBehaviour
         int prvy;
         int druhy = Random.Range(mink, maxk);
         int treti = Random.Range(mink, maxk);
-        int vysledna = Random.Range(pociatocna, pociatocna + 25);
+        int vysledna = Random.Range(pociatocna+1, pociatocna + 25);
         int r = Random.Range(1, 7);
 
         if (r % 2 == 0) while (!ok)
@@ -122,17 +131,21 @@ public class ThirdLevelGenerator : MonoBehaviour
                 solved = new List<List<int>>();
                 pociatocna = Random.Range(min, max + 1);
                 prvy = Random.Range(mink, maxk);
+                vysledna = Random.Range(pociatocna+1, pociatocna + 25);
                 while (prvy == druhy) druhy = Random.Range(mink, maxk);
                 while (treti == druhy || treti == prvy) treti = Random.Range(mink, maxk);
-                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 25);
+                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna + 1, pociatocna + 25);
                 int target = vysledna - pociatocna;
 
-                if (twoStones && target % Gcd(druhy, treti) != 0 && r == 1)
+                if (twoStones && target % Gcd(druhy, treti) != 0 && r % 3 == 0)
                 {
-                    Debug.Log("NO SOLUTIONS " + Gcd(druhy, treti));
+                    int[] k = new int[] { druhy, treti };
+                    Array.Sort(k);
+                    if (ContainsItemFourth(k)) continue;
                     GameManager.instance.playerStats.noSolutions = true;
                     ok = true;
                     kamene = new List<int> { druhy, treti };
+                    zasobnik2.Add(k);
                     break;
                 }
 
@@ -140,8 +153,12 @@ public class ThirdLevelGenerator : MonoBehaviour
                 
                 if (result.Count() >= mins && result.Count() <= maxs && result.Count != 0)
                 {
+                    int[] k = (twoStones) ? new int[] { druhy, treti } : new int[] { prvy, druhy, treti };
+                    Array.Sort(k);
+                    if (ContainsItemFourth(k)) continue;
                     ok = true;
                     solved = result;
+                    zasobnik2.Add(k);
                     kamene = (twoStones) ? new List<int> { druhy, treti } : new List<int> { prvy, druhy, treti };
                 }
             }
@@ -154,16 +171,19 @@ public class ThirdLevelGenerator : MonoBehaviour
                 prvy = Random.Range(2, 9);
                 druhy = Random.Range(-5, 8);
                 treti = -1 * Random.Range(2, 8);
+                vysledna = Random.Range(pociatocna + 1, pociatocna + 25);
                 while (prvy == druhy || prvy == druhy * -1 || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
                 while (treti == druhy || treti * -1 == prvy) treti = -1 * Random.Range(2, 8);
-                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 25);
+                while (vysledna == pociatocna) vysledna = Random.Range(pociatocna + 1, pociatocna + 25);
                 int target = vysledna - pociatocna;
 
-                if (twoStones && target % Gcd(prvy, treti) != 0 && r == 1)
+                if (twoStones && target % Gcd(prvy, treti) != 0 && r %3 == 0)
                 {
-                    Debug.Log("NO SOLUTIONS " + Gcd(prvy, treti));
+                    int[] k = new int[] { prvy, treti };
+                    Array.Sort(k);
                     GameManager.instance.playerStats.noSolutions = true;
                     ok = true;
+                    zasobnik2.Add(k);
                     kamene = new List<int> { prvy, treti };
                     break;
                 }
@@ -172,8 +192,12 @@ public class ThirdLevelGenerator : MonoBehaviour
                 
                 if (result.Count() >= 3 && result.Count() <= 6)
                 {
+                    int[] k = (twoStones) ? new int[] { prvy, treti } : new int[] { prvy, druhy, treti };
+                    Array.Sort(k);
+                    if (ContainsItemFourth(k)) continue;
                     GameManager.instance.playerStats.infine = true;
                     ok = true;
+                    zasobnik2.Add(k);
                     solved = result;
                     kamene = (twoStones) ? new List<int> { prvy, treti } : new List<int> { prvy, druhy, treti };
                 }
@@ -239,9 +263,18 @@ public class ThirdLevelGenerator : MonoBehaviour
         return Gcd(b, a % b);
     }
 
-    bool ContainsItem(List<int> z)
+    bool ContainsItem(int[] z)
     {
-        foreach (List<int> i in zasobnik)
+        foreach (int[] i in zasobnik)
+        {
+            if (string.Join(",", i) == string.Join(",", z)) return true;
+        }
+        return false;
+    }
+
+    bool ContainsItemFourth(int[] z)
+    {
+        foreach (int[] i in zasobnik2)
         {
             if (string.Join(",", i) == string.Join(",", z)) return true;
         }

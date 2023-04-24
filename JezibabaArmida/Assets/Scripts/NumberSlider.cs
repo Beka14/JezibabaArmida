@@ -17,8 +17,6 @@ public class NumberSlider : MonoBehaviour
         slider.value = Random.Range(0, 20);
         t.text = slider.value + "";
 
-        //slider.minValue = -1 * (GameManager.instance.GetFinalValue() + Random.Range(3,18));
-        //slider.maxValue = GameManager.instance.GetFinalValue() + Random.Range(3, 19);
     }
 
     public void ChangeValue(int i)
@@ -39,11 +37,11 @@ public class NumberSlider : MonoBehaviour
         t.text = slider.value + "";
     }
 
-    public void SetMinMax(int max)
+    public void SetMinMax(int max, int value)
     {
-        Debug.Log("VALUE: "+ max);
-        slider.minValue = max - Random.Range(10,26);
-        slider.maxValue = max + Random.Range(3, 19);
+        Debug.Log(max);
+        slider.minValue = max - value - Random.Range(0, 10);
+        slider.maxValue = max + value + Random.Range(0, 10);
         //ChangeValue(0);
     }
 }

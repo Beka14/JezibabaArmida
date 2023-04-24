@@ -63,8 +63,11 @@ public class LVL3Manager : MonoBehaviour
         }
 
         GameManager.instance.DeleteStonesFromKotol("kamene2");
+        GameManager.instance.DeleteStonesFromKotol("Kotol_lvl3");
 
-        if(GameManager.instance.level == 3)
+        GameManager.instance.boardScript.SetUpThermo(GameManager.instance.playerStats.pociatocna3);
+
+        if (GameManager.instance.level == 3)
         {
             GameManager.instance.playerStats.answers = new List<List<int>>();
             odpovede = new List<List<int>>();
@@ -146,7 +149,6 @@ public class LVL3Manager : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         holderBook = new Dictionary<int[], GameObject>();
-        ;
         foreach (List<int> o in objekt)
         {
             List<int> pole = new List<int>();

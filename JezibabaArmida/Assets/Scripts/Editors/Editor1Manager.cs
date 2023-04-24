@@ -49,7 +49,7 @@ public class Editor1Manager : MonoBehaviour
     {
         int e = (x.name == "studeny") ? -1 : 1;
         TextMeshProUGUI t = x.transform.Find("value").GetComponent<TextMeshProUGUI>();
-        kamene.Add(e*Convert.ToInt16(t.text));
+        kamene.Add((t.text == "") ? 1 * e : e * Convert.ToInt16(t.text));
         hodnota += (t.text == "") ? e * 1 : e * Convert.ToInt16(t.text);
         value.text = (t.text == "") ? (e + (Convert.ToInt16(value.text))) + "" : (e * Convert.ToInt16(t.text) + (Convert.ToInt16(value.text))) + "";
         Debug.Log(hodnota);
@@ -59,7 +59,7 @@ public class Editor1Manager : MonoBehaviour
     {
         int e = (x.name == "studeny") ? -1 : 1;
         TextMeshProUGUI t = x.transform.Find("value").GetComponent<TextMeshProUGUI>();
-        kamene.Remove(e*Convert.ToInt16(t.text));
+        kamene.Remove((t.text == "") ? 1 * e : e * Convert.ToInt16(t.text));
         hodnota += (t.text == "") ? -1 * e : -1 * e * Convert.ToInt16(t.text);
         value.text = (t.text == "") ? (-1 * e + (Convert.ToInt16(value.text)))+"" : (-1 * e * Convert.ToInt16(t.text) + (Convert.ToInt16(value.text))) +"";
         Debug.Log(hodnota);
@@ -72,6 +72,7 @@ public class Editor1Manager : MonoBehaviour
         GameManager.instance.playerStats.pociatocna = (int)slider.value;
         GameManager.instance.playerStats.finalna = Convert.ToInt16(value.text);
         GameManager.instance.playerStats.savedEq = true;
+        GameManager.instance.playerStats.savedEditor1 = true;
 
         SceneManager.LoadScene(1);
     }
@@ -98,5 +99,10 @@ public class Editor1Manager : MonoBehaviour
         else i.color = Color.green;
         yield return new WaitForSeconds(1f);
         i.color = color;
+    }
+
+    public int GetHodnota()
+    {
+        return hodnota;
     }
 }

@@ -64,21 +64,23 @@ public class GameManager : MonoBehaviour
 
     public void InfineSolutions()
     {
-        StartCoroutine(ShowBubbleLVL3(2));
+        StartCoroutine(ShowBubbleLVL3(5));
+        ConfettiAnimation();
         playerStats.savedEq4 = false;
         playerStats.infine = false;
         DeleteStonesFromKotol("Kotol_lvl3");
-        UpdateProgressionSlider();
+        if (!playerStats.savedEditor3 && !playerStats.savedEditor4) UpdateProgressionSlider();
         boardScript.SetUpBoard();
     }
 
     public void NoSolutions()
     {
-        StartCoroutine(ShowBubbleLVL3(2));
+        StartCoroutine(ShowBubbleLVL3(5));
+        ConfettiAnimation();
         playerStats.savedEq4 = false;
         playerStats.noSolutions = false;
         DeleteStonesFromKotol("Kotol_lvl3");
-        UpdateProgressionSlider();
+        if (!playerStats.savedEditor3 && !playerStats.savedEditor4) UpdateProgressionSlider();
         boardScript.SetUpBoard();
     }
 
@@ -91,11 +93,13 @@ public class GameManager : MonoBehaviour
         {
             if (right == left)
             {
-                UpdateProgressionSlider();
+                if(!playerStats.savedEditor1 && !playerStats.savedEditor2) UpdateProgressionSlider();
                 ConfettiAnimation();
                 StartCoroutine(ShowBubble(1));
                 if (level == 1) playerStats.savedEq = false;
                 else if (level == 2) playerStats.savedEq2 = false;
+                else if (playerStats.savedEditor1) playerStats.savedEditor1 = false;
+                else if (playerStats.savedEditor2) playerStats.savedEditor2 = false;
                 boardScript.SetUpBoard();
             }
             else
@@ -106,7 +110,7 @@ public class GameManager : MonoBehaviour
 
         else
         {
-            if(playerStats.infine || playerStats.noSolutions)
+            if(gotSolutions == allSolutions && playerStats.infine || playerStats.noSolutions)
             {
                 StartCoroutine(ShowBubbleLVL3(6));
                 return;
@@ -115,7 +119,7 @@ public class GameManager : MonoBehaviour
             allSolutions = (level == 3) ? playerStats.solutionsAll : playerStats.solutionsAll4;
             if (gotSolutions == allSolutions)
             {
-                UpdateProgressionSlider();
+                if (!playerStats.savedEditor3 && !playerStats.savedEditor4) UpdateProgressionSlider();
                 ConfettiAnimation();
                 if (level==3) playerStats.savedEq3 = false; else playerStats.savedEq4 = false;
                 //VYMAZ KAMENE
@@ -154,6 +158,7 @@ public class GameManager : MonoBehaviour
             for (var i = g.transform.childCount - 1; i >= 0; i--)
             {
                 gameObjects.Add(GetValueFromStone(g.transform.GetChild(i).gameObject));
+                Object.Destroy(g.transform.GetChild(i).gameObject);
             }
 
             //boardScript.SetUpThermo(playerStats.pociatocna3);
@@ -184,11 +189,23 @@ public class GameManager : MonoBehaviour
                 //vypis ze to uz mame
                 if (playerStats.zaporne == true)
                 {
+                    if (ContainsSolution(gameObjects))
+                    {
+                        StartCoroutine(ShowBubbleLVL3(1));
+                    }
                     //boardScript.SetUpThermo(playerStats.finalna3);
                     boardScript.InstantiateStonesLVL3(gameObjects, true);
                 }
                 //Debug.Log("uz som tam lol");
-                StartCoroutine(ShowBubbleLVL3(1));
+                //TODO TU ZISTIT CI TO MAME ALEBO TO NEEXISTUJE
+                /*
+                if (ContainsSolution(gameObjects))
+                {
+                    StartCoroutine(ShowBubbleLVL3(1));
+                }
+                */
+                //
+                else StartCoroutine(ShowBubbleLVL3(8));
 
             }
 
@@ -209,12 +226,26 @@ public class GameManager : MonoBehaviour
 
     }
 
-    int GetValueFromStone(GameObject kamen)
+    private bool ContainsSolution(List<int> gameObjects)
+    {
+        int[] odpoved = gameObjects.ToArray();
+        Array.Sort(odpoved);
+        List<List<int>> vsetkySolved = (level == 3) ? playerStats.solved : playerStats.solved4;
+        foreach (List<int> g in vsetkySolved)
+        {
+            int[] gg = g.ToArray();
+            Array.Sort(gg);
+            if (string.Join(",", gg) == string.Join(",", odpoved)) return true;
+        }
+        return false;
+    }
+
+    public int GetValueFromStone(GameObject kamen)
     {
         TextMeshProUGUI tmp = kamen.transform.Find("value").GetComponent<TextMeshProUGUI>();
         int i = 1;
-        if (kamen.name == "drag_studeny" || kamen.name == "drag_studeny2") i = -1;
-        Object.Destroy(kamen);
+        if (kamen.name == "drag_studeny" || kamen.name == "drag_studeny2" || kamen.name == "edit_studeny" || kamen.name == "studeny") i = -1;
+        //Object.Destroy(kamen);
         return (Convert.ToInt32(tmp.text) * i);
     }
 
@@ -311,6 +342,10 @@ public class GameManager : MonoBehaviour
                 audioManager.PlaySound(12);
                 sprava = GameObject.Find("napln_sprava").GetComponent<Image>();
                 break;
+            case 5:
+                audioManager.PlaySound(1);
+                sprava = GameObject.Find("dobra_sprava").GetComponent<Image>();
+                break;
             default:
                 audioManager.PlaySound(8);
                 sprava = GameObject.Find("zla_sprava").GetComponent<Image>();
@@ -339,6 +374,16 @@ public class GameManager : MonoBehaviour
     public void UpdateProgressionSlider()
     {
         Slider prog = GameObject.Find("Progression").GetComponent<Slider>();
+        if (prog.value == 10) return;
+        if (prog.value == 9)
+        {
+            prog.value = 10;
+            if (level == 1) playerStats.level_1 = 10;
+            else if (level == 2) playerStats.level_2 = 10;
+            else if (level == 3) playerStats.level_3 = 10;
+            else playerStats.level_4 = 10;
+            return;
+        }
         prog.value = (prog.value+1) % 10;
         if(level == 1) playerStats.level_1 = (playerStats.level_1+1)% 10;
         else if(level == 2) playerStats.level_2 = (playerStats.level_2+1)% 10;
@@ -421,11 +466,13 @@ public class GameManager : MonoBehaviour
         switch (i)
         {
             case 2:
+                audioManager.PlaySound(9);
                 icon2.GetComponent<Button>().interactable = true;
                 reset_icon2.GetComponent<Button>().interactable = true;
                 icon2.transform.Find("txt2").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
                 break;
             case 3:
+                audioManager.PlaySound(10);
                 icon3.GetComponent<Button>().interactable = true;
                 reset_icon3.GetComponent<Button>().interactable = true;
                 icon3.transform.Find("txt3").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
@@ -436,12 +483,31 @@ public class GameManager : MonoBehaviour
                 icon4.transform.Find("txt4").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
                 break;
         }
+        StartCoroutine(StartAnimation(i));
     }
 
-    public void UnlockEditor()
+    public void UnlockEditor(int x)
     {
-        Image i = GameObject.Find("editor_btn").GetComponent<Image>();
-        i.color = new Color(255,255,255,255);
+        if(x == 1)
+        {
+            GameObject.Find("editor_btn").GetComponent<Button>().interactable = true;
+            GameObject.Find("editor_btn").transform.SetParent(GameObject.Find("Buttons").transform);
+        }
+        else if(x == 2)
+        {
+            GameObject.Find("editor2_btn").GetComponent<Button>().interactable = true;
+            GameObject.Find("editor2_btn").transform.SetParent(GameObject.Find("Buttons").transform);
+        }
+        else if(x == 3) 
+        {
+            GameObject.Find("editor3_btn").GetComponent<Button>().interactable = true;
+            GameObject.Find("editor3_btn").transform.SetParent(GameObject.Find("Buttons").transform);
+        }
+        else if (x == 4)
+        {
+            GameObject.Find("editor4_btn").GetComponent<Button>().interactable = true;
+            GameObject.Find("editor4_btn").transform.SetParent(GameObject.Find("Buttons").transform);
+        }
     }
 
     public void ResetLevel(int i)
@@ -469,4 +535,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    IEnumerator StartAnimation(int i)
+    {
+        string level = "";
+        if (i == 2) level = "second_unlock"; else if (i == 3) level = "third_unlock"; else level = "fourth_unlock";
+        GameObject.Find(level).GetComponent<Image>().color = new Color(255, 255, 255, 255);
+        GameObject.Find("txt" + i).GetComponent<TextMeshProUGUI>().color = new Color(255, 255, 255, 255);
+        GameObject.Find(level).GetComponent<Animator>().SetBool("pusti", true);
+        yield return new WaitForSeconds(1.4f);
+        GameObject.Find(level).GetComponent<Image>().color = new Color(255, 255, 255, 0);
+        GameObject.Find("txt" + i).GetComponent<TextMeshProUGUI>().color = new Color(255, 255, 255, 0);
+        GameObject.Find(level).GetComponent<Animator>().SetBool("pusti", false);
+    }
 }

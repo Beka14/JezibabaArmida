@@ -56,17 +56,19 @@ public class BoardManager : MonoBehaviour
         thermo.SetValue(value);
     }
 
-    public void SetUpNumberSlider()
+    public void SetUpNumberSlider(List<int> stones)
     {
+        int valueOfStones = 0;
+        foreach (int s in stones) valueOfStones += (s < 0) ? s * -1 : s;
         if (numberSlider == null) numberSlider = GameObject.Find("Numbers").GetComponent<NumberSlider>();
-        if(GameManager.instance.level == 1) numberSlider.SetMinMax(GameManager.instance.playerStats.finalna);
-        else numberSlider.SetMinMax(GameManager.instance.playerStats.finalna2);
+        if(GameManager.instance.level == 1) numberSlider.SetMinMax(GameManager.instance.playerStats.finalna, valueOfStones);
+        else numberSlider.SetMinMax(GameManager.instance.playerStats.finalna2, valueOfStones);
     }
 
     public void InstantiateStones(List<int> stones, List<string> znam)     
     {
-        SetUpNumberSlider();
-        zatvorky = firstLevelGenerator.zatvorky;
+        SetUpNumberSlider(stones);
+        if (znam.Count() == 0) zatvorky = new Dictionary<int, string>(); else zatvorky = GameManager.instance.playerStats.zatvorky;
         bool poZatvorke = false;
         int index = 0;
         kamene = GameObject.Find("kamene");

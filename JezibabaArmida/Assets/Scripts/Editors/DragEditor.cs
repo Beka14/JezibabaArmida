@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Unity.VisualScripting;
+using System;
 
 public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -12,14 +13,30 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
     [SerializeField] GameObject Kotol;
     public Transform parentAfterDrag;
     Editor1Manager manager;
+    Editor2Manager manager2;
+    Editor3Manager manager3;
+    int prvy = 0;
+    int k = 0;
     public bool wasInKotol = false;
     bool mozemHodit = false;
     bool mozemVyhodit = false;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        manager = GameObject.Find("Editor1Manager").GetComponent<Editor1Manager>();
+        if(prvy == 0)
+        {
+            if (GameObject.Find("minus") == null) prvy = 1;
+            if (GameObject.Find("kamene1i") != null) prvy = 3;
+            else prvy = 2;
+        }
+        Debug.Log(prvy);
+        manager = GameObject.Find("EditorManager").GetComponent<Editor1Manager>();
+        manager2 = GameObject.Find("EditorManager").GetComponent<Editor2Manager>();
+        manager3 = GameObject.Find("EditorManager").GetComponent<Editor3Manager>();
         if (Kotol == null) Kotol = GameObject.Find("kamene");
+        k = 0;
+        if (transform.GetSiblingIndex() != k-1 && k != 0 && wasInKotol) mozemVyhodit = true;
+        else mozemVyhodit = false;
         //Debug.Log(mozemVyhodit);
         if (!mozemHodit && !mozemVyhodit)
         {
@@ -46,6 +63,16 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
         }
     }
 
+    /*
+    private int PocetKamenov()
+    {
+        if (prvy == 1) return manager.pocet_kamenov;
+        if (prvy == 2) return manager2.pocet_kamenov;
+        //else return manager3.pocet_kamenov;
+        return 0;
+    }
+    */
+
     public void OnDrag(PointerEventData eventData)
     {
         if (!mozemHodit && !mozemVyhodit)
@@ -62,12 +89,53 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
             Debug.Log(transform.parent.name);
             if (transform.parent.name == "Canvas" && wasInKotol)
             {
-                GameObject.Find("Editor1Manager").GetComponent<Editor1Manager>().RemoveValue(kamen);
+                if (prvy == 3 && ((parentAfterDrag.name == "kamene1i" && manager3.prvy_slot) || (parentAfterDrag.name == "kamene2i" && manager3.druhy_slot)))
+                {
+                    if (parentAfterDrag.name == "kamene1i")
+                    {
+                        manager3.prvy_slot = false;
+                        manager3.prvy_kamen = 0;
+                        manager3.SetSolutions(0);
+                    }
+
+                    else
+                    {
+                        manager3.druhy_slot = false;
+                        manager3.druhy_kamen = 0;
+                        manager3.SetSolutions(0);
+                    }
+                }
+                else if (prvy == 3)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+                else if (prvy==1) manager.RemoveValue(kamen); else manager2.RemoveValue(kamen);
                 Destroy(gameObject);
             }
-            else if (parentAfterDrag.name == "kamene" && transform.parent.name == "Canvas" && manager.pocet_kamenov < 8)
+            else if (parentAfterDrag.name != "kamene2" && transform.parent.name == "Canvas" && k < 8)
             {
-                GameObject.Find("Editor1Manager").GetComponent<Editor1Manager>().AddValue(kamen);
+                if (prvy == 3 && ((parentAfterDrag.name == "kamene1i" && !manager3.prvy_slot) || (parentAfterDrag.name == "kamene2i" && !manager3.druhy_slot)))
+                {
+                    if (parentAfterDrag.name == "kamene1i")
+                    {
+                        manager3.prvy_slot = true;
+                        manager3.prvy_kamen = GameManager.instance.GetValueFromStone(kamen);
+                    }
+
+                    else
+                    {
+                        manager3.druhy_slot = true;
+                        manager3.druhy_kamen = GameManager.instance.GetValueFromStone(kamen);
+                    }
+                    wasInKotol = true;
+                }
+                else if (prvy == 3)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+                else if (prvy == 1) manager.AddValue(kamen); else manager2.AddValue(kamen);
                 wasInKotol = true;
             }
             else
@@ -75,7 +143,7 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
                 Destroy(gameObject);
             }
 
-            transform.SetParent(Kotol.transform);       //parentAfterDrag
+            transform.SetParent(parentAfterDrag);       //parentAfterDrag kotol.transform
             image.raycastTarget = true;
             transform.localScale = new Vector3(1, 1, 1);
         }

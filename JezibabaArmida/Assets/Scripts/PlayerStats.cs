@@ -21,8 +21,15 @@ public class PlayerStats : MonoBehaviour
     public bool savedEq2 = false;
     public bool savedEq3 = false;
     public bool savedEq4 = false;
+    public bool savedEditor1 = false;
+    public bool savedEditor2 = false;
+    public bool savedEditor3 = false;
+    public bool savedEditor4 = false;
 
     public bool editor1 = false;
+    public bool editor2 = false;
+    public bool editor3 = false;
+    public bool editor4 = false;
 
     /// SAVE EQ
 
@@ -67,19 +74,47 @@ public class PlayerStats : MonoBehaviour
         yield return new WaitForEndOfFrame();
         if (level == 0)
         {
-            
+            if (savedEditor1)
+            {
+                savedEditor1 = false;
+                savedEq = false;
+            }
+            if (savedEditor2)
+            {
+                savedEditor2 = false;
+                savedEq2 = false;
+            }
+            if (savedEditor3)
+            {
+                savedEditor3 = false;
+                savedEq3 = false;
+            }
+            if (savedEditor4)
+            {
+                savedEditor4 = false;
+                savedEq4 = false;
+            }
         }
         else if(GameManager.instance.level == 1)
         {
             GameManager.instance.SetProgressionSlider(level_1);
-            if(editor1) GameManager.instance.UnlockEditor();
+            if(editor1) GameManager.instance.UnlockEditor(1);
         }
         else if(GameManager.instance.level == 2)
         {
             GameManager.instance.SetProgressionSlider(level_2);
+            if (editor2) GameManager.instance.UnlockEditor(2);
         }
-        else if(GameManager.instance.level == 3) GameManager.instance.SetProgressionSlider(level_3);
-        else GameManager.instance.SetProgressionSlider(level_4);
+        else if(GameManager.instance.level == 3)
+        {
+            GameManager.instance.SetProgressionSlider(level_3);
+            if (editor3) GameManager.instance.UnlockEditor(3);
+        }
+        else
+        {
+            GameManager.instance.SetProgressionSlider(level_4);
+            if (editor4) GameManager.instance.UnlockEditor(4);
+        }
     }
 
     public string GetEquasion(int l)
@@ -90,11 +125,27 @@ public class PlayerStats : MonoBehaviour
 
     private void Update()
     {
+        
         if (level_1 == 5 || level_2 == 5 || level_3 == 5) UnlockLevel();
-        if (level_1 == 9)
+        if (level_1 == 10 && !editor1)
         {
-            GameManager.instance.UnlockEditor();
+            GameManager.instance.UnlockEditor(1);
             editor1 = true;
+        }
+        if(level_2 == 10 && !editor2)
+        {
+            GameManager.instance.UnlockEditor(2);
+            editor2 = true;
+        }
+        if(level_3 == 10 && !editor3)
+        {
+            GameManager.instance.UnlockEditor(3);
+            editor3 = true;
+        }
+        if (level_4 == 10 && !editor4)
+        {
+            GameManager.instance.UnlockEditor(4);
+            editor4 = true;
         }
     }
 
