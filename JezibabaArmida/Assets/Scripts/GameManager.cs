@@ -438,6 +438,7 @@ public class GameManager : MonoBehaviour
             level = lvl;
             InitLVL3();
         }
+        level = lvl;
     }
 
     public void LoadLevel(int i)

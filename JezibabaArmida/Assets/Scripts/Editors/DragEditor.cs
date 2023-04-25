@@ -23,18 +23,15 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if(prvy == 0)
-        {
-            if (GameObject.Find("minus") == null) prvy = 1;
-            if (GameObject.Find("kamene1i") != null) prvy = 3;
-            else prvy = 2;
-        }
-        Debug.Log(prvy);
         manager = GameObject.Find("EditorManager").GetComponent<Editor1Manager>();
+        if (manager != null) prvy = 1;
         manager2 = GameObject.Find("EditorManager").GetComponent<Editor2Manager>();
+        if (manager2 != null) prvy = 2;
         manager3 = GameObject.Find("EditorManager").GetComponent<Editor3Manager>();
+        if (manager3 != null) prvy = 3;
+        Debug.Log(prvy);
         if (Kotol == null) Kotol = GameObject.Find("kamene");
-        k = 0;
+        k = PocetKamenov();
         if (transform.GetSiblingIndex() != k-1 && k != 0 && wasInKotol) mozemVyhodit = true;
         else mozemVyhodit = false;
         //Debug.Log(mozemVyhodit);
@@ -63,7 +60,6 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
         }
     }
 
-    /*
     private int PocetKamenov()
     {
         if (prvy == 1) return manager.pocet_kamenov;
@@ -71,7 +67,7 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
         //else return manager3.pocet_kamenov;
         return 0;
     }
-    */
+  
 
     public void OnDrag(PointerEventData eventData)
     {
@@ -113,7 +109,7 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
                 else if (prvy==1) manager.RemoveValue(kamen); else manager2.RemoveValue(kamen);
                 Destroy(gameObject);
             }
-            else if (parentAfterDrag.name != "kamene2" && transform.parent.name == "Canvas" && k < 8)
+            else if (parentAfterDrag.name != "kamene2" && parentAfterDrag.name != "minus" && parentAfterDrag.name != "plus" && transform.parent.name == "Canvas" && k < 8)
             {
                 if (prvy == 3 && ((parentAfterDrag.name == "kamene1i" && !manager3.prvy_slot) || (parentAfterDrag.name == "kamene2i" && !manager3.druhy_slot)))
                 {
@@ -135,6 +131,7 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
                     Destroy(gameObject);
                     return;
                 }
+                
                 else if (prvy == 1) manager.AddValue(kamen); else manager2.AddValue(kamen);
                 wasInKotol = true;
             }

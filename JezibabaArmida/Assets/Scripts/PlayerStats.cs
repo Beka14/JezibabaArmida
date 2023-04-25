@@ -127,22 +127,22 @@ public class PlayerStats : MonoBehaviour
     {
         
         if (level_1 == 5 || level_2 == 5 || level_3 == 5) UnlockLevel();
-        if (level_1 == 10 && !editor1)
+        if (level_1 == 1 && !editor1)
         {
             GameManager.instance.UnlockEditor(1);
             editor1 = true;
         }
-        if(level_2 == 10 && !editor2)
+        if(level_2 == 1 && !editor2)
         {
             GameManager.instance.UnlockEditor(2);
             editor2 = true;
         }
-        if(level_3 == 10 && !editor3)
+        if(level_3 == 1 && !editor3)
         {
             GameManager.instance.UnlockEditor(3);
             editor3 = true;
         }
-        if (level_4 == 10 && !editor4)
+        if (level_4 == 1 && !editor4)
         {
             GameManager.instance.UnlockEditor(4);
             editor4 = true;

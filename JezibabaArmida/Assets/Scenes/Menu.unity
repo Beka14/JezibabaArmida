@@ -2699,6 +2699,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: fourth_lvl
       objectReference: {fileID: 0}
+    - target: {fileID: 2797720658393472940, guid: 3a4440abc4f9ba045a979cf6bfd5da86, type: 3}
+      propertyPath: m_Interactable
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2797720658393472941, guid: 3a4440abc4f9ba045a979cf6bfd5da86, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2782,6 +2786,14 @@ PrefabInstance:
     - target: {fileID: 2797720658393472941, guid: 3a4440abc4f9ba045a979cf6bfd5da86, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2797720659297314928, guid: 3a4440abc4f9ba045a979cf6bfd5da86, type: 3}
+      propertyPath: m_fontColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2797720659297314928, guid: 3a4440abc4f9ba045a979cf6bfd5da86, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a4440abc4f9ba045a979cf6bfd5da86, type: 3}

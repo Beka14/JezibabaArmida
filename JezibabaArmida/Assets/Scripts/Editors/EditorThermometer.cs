@@ -16,15 +16,12 @@ public class EditorThermometer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (prvy == 0)
-        {
-            if (GameObject.Find("minus") == null) prvy = 1;
-            if (GameObject.Find("kamene1i") != null) prvy = 3;
-            else prvy = 2;
-        }
         manager = GameObject.Find("EditorManager").GetComponent<Editor1Manager>();
+        if (manager != null) prvy = 1;
         manager2 = GameObject.Find("EditorManager").GetComponent<Editor2Manager>();
+        if (manager2 != null) prvy = 2;
         manager3 = GameObject.Find("EditorManager").GetComponent<Editor3Manager>();
+        if (manager3 != null) prvy = 3;
         slider = GetComponent<Slider>();
         t = GameObject.Find("temp_txt").GetComponent<TextMeshProUGUI>();
         if(prvy!=3) finalNumber = GameObject.Find("value").GetComponent<TextMeshProUGUI>();
