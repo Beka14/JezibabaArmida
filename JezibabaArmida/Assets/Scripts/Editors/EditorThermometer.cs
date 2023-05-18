@@ -13,7 +13,6 @@ public class EditorThermometer : MonoBehaviour
     Editor1Manager manager;
     Editor2Manager manager2;
     Editor3Manager manager3;
-    // Start is called before the first frame update
     void Start()
     {
         manager = GameObject.Find("EditorManager").GetComponent<Editor1Manager>();

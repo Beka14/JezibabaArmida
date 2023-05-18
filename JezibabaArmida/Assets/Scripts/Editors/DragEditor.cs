@@ -34,7 +34,6 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
         k = PocetKamenov();
         if (transform.GetSiblingIndex() != k-1 && k != 0 && wasInKotol) mozemVyhodit = true;
         else mozemVyhodit = false;
-        //Debug.Log(mozemVyhodit);
         if (!mozemHodit && !mozemVyhodit)
         {
             if (!wasInKotol)
@@ -64,7 +63,6 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
     {
         if (prvy == 1) return manager.pocet_kamenov;
         if (prvy == 2) return manager2.pocet_kamenov;
-        //else return manager3.pocet_kamenov;
         return 0;
     }
   
@@ -140,7 +138,7 @@ public class DragEditor : MonoBehaviour,IBeginDragHandler, IDragHandler, IEndDra
                 Destroy(gameObject);
             }
 
-            transform.SetParent(parentAfterDrag);       //parentAfterDrag kotol.transform
+            transform.SetParent(parentAfterDrag);       
             image.raycastTarget = true;
             transform.localScale = new Vector3(1, 1, 1);
         }

@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class ButtonScript : MonoBehaviour
 {
-    // Start is called before the first frame update
     Button button;
     void Start()
     {
@@ -16,9 +15,7 @@ public class ButtonScript : MonoBehaviour
 
     void Next()
     {
-        //Debug.Log("klik");
         GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
-        //gm.CheckTask();
         gm.NextTask();
     }
 }

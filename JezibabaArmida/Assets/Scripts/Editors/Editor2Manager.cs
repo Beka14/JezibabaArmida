@@ -148,7 +148,6 @@ public class Editor2Manager : MonoBehaviour
     {
         if (kamene.Count == 0)
         {
-            //ZLE
             StartCoroutine(ChangeColor(0));
         }
         else

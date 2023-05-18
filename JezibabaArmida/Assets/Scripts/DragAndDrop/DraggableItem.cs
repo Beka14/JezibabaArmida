@@ -22,8 +22,6 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         int v = PlaygroundManager.instance.GetThermoValue();
         mozemHodit = (kamen.name == "studeny" && v == -60 && !wasInKotol) || (kamen.name == "horuci" && v == 100 && !wasInKotol);
         mozemVyhodit = (kamen.name == "studeny" && v == 100 && wasInKotol) || (kamen.name == "horuci" && v == -60 && wasInKotol);
-        //Debug.Log(mozemHodit);
-        //Debug.Log(mozemVyhodit);
         if (!mozemHodit && !mozemVyhodit)
         {
             if (!wasInKotol)
@@ -57,7 +55,6 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (!mozemHodit && !mozemVyhodit)
         {
             transform.position = Input.mousePosition;
-            //transform.localScale = new Vector3(1, 1, 1);
         }
     }
 
@@ -65,27 +62,20 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         if (!mozemHodit && !mozemVyhodit)
         {
-            //Debug.Log(parentAfterDrag.name);
-            //Debug.Log(transform.parent.name);
-            if (transform.parent.name == "Canvas" && wasInKotol) //(parentAfterDrag.name == "Kotol" || parentAfterDrag.name == "hod" || parentAfterDrag.name == "hod") && 
+            if (transform.parent.name == "Canvas" && wasInKotol) 
             {
-                //Debug.Log("vyhod");
                 if (gameObject.name == "studeny") PlaygroundManager.instance.RemoveStone(kamen);
                 else PlaygroundManager.instance.RemoveStone(kamen);
                 Destroy(gameObject);
             }
             else if ((parentAfterDrag.name == "Kotol" || parentAfterDrag.name == "hod") && transform.parent.name == "Canvas")
             {
-                //Debug.Log("prihod");
                 if (gameObject.name == "studeny") PlaygroundManager.instance.AddStone(kamen);
                 else PlaygroundManager.instance.AddStone(kamen);
                 wasInKotol = true;
             }
             else
             {
-                //Debug.Log("mmmm");
-                //Debug.Log(parentAfterDrag.name);
-                //Debug.Log(transform.parent.name);
                 Destroy(gameObject);
             }
 

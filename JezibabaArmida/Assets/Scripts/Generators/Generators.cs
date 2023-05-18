@@ -43,9 +43,6 @@ public class Generators : MonoBehaviour
             x = Generate2(cold, hot, p[0], p[1], minS, maxS);
             if (x[0] != -100) break;
         }
-        Debug.Log("-------------------------");
-        Debug.Log(x[0] + " " + x[1]);
-        Debug.Log("-------------------------");
 
         List<int> k = new List<int>();
         for (int i = 0; i < hot; i++) k.Add(x[1]);
@@ -61,7 +58,7 @@ public class Generators : MonoBehaviour
         while (true)
         {
             if (x0 <= max && y0 <= max && x0 >= -min && y0 >= -min && ((x0 > 0 && y0 < 0) || (x0 < 0 && y0 > 0)))
-            {   //x0 + y0 == h && x0 != 0 && y0 != 0
+            {   
                 return new int[] { x0, y0 };
             }
             else
@@ -99,7 +96,7 @@ public class Generators : MonoBehaviour
         while (true)
         {
             if (CheckMinMax(x0, y0, min, max))
-            {   //x0 + y0 == h && x0 != 0 && y0 != 0
+            {   
                 return new int[] { x0, y0 };
             }
             else
@@ -120,7 +117,7 @@ public class Generators : MonoBehaviour
                         x0 = x;
                         y0 = y;
                     }
-                    else if (t >= 5)         //if(t >= 5)
+                    else if (t >= 5)        
                     {
                         return new int[] { -100, -100 };
                     }
@@ -138,7 +135,6 @@ public class Generators : MonoBehaviour
         int q = vals[2];
         if (c % d != 0)
         {
-            //System.out.println("no integer solutions exist");
             return new int[] { -100, -100 };
         }
         int x0 = p * (c / d);
@@ -194,7 +190,6 @@ public class Generators : MonoBehaviour
                     if (!l.Contains(x))
                     {
                         l.Add(x);
-                        //System.out.println(x[0] + " " + x[1]);
                     }
                 }
             }

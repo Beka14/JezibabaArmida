@@ -54,9 +54,7 @@ public class FirstLevelGenerator : MonoBehaviour
         }
 
         if (generators == null) generators = gameObject.GetComponent<Generators>();
-        //Debug.Log(pocet_kamenov + " " + mink + " " + maxk);
         List<List<int>> gen = generators.GenerateFirstDiophine(pocet_kamenov, mink, maxk);
-
         
         if (gen[0][0] != -100 && !ContainsItem(gen[0]))
         {
@@ -90,16 +88,6 @@ public class FirstLevelGenerator : MonoBehaviour
             answer = pociatocna;
             tmp = Stringify_lvl2(pole, kamene, minus, vymena_znam);
         }
-
-        //TODO 
-        /*
-        GameManager.instance.boardScript.SetUpThermo(pociatocna);
-        if (numberSlider == null) numberSlider = GameObject.Find("Numbers").GetComponent<NumberSlider>();
-        GameManager.instance.boardScript.InstantiateStones(vsetky, znamienka);
-        */
-        //
-
-        // SAVE EQ
 
         if (GameManager.instance.level == 1)
         {
@@ -189,8 +177,7 @@ public class FirstLevelGenerator : MonoBehaviour
             index++;
         }
         
-
-        //a su kamene v zatvorke
+        //ak su kamene v zatvorke
         if (a.Count() != 0)
         {
             int x = 0;

@@ -18,21 +18,11 @@ public class DragEditor3 : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        /*
-        if (prvy == 0)
-        {
-            if (GameObject.Find("minus") == null) prvy = 1;
-            else prvy = 2;
-        }
-        manager = GameObject.Find("EditorManager").GetComponent<Editor1Manager>();
-        manager2 = GameObject.Find("EditorManager").GetComponent<Editor2Manager>();
-        */
         manager = GameObject.Find("EditorManager").GetComponent<Editor3Manager>();
         if (Kotol == null) Kotol = GameObject.Find("kamene");
         int k = (manager == null) ? manager.pocet_kamenov : manager.pocet_kamenov;
         if (transform.GetSiblingIndex() != k - 1 && k != 0 && wasInKotol) mozemVyhodit = true;
         else mozemVyhodit = false;
-        //Debug.Log(mozemVyhodit);
         if (!mozemHodit && !mozemVyhodit)
         {
             if (!wasInKotol)
@@ -74,12 +64,10 @@ public class DragEditor3 : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
             Debug.Log(transform.parent.name);
             if (transform.parent.name == "Canvas" && wasInKotol)
             {
-                //if (prvy == 1) manager.RemoveValue(kamen); else manager.RemoveValue(kamen);
                 Destroy(gameObject);
             }
             else if (transform.parent.name == "Canvas" && (prvy == 1) ? manager.pocet_kamenov < 8 : manager.pocet_kamenov < 8)
             {
-                //if (prvy == 1) manager.AddValue(kamen); else manager.AddValue(kamen);
                 wasInKotol = true;
             }
             else
@@ -87,7 +75,7 @@ public class DragEditor3 : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
                 Destroy(gameObject);
             }
 
-            transform.SetParent(Kotol.transform);       //parentAfterDrag kotol.transform
+            transform.SetParent(Kotol.transform);     
             image.raycastTarget = true;
             transform.localScale = new Vector3(1, 1, 1);
         }

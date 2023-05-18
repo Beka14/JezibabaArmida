@@ -101,9 +101,9 @@ public class BoardManager : MonoBehaviour
                 naPloche.Add(g);
             }
 
-            if (znam.Count() != 0 && i < znam.Count())      //i+1
+            if (znam.Count() != 0 && i < znam.Count())     
             {
-                if (znam[i] == "-")             //i+1
+                if (znam[i] == "-")       
                 {
                     if (poZatvorke)
                     {
@@ -176,8 +176,6 @@ public class BoardManager : MonoBehaviour
                 GameManager.instance.DeleteStonesFromKotol("kamene" + i + "i");
             }
         }
-
-        ////////// SAVED EQ
 
         if (GameManager.instance.playerStats.savedEq && GameManager.instance.level == 1)
         {
@@ -281,7 +279,6 @@ public class BoardManager : MonoBehaviour
 
         if(level == 3)
         {
-            //bool zaporne = false, bool twoStones = false, int mink = 2, int maxk = 8, int mins = 3, int maxs = 6
             int prog = GameManager.instance.playerStats.level_3;
             int[] p = {3,3,4,4,5,3,4,3,5,6};
             int x = (int)Math.Ceiling((double)((prog + 1) / 2));

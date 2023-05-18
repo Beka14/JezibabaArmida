@@ -26,8 +26,7 @@ public class PlaygroundManager : MonoBehaviour
         RectTransform rc = kotol.GetComponent<RectTransform>();
         GridLayoutGroup glg = kotol.GetComponent<GridLayoutGroup>();
         kameneMax = Mathf.FloorToInt(rc.rect.width / (glg.cellSize.x + glg.spacing.x)) * Mathf.FloorToInt(rc.rect.height / (glg.cellSize.y + glg.spacing.y));
-        Debug.Log(kameneMax);
-        //kameneMax = 6;
+        
     }
     
     public void AddStone(GameObject kamen)     
@@ -39,7 +38,6 @@ public class PlaygroundManager : MonoBehaviour
         }
         kameneCount++;
         thermometer.ChangeValue((kamen.name == "studeny")? -1:1);
-        //Debug.Log(kameneCount);
     }
 
     public void RemoveStone(GameObject kamen)     
@@ -48,16 +46,13 @@ public class PlaygroundManager : MonoBehaviour
         {
             skryteKamene[0].SetActive(true);
             skryteKamene.RemoveAt(0);
-            Debug.Log("activujm");
         }
         kameneCount--;
         thermometer.ChangeValue((kamen.name == "studeny") ? 1 : -1);
-        //Debug.Log(kameneCount);
     }
 
     public int GetThermoValue()
     {
-        //Debug.Log(thermometer.GetValue());
         return thermometer.GetValue();
     }
     

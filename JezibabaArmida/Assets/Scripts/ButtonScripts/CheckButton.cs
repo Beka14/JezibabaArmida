@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class CheckButton : MonoBehaviour
 {
-    // Start is called before the first frame update
     Button button;
     void Start()
     {

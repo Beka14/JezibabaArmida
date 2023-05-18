@@ -9,9 +9,7 @@ public class DropItemLVL3 : MonoBehaviour, IDropHandler
     bool mozemVyhodit;
     public void OnDrop(PointerEventData eventData)
     {
-        Debug.Log("DROPLI DO MNA ");
         GameObject dropped = eventData.pointerDrag;
-        //int v = PlaygroundManager.instance.GetThermoValue();
         bool wasInKotol;
         if (dropped.GetComponent<DragItemLVL3>() == null)
         {
@@ -19,12 +17,10 @@ public class DropItemLVL3 : MonoBehaviour, IDropHandler
         }
         else wasInKotol = dropped.GetComponent<DragItemLVL3>().wasInKotol;
 
-        mozemHodit = false; //(dropped.name == "drag_studeny" && !wasInKotol) || (dropped.name == "drag_horuci" && !wasInKotol);
+        mozemHodit = false;
         mozemVyhodit = (dropped.name == "drag_studeny" && wasInKotol) || (dropped.name == "drag_horuci" && wasInKotol);
         if (!mozemHodit)
         {
-            //DragItemLVL3 draggableItem = dropped.GetComponent<DragItemLVL3>();
-            //draggableItem.parentAfterDrag = transform;
 
             if (dropped.GetComponent<DragItemLVL3>() == null)
             {

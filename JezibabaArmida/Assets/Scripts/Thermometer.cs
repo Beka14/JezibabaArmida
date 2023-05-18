@@ -9,7 +9,6 @@ public class Thermometer : MonoBehaviour
 {
     [SerializeField] private Slider slider;
     private TextMeshProUGUI t;
-    // Start is called before the first frame update
     void Start()
     {
         t = GameObject.Find("temp_txt").GetComponent<TextMeshProUGUI>();
@@ -22,13 +21,10 @@ public class Thermometer : MonoBehaviour
 
     public void ChangeValue(int i)
     {
-        //Debug.Log(slider.value);
         slider.value += i;
-        //Debug.Log(slider.value);
         t.text = slider.value+"";
     }
 
-    // Update is called once per frame
     public int GetValue()
     {
         t = GameObject.Find("temp_txt").GetComponent<TextMeshProUGUI>();

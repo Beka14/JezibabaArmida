@@ -20,7 +20,6 @@ public class DragEditor2 : MonoBehaviour
     {
         manager = GameObject.Find("EditorManager").GetComponent<Editor2Manager>();
         if (Kotol == null) Kotol = GameObject.Find("kamene");
-        //Debug.Log(mozemVyhodit);
         if (!mozemHodit && !mozemVyhodit)
         {
             if (!wasInKotol)
@@ -75,7 +74,7 @@ public class DragEditor2 : MonoBehaviour
                 Destroy(gameObject);
             }
 
-            transform.SetParent(Kotol.transform);       //parentAfterDrag
+            transform.SetParent(Kotol.transform);       
             image.raycastTarget = true;
             transform.localScale = new Vector3(1, 1, 1);
         }

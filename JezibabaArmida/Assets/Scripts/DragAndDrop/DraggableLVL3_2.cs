@@ -54,45 +54,24 @@ public class DraggableLVL3_2 : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (!mozemHodit && !mozemVyhodit)
         {
-            //Debug.Log(parentAfterDrag.name);
-            //Debug.Log(transform.parent.name);
-            if (transform.parent.name == "Canvas" && wasInKotol) //(parentAfterDrag.name == "Kotol_lvl3" || parentAfterDrag.name == "hod") && 
+            if (transform.parent.name == "Canvas" && wasInKotol) 
             {
-                //Debug.Log("vyhod");
                 GameManager.instance.RemoveStoneSlider(kamen);
                 kamen.transform.SetParent(kamene.transform);
                 wasInKotol = false;
-                //Destroy(gameObject);
             }
-            else if ((parentAfterDrag.name == "hod" || parentAfterDrag.name == "Kotol_lvl3") && !wasInKotol) //transform.parent.name == "Canvas" && !wasInKotol
+            else if ((parentAfterDrag.name == "hod" || parentAfterDrag.name == "Kotol_lvl3") && !wasInKotol) 
             {
-                //Debug.Log("prihod");
                 transform.SetParent(Kotol.transform);
                 GameManager.instance.AddStoneSlider(kamen);
                 wasInKotol = true;
             }
             else
             {
-                //Destroy(gameObject);
                 wasInKotol = false;
                 transform.SetParent(parentAfterDrag);
             }
 
-            //transform.SetParent(parentAfterDrag);       
-            /*
-            if ((parentAfterDrag.name == "hod" || parentAfterDrag.name == "Kotol_lvl3") && !wasInKotol)
-            {
-                transform.SetParent(Kotol.transform);
-                wasInKotol = true;
-            }
-
-            else
-            {
-                wasInKotol = false;
-                transform.SetParent(parentAfterDrag);
-            }
-            */
-            //transform.SetParent(parentAfterDrag);
             image.raycastTarget = true;
             transform.localScale = new Vector3(1, 1, 1);
         }

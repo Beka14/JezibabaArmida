@@ -34,8 +34,6 @@ public class ThirdLevelGenerator : MonoBehaviour
                 while (treti == druhy || treti == prvy) treti = Random.Range(mink, maxk);
                 while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 25);
 
-                //Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
-
                 int target = vysledna - pociatocna;
                 List<List<int>> result = (twoStones) ? CombinationSum(new int[] { druhy, treti }, target, false) : CombinationSum(new int[] { prvy, druhy, treti }, target, false);
                 
@@ -62,7 +60,6 @@ public class ThirdLevelGenerator : MonoBehaviour
                 while (prvy == druhy || prvy == druhy * -1 || druhy == -1 || druhy == 1 || druhy == 0) druhy = Random.Range(-5, 8);
                 while (treti == druhy || treti * -1 == prvy) treti = -1 * Random.Range(2, 8);
                 while (vysledna == pociatocna) vysledna = Random.Range(pociatocna, pociatocna + 25);
-                //Debug.Log(pociatocna + " + " + prvy + " + " + druhy + " + " + treti + " = " + vysledna);
 
                 int target = vysledna - pociatocna;
                 List<List<int>> result = (twoStones) ? CombinationSum(new int[] { prvy, treti }, target, true) : CombinationSum(new int[] { prvy, druhy, treti }, target, true);
@@ -79,12 +76,8 @@ public class ThirdLevelGenerator : MonoBehaviour
                 }
             }
 
-        // SOLVED INSTANTIOATE
         if (GameManager.instance.lvl3man == null) GameManager.instance.lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
         GameManager.instance.lvl3man.SetUpAnswers(solved, new List<List<int>>());
-        //
-
-        //TODO 
 
         GameManager.instance.boardScript.SetUpThermoLVL3(vysledna);
         GameManager.instance.boardScript.SetUpFinal(vysledna);
@@ -92,10 +85,7 @@ public class ThirdLevelGenerator : MonoBehaviour
         GameManager.instance.boardScript.SetUpSolutionsNumber(0, solved.Count());
         GameManager.instance.boardScript.InstantiateStonesLVL3(kamene, zaporne);
 
-        //
-
-        // SAVE EQ
-
+       
         GameManager.instance.playerStats.kamene3 = new List<int>();
         GameManager.instance.playerStats.kamene3.AddRange(kamene);
         GameManager.instance.playerStats.kameneNaPloche = kamene;
@@ -203,12 +193,9 @@ public class ThirdLevelGenerator : MonoBehaviour
                 }
             }
 
-        // SOLVED INSTANTIOATE
         if (GameManager.instance.lvl3man == null) GameManager.instance.lvl3man = GameObject.Find("LVL3Manager").GetComponent<LVL3Manager>();
         GameManager.instance.lvl3man.SetUpAnswers(solved, new List<List<int>>());
-        //
-
-        //TODO 
+      
 
         GameManager.instance.boardScript.SetUpThermoLVL3(vysledna);
         GameManager.instance.boardScript.SetUpFinal(vysledna);
@@ -217,9 +204,6 @@ public class ThirdLevelGenerator : MonoBehaviour
         GameManager.instance.boardScript.SetUpSolutionsNumber(0, (GameManager.instance.playerStats.noSolutions) ? pseudoSolutions : solved.Count());
         GameManager.instance.boardScript.InstantiateStonesLVL3(kamene, false);
 
-        //
-
-        // SAVE EQ
 
         GameManager.instance.playerStats.kamene4 = new List<int>();
         GameManager.instance.playerStats.kamene4.AddRange(kamene);
@@ -300,7 +284,7 @@ public class ThirdLevelGenerator : MonoBehaviour
         {
             for (int i = start; i < nums.Length && nums[i] <= target; i++)
             {
-                if (nums[i] < 0 && (depth >= 10 && d))    //&& depth >= 8
+                if (nums[i] < 0 && (depth >= 10 && d))    
                 {
                     continue;
                 }

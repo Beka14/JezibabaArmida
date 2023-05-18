@@ -20,11 +20,6 @@ public class DragItemLVL3 : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (Kotol == null) Kotol = GameObject.Find("Kotol_lvl3");
-        //Debug.Log("MAM KAME: ---------- " + kamen.name);
-        //mozemHodit = false; //(kamen.name == "drag_studeny" && !wasInKotol) || (kamen.name == "drag_horuci" && !wasInKotol);
-        //mozemVyhodit = (kamen.name == "drag_studeny" && wasInKotol) || (kamen.name == "drag_horuci" && wasInKotol);
-        //Debug.Log(mozemHodit);
-        //Debug.Log(mozemVyhodit);
         if (!mozemHodit && !mozemVyhodit)
         {
             if (!wasInKotol)
@@ -64,18 +59,14 @@ public class DragItemLVL3 : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     {
         if (!mozemHodit && !mozemVyhodit)
         {
-            //Debug.Log(parentAfterDrag.name);
-            //Debug.Log(transform.parent.name);
-            if (transform.parent.name == "Canvas" && wasInKotol) //(parentAfterDrag.name == "Kotol_lvl3" || parentAfterDrag.name == "kamene" || parentAfterDrag.name == "hod") && 
+            if (transform.parent.name == "Canvas" && wasInKotol) 
             {
-                //Debug.Log("vyhod");
                 if (gameObject.name == "drag_studeny") GameManager.instance.RemoveStoneSlider(kamen);
                 else GameManager.instance.RemoveStoneSlider(kamen);
                 Destroy(gameObject);
             }
             else if ((parentAfterDrag.name == "Kotol_lvl3" || parentAfterDrag.name == "hod") && transform.parent.name == "Canvas")
             {
-                //Debug.Log("prihod");
                 if (gameObject.name == "drag_studeny") GameManager.instance.AddStoneSlider(kamen);
                 else GameManager.instance.AddStoneSlider(kamen);
                 wasInKotol = true;

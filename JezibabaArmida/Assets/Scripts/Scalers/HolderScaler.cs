@@ -15,8 +15,7 @@ public class HolderScaler : MonoBehaviour
         children = 0;
     }
 
-    // Update is called once per frame
-    void Update()                                   //TODO nieje to bad???
+    void Update()                                  
     {
         children = transform.childCount;
         if (glg.cellSize != new Vector2((width / children) - 10, (width / children) - 10))

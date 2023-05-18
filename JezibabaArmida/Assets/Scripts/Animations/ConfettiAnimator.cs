@@ -6,8 +6,6 @@ using UnityEngine.UI;
 public class ConfettiAnimator : MonoBehaviour
 {
     Animator anim;
-    bool bop = false;
-    // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();

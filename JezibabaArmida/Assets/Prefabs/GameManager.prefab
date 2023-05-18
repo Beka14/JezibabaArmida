@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2833452945128290405}
   - component: {fileID: 2084534328}
   - component: {fileID: 1141027952}
+  - component: {fileID: 6173329835399108735}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -56,9 +57,6 @@ MonoBehaviour:
   icon2: {fileID: 4195579619803859639, guid: a5bd6ef179a5b0f48934418f96fd367f, type: 3}
   icon3: {fileID: 2056323582455477134, guid: e7032f8c53db8914f98e16566de0f73e, type: 3}
   icon4: {fileID: 2797720658393472938, guid: 3a4440abc4f9ba045a979cf6bfd5da86, type: 3}
-  icon2_unlock: {fileID: 0}
-  icon3_unlock: {fileID: 6958319217802079940, guid: d80e46f02a41c904099b9b3020f0b0a5, type: 3}
-  icon4_unlock: {fileID: 2775791541407200693, guid: 3520d4dee6bc51e41888c2642714e759, type: 3}
   reset_icon2: {fileID: 6581845484638251469, guid: 4fd9aa44e3b9b0447aa19adf3bcfbac8, type: 3}
   reset_icon3: {fileID: 7696576893155203909, guid: 26e4f7076445e2447b5e74cb1995e7f5, type: 3}
   reset_icon4: {fileID: 5802760219528885934, guid: 81a217990dd0aba43b4b40134796ea7c, type: 3}
@@ -107,8 +105,14 @@ MonoBehaviour:
   savedEq2: 0
   savedEq3: 0
   savedEq4: 0
+  savedEditor1: 0
+  savedEditor2: 0
+  savedEditor3: 0
+  savedEditor4: 0
   editor1: 0
   editor2: 0
+  editor3: 0
+  editor4: 0
   kamene: 
   rovnica: 
   pociatocna: 0
@@ -200,3 +204,16 @@ MonoBehaviour:
   super: {fileID: 8300000, guid: 8d8282d46d80f1c4a9b196c8db0b1c11, type: 3}
   totorieseniesiuzzadal: {fileID: 8300000, guid: fe8c5737dbe4139478834f4aec8d9272, type: 3}
   unlockeditor1: {fileID: 8300000, guid: 371e39a760aad394897f9956b306f2b7, type: 3}
+--- !u!114 &6173329835399108735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 588874953701159472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1b6e2084b5d9294e8307bf97db984a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileName: data

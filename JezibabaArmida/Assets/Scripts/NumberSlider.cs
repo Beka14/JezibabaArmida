@@ -21,9 +21,7 @@ public class NumberSlider : MonoBehaviour
 
     public void ChangeValue(int i)
     {
-        //Debug.Log(slider.value);
         slider.value += i;
-        //Debug.Log(slider.value);
         t.text = slider.value + "";
     }
 
@@ -42,6 +40,5 @@ public class NumberSlider : MonoBehaviour
         Debug.Log(max);
         slider.minValue = max - value - Random.Range(0, 10);
         slider.maxValue = max + value + Random.Range(0, 10);
-        //ChangeValue(0);
     }
 }

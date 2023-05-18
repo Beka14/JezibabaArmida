@@ -41,17 +41,19 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("--------------- STARTING ---------------");
         playerStats = gameObject.GetComponent<PlayerStats>();
         boardScript = gameObject.GetComponent<BoardManager>();
         audioManager = gameObject.GetComponent<AudioManager>();
     }
 
+    public void SetUpPS()
+    {
+        playerStats = gameObject.GetComponent<PlayerStats>();
+    }
+
     public void Init()
     {
-        //t = GameObject.Find("txt").GetComponent<TextMeshProUGUI>();
         boardScript = gameObject.GetComponent<BoardManager>();
-        //t.text = boardScript.SetUpBoard();
         boardScript.SetUpBoard();
     }
 
@@ -88,7 +90,6 @@ public class GameManager : MonoBehaviour
     {
         int right = boardScript.GetAnswer();     
         int left = GetInput();
-        //Debug.Log(right + " == " + left);
         if(level == 2 || level == 1)
         {
             if (right == left)
@@ -122,14 +123,13 @@ public class GameManager : MonoBehaviour
                 if (!playerStats.savedEditor3 && !playerStats.savedEditor4) UpdateProgressionSlider();
                 ConfettiAnimation();
                 if (level==3) playerStats.savedEq3 = false; else playerStats.savedEq4 = false;
-                //VYMAZ KAMENE
+                
                 DeleteStonesFromKotol("Kotol_lvl3");
-                //
+                
                 boardScript.SetUpBoard();
             }
             else
             {
-                //VYPIS BUBLINU NECH DOKONCI ZADANIE
                 StartCoroutine(ShowBubbleLVL3(3));
             }
         }
@@ -142,8 +142,6 @@ public class GameManager : MonoBehaviour
         allSolutions = (level == 3) ? playerStats.solutionsAll : playerStats.solutionsAll4;
         int right = (int)GameObject.Find("Slider").GetComponent<Slider>().value;
         int left = GetInput();
-        //Debug.Log(left + " == " + right);
-        //Debug.Log(gotSolutions + " / " + allSolutions);
 
         if (gotSolutions == allSolutions)
         {
@@ -161,15 +159,10 @@ public class GameManager : MonoBehaviour
                 Object.Destroy(g.transform.GetChild(i).gameObject);
             }
 
-            //boardScript.SetUpThermo(playerStats.pociatocna3);
-
             if (lvl3man.ContainsAnswer(gameObjects))
             {
-                //super, nemame este a objavila sa teraz aj sa zapocitali riesenia
                 UpdateSolutionsText();
                 StartCoroutine(ShowBubbleLVL3(0));
-
-                // ulozit lvl3.2 kamene na ploche
 
                 if (playerStats.zaporne)
                 {
@@ -181,7 +174,6 @@ public class GameManager : MonoBehaviour
 
                 gotSolutions = (level == 3) ? playerStats.solutionsGot : playerStats.solutionsGot4;
                 allSolutions = (level == 3) ? playerStats.solutionsAll : playerStats.solutionsAll4;
-                //
             }
 
             else
@@ -193,18 +185,9 @@ public class GameManager : MonoBehaviour
                     {
                         StartCoroutine(ShowBubbleLVL3(1));
                     }
-                    //boardScript.SetUpThermo(playerStats.finalna3);
                     boardScript.InstantiateStonesLVL3(gameObjects, true);
                 }
-                //Debug.Log("uz som tam lol");
-                //TODO TU ZISTIT CI TO MAME ALEBO TO NEEXISTUJE
-                /*
-                if (ContainsSolution(gameObjects))
-                {
-                    StartCoroutine(ShowBubbleLVL3(1));
-                }
-                */
-                //
+                
                 else StartCoroutine(ShowBubbleLVL3(8));
 
             }
@@ -245,7 +228,7 @@ public class GameManager : MonoBehaviour
         TextMeshProUGUI tmp = kamen.transform.Find("value").GetComponent<TextMeshProUGUI>();
         int i = 1;
         if (kamen.name == "drag_studeny" || kamen.name == "drag_studeny2" || kamen.name == "edit_studeny" || kamen.name == "studeny") i = -1;
-        //Object.Destroy(kamen);
+        
         return (Convert.ToInt32(tmp.text) * i);
     }
 
@@ -294,7 +277,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            //1,3,4,14
             int[] pole = { 1, 3, 4, 14 };
             int x = UnityEngine.Random.Range(1,4);
             audioManager.PlaySound(pole[x]);
@@ -462,18 +444,18 @@ public class GameManager : MonoBehaviour
         StartCoroutine(a.Animate());
     }
 
-    public void UnlockLevel(int i)
+    public void UnlockLevel(int i, bool sound=true)
     {
         switch (i)
         {
             case 2:
-                audioManager.PlaySound(9);
+                if(sound) audioManager.PlaySound(9);
                 icon2.GetComponent<Button>().interactable = true;
                 reset_icon2.GetComponent<Button>().interactable = true;
                 icon2.transform.Find("txt2").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
                 break;
             case 3:
-                audioManager.PlaySound(10);
+                if (sound) audioManager.PlaySound(10);
                 icon3.GetComponent<Button>().interactable = true;
                 reset_icon3.GetComponent<Button>().interactable = true;
                 icon3.transform.Find("txt3").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
@@ -484,7 +466,7 @@ public class GameManager : MonoBehaviour
                 icon4.transform.Find("txt4").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
                 break;
         }
-        StartCoroutine(StartAnimation(i));
+        if(sound) StartCoroutine(StartAnimation(i));
     }
 
     public void UnlockEditor(int x)

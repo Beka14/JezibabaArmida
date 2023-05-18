@@ -31,8 +31,7 @@ public class ScalerKotol : MonoBehaviour
         Debug.Log(kameneMax);
     }
 
-    // Update is called once per frame
-    void Update()                                   //TODO nieje to bad???
+    void Update()                                  
     {
         children = transform.childCount;
         if(children < pred_children)
