@@ -74,6 +74,22 @@ public class PlayerStats : MonoBehaviour
         yield return new WaitForEndOfFrame();
         if (level == 0)
         {
+            if (levels[1] && GameObject.Find("second_lvl").GetComponent<Button>().interactable == false)
+            {
+                GameObject.Find("second_lvl").GetComponent<Button>().interactable = true;
+                GameObject.Find("txt2").GetComponent<TextMeshProUGUI>().color = new Color(255,255,255,1);
+            }
+            if (levels[2] && GameObject.Find("third_lvl").GetComponent<Button>().interactable == false)
+            {
+                GameObject.Find("third_lvl").GetComponent<Button>().interactable = true;
+                GameObject.Find("txt3").GetComponent<TextMeshProUGUI>().color = new Color(255, 255, 255, 1);
+            }
+            if (levels[3] && GameObject.Find("fourth_lvl").GetComponent<Button>().interactable == false)
+            {
+                GameObject.Find("fourth_lvl").GetComponent<Button>().interactable = true;
+                GameObject.Find("txt4").GetComponent<TextMeshProUGUI>().color = new Color(255, 255, 255, 1);
+            }
+
             if (savedEditor1)
             {
                 savedEditor1 = false;

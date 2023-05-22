@@ -455,12 +455,13 @@ public class GameManager : MonoBehaviour
                 icon2.transform.Find("txt2").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
                 break;
             case 3:
-                if (sound) audioManager.PlaySound(10);
+                if(sound) audioManager.PlaySound(10);
                 icon3.GetComponent<Button>().interactable = true;
                 reset_icon3.GetComponent<Button>().interactable = true;
                 icon3.transform.Find("txt3").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);
                 break;
             case 4:
+                if (sound) audioManager.PlaySound(20);
                 icon4.GetComponent<Button>().interactable = true;
                 reset_icon4.GetComponent<Button>().interactable = true;
                 icon4.transform.Find("txt4").GetComponent<TextMeshProUGUI>().color = new Color(217, 217, 217, 255);

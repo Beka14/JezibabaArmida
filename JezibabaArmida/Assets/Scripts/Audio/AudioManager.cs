@@ -21,7 +21,12 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioClip skustoesteraz;
     [SerializeField] AudioClip super;
     [SerializeField] AudioClip totorieseniesiuzzadal;
-    [SerializeField] AudioClip unlockeditor1;
+
+    [SerializeField] AudioClip ieditor1;
+    [SerializeField] AudioClip ieditor2;
+    [SerializeField] AudioClip ieditor3;
+    [SerializeField] AudioClip ieditor4;
+    [SerializeField] AudioClip odomkol4;
 
     AudioSource source;
 
@@ -79,7 +84,19 @@ public class AudioManager : MonoBehaviour
                 source.clip = totorieseniesiuzzadal;
                 break;
             case 16:
-                source.clip = unlockeditor1;
+                source.clip = ieditor1;
+                break;
+            case 17:
+                source.clip = ieditor2;
+                break;
+            case 18:
+                source.clip = ieditor3;
+                break;
+            case 19:
+                source.clip = ieditor4;
+                break;
+            case 20:
+                source.clip = odomkol4;
                 break;
             default:
                 break;
