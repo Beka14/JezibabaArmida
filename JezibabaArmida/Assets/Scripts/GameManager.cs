@@ -23,9 +23,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject icon3;
     [SerializeField] GameObject icon4;
 
-    [SerializeField] GameObject reset_icon2;
-    [SerializeField] GameObject reset_icon3;
-    [SerializeField] GameObject reset_icon4;
+    [SerializeField] public GameObject reset_icon2;
+    [SerializeField] public GameObject reset_icon3;
+    [SerializeField] public GameObject reset_icon4;
 
     public LVL3Manager lvl3man;
 

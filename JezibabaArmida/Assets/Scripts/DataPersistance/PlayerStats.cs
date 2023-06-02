@@ -74,19 +74,23 @@ public class PlayerStats : MonoBehaviour
         yield return new WaitForEndOfFrame();
         if (level == 0)
         {
-            if (levels[1] && GameObject.Find("second_lvl").GetComponent<Button>().interactable == false)
+            if (levels[1] != false && GameObject.Find("second_lvl").GetComponent<Button>().interactable == false)
             {
+                Debug.Log("WTF? " + levels[1]);
                 GameObject.Find("second_lvl").GetComponent<Button>().interactable = true;
+                GameManager.instance.reset_icon2.GetComponent<Button>().interactable = true;
                 GameObject.Find("txt2").GetComponent<TextMeshProUGUI>().color = new Color(255,255,255,1);
             }
-            if (levels[2] && GameObject.Find("third_lvl").GetComponent<Button>().interactable == false)
+            if (levels[2] != false && GameObject.Find("third_lvl").GetComponent<Button>().interactable == false)
             {
                 GameObject.Find("third_lvl").GetComponent<Button>().interactable = true;
+                GameManager.instance.reset_icon3.GetComponent<Button>().interactable = true;
                 GameObject.Find("txt3").GetComponent<TextMeshProUGUI>().color = new Color(255, 255, 255, 1);
             }
-            if (levels[3] && GameObject.Find("fourth_lvl").GetComponent<Button>().interactable == false)
+            if (levels[3] != false && GameObject.Find("fourth_lvl").GetComponent<Button>().interactable == false)
             {
                 GameObject.Find("fourth_lvl").GetComponent<Button>().interactable = true;
+                GameManager.instance.reset_icon4.GetComponent<Button>().interactable = true;
                 GameObject.Find("txt4").GetComponent<TextMeshProUGUI>().color = new Color(255, 255, 255, 1);
             }
 
@@ -111,6 +115,7 @@ public class PlayerStats : MonoBehaviour
                 savedEq4 = false;
             }
         }
+
         else if(GameManager.instance.level == 1)
         {
             GameManager.instance.SetProgressionSlider(level_1);
@@ -238,7 +243,7 @@ public class PlayerStats : MonoBehaviour
         data.rovnica2 = rovnica2;
         data.pociatocna2 = pociatocna2;
         data.finalna2 = finalna2;
-
+        /*
         data.kamene3 = kamene3;
         data.kameneNaPloche = kameneNaPloche;
         data.solved = solved;
@@ -253,12 +258,15 @@ public class PlayerStats : MonoBehaviour
         data.kameneNaPloche4 = kameneNaPloche4;
         data.solved4 = solved4;
         data.answers4 = answers4;
+        Debug.Log("SAVING --- " + data.solved4.Count);
+        Debug.Log("SAVING --- " + data.answers4.Count);
         data.solutionsAll4 = solutionsAll4;
         data.solutionsGot4 = solutionsGot4;
         data.pociatocna4 = pociatocna4;
         data.finalna4 = finalna4;
         data.infine = infine;
         data.noSolutions = noSolutions;
+        */
     }
 
     public void LoadData(SavedData data)
@@ -272,8 +280,8 @@ public class PlayerStats : MonoBehaviour
 
         savedEq = data.savedEq;
         savedEq2 = data.savedEq2;
-        savedEq3 = data.savedEq3;
-        savedEq4 = data.savedEq4;
+        //savedEq3 = data.savedEq3;
+        //savedEq4 = data.savedEq4;
         savedEditor1 = data.savedEditor1;
         savedEditor2 = data.savedEditor2;
         savedEditor3 = data.savedEditor3;
@@ -295,7 +303,7 @@ public class PlayerStats : MonoBehaviour
         rovnica2 = data.rovnica2;
         pociatocna2 = data.pociatocna2;
         finalna2 = data.finalna2;
-
+        /*
         kamene3 = data.kamene3;
         kameneNaPloche = data.kameneNaPloche;
         solved = data.solved;
@@ -310,11 +318,15 @@ public class PlayerStats : MonoBehaviour
         kameneNaPloche4 = data.kameneNaPloche4;
         solved4 = data.solved4;
         answers4 = data.answers4;
+        Debug.Log("LOADING --- " + data.solved4.Count);
+        Debug.Log("LOADING --- " + data.answers4.Count);
         solutionsAll4 = data.solutionsAll4;
         solutionsGot4 = data.solutionsGot4;
         pociatocna4 = data.pociatocna4;
         finalna4 = data.finalna4;
         infine = data.infine;
         noSolutions = data.noSolutions;
+        */
     }
+
 }

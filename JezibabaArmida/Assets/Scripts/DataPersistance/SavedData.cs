@@ -42,7 +42,7 @@ public class SavedData
     public int pociatocna2;
     public int finalna2;
 
-
+    /*
     public List<int> kamene3 = new List<int>();
     public List<int> kameneNaPloche = new List<int>();
     public List<List<int>> solved = new List<List<int>>();
@@ -64,4 +64,5 @@ public class SavedData
     public int finalna4;
     public bool infine;
     public bool noSolutions;
+    */
 }
